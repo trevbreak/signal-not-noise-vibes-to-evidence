@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { SCENES } from "../scenes";
+import { actDeadline, SCENES } from "../scenes";
 import { buildCount, useStore } from "../lib/store";
 import { sendCommand } from "../lib/sync";
 import { VARIANT, VARIANTS, switchVariant, type VariantId } from "../variants";
@@ -52,7 +52,11 @@ export function Presenter() {
   }, []);
 
   const secs = Math.floor((now - start) / 1000);
-  const mmss = `${Math.floor(secs / 60)}:${String(secs % 60).padStart(2, "0")}`;
+  const clock = (n: number) => `${Math.floor(n / 60)}:${String(Math.abs(n) % 60).padStart(2, "0")}`;
+  const mmss = clock(secs);
+  // Each act has a budget: show when this one should be done, and whether we're behind.
+  const due = actDeadline(scene.act);
+  const late = due !== null && secs > due;
 
   return (
     <div className="presenter">
@@ -63,6 +67,12 @@ export function Presenter() {
           </span>
           <span style={{ color: "var(--muted)" }}>/ 25:00</span>
         </button>
+        {due !== null && (
+          <div className={`checkpoint ${late ? "late" : ""}`} title="When this act should be finished, from the act budgets in src/scenes.ts">
+            Finish this act by <strong>{clock(due)}</strong>
+            {late && <span> · {clock(secs - due)} behind</span>}
+          </div>
+        )}
         <div>
           <div style={{ color: "var(--muted)" }}>
             {sceneIndex + 1}/{SCENES.length} · {scene.act}
@@ -95,6 +105,9 @@ export function Presenter() {
             </option>
           ))}
         </select>
+        <button className="btn" onClick={() => sendCommand("zoom")} title="Projector text size (Z on the projector)">
+          Text size
+        </button>
         <button
           className="btn"
           onClick={() => confirm("Clear every translator back to Version 1, with no answers? Use this between rehearsal and the real talk.") && sendCommand("reset")}
@@ -105,7 +118,7 @@ export function Presenter() {
           Next: <strong style={{ color: "var(--text)" }}>{next ? next.title : "the end"}</strong>
           <br />
           <span className="mono" style={{ fontSize: "0.8rem" }}>
-            ← → scenes · ↑↓ phrase · space translate · R try 5× · A all phrases · S side by side · F next version · B back · J next check · P replay
+            ← → scenes · ↑↓ phrase · space translate · R try 5× · A all phrases · S side by side · F next version · B back · J next check · P replay · Z text size
           </span>
         </div>
       </div>
@@ -123,9 +136,13 @@ export function Presenter() {
           </div>
         </div>
       ) : (
-        <div className="notes-body">{scene.notes ?? <span style={{ color: "var(--muted)" }}>No notes for this scene.</span>}</div>
+        <div className="notes-body">{scene.notes ? <Beats text={scene.notes} /> : <span style={{ color: "var(--muted)" }}>No notes for this scene.</span>}</div>
       )}
-      {talk && scene.notes && <div className="notes-body small">{scene.notes}</div>}
+      {talk && scene.notes && (
+        <div className="notes-body small">
+          <Beats text={scene.notes} />
+        </div>
+      )}
       {scene.kind === "lab" && scene.judges.length > 0 && (
         <div style={{ color: "var(--muted)" }}>
           Checks, in order (J): {scene.judges.map((j) => j.name).join(" → ")}
@@ -150,4 +167,23 @@ export function Presenter() {
       </div>
     </div>
   );
+}
+
+/** Notes as beats: one per line, with **bold** for what to press or say. */
+function Beats({ text }: { text: string }) {
+  const lines = text.split("\n").map((l) => l.trim()).filter(Boolean);
+  if (lines.length === 1) return <Bold text={lines[0]} />;
+  return (
+    <ol className="beats">
+      {lines.map((l, i) => (
+        <li key={i}>
+          <Bold text={l} />
+        </li>
+      ))}
+    </ol>
+  );
+}
+
+function Bold({ text }: { text: string }) {
+  return <>{text.split(/\*\*(.+?)\*\*/g).map((p, i) => (i % 2 ? <strong key={i}>{p}</strong> : p))}</>;
 }

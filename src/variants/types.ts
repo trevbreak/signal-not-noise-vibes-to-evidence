@@ -16,6 +16,8 @@ export type ImageChapter = {
   /** The point, shown once the judges have marked it. */
   lesson: string;
   purposes?: boolean;
+  /** With `purposes`: why the real one must stay exactly as it is. */
+  dontTouch?: string;
 };
 
 export type Variant = {

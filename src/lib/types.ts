@@ -36,7 +36,16 @@ export type RunResult = {
 
 export type Stage = "prioritise" | "define" | "collect" | "run" | "test" | "iterate";
 
-type SceneBase = { id: string; act: string; notes?: string; meters: Meters; stage?: Stage };
+type SceneBase = {
+  id: string;
+  act: string;
+  /** Presenter notes. One beat per line; **bold** marks what to press. */
+  notes?: string;
+  meters: Meters;
+  stage?: Stage;
+  /** Cut from the running order (kept so it can come back). Say why. */
+  cut?: string;
+};
 
 export type SlideScene = SceneBase & {
   kind: "slide";
@@ -53,6 +62,8 @@ export type SlideScene = SceneBase & {
   reveal?: boolean;
   /** What to say at each build step (index 0 = when the slide first appears). Shown in the presenter view. */
   talk?: string[];
+  /** Show the side-by-side from the "main" lab under the statement: the evidence for the claim. */
+  evidence?: "compare";
   /** Worked examples marked against the marking guide (the "collect" slide). */
   scorecards?: Scorecard[];
 };

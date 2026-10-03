@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { post } from "../lib/api";
 import type { ImageScene, Verdict } from "../lib/types";
 import type { ImageChapter } from "../variants/types";
@@ -60,6 +60,14 @@ export function ImageLab({ scene }: { scene: ImageScene }) {
   const dontTouch = ch.purposes && purpose === "wall";
   const key = ch.purposes ? `${ch.id}:${purpose}` : ch.id;
   const isRevealed = !!revealed[key];
+  // Click a picture to see it full screen: the words inside are too small to read from the back.
+  const [zoom, setZoom] = useState<string | null>(null);
+  useEffect(() => {
+    if (!zoom) return;
+    const close = (e: KeyboardEvent) => e.key === "Escape" && setZoom(null);
+    window.addEventListener("keydown", close);
+    return () => window.removeEventListener("keydown", close);
+  }, [zoom]);
 
   const aussify = () => {
     // Pre-generated, so this is instant. A short beat keeps the "magic" moment. Then the judges mark it.
@@ -142,17 +150,17 @@ export function ImageLab({ scene }: { scene: ImageScene }) {
       <div className="imgs">
         <figure className="imgcard" style={{ margin: 0 }}>
           <figcaption className="cap">English</figcaption>
-          <img src={original} alt={`${ch.label}, original`} />
+          <img src={original} alt={`${ch.label}, original`} className="zoomable" onClick={() => setZoom(original)} />
         </figure>
         <figure className="imgcard" style={{ margin: 0 }}>
           <figcaption className="cap">{V.outLabel}</figcaption>
           {dontTouch ? (
             <div className="placeholder dont">
               <strong>Don't touch it.</strong>
-              <span>People rely on this sign to stay safe, and safety signs follow a standard. The right answer is no change at all.</span>
+              <span>{ch.dontTouch ?? "People rely on this sign as it is. The right answer is no change at all."}</span>
             </div>
           ) : isRevealed ? (
-            <img src={aussified} alt={`${ch.label}, rewritten`} className="reveal-img" />
+            <img src={aussified} alt={`${ch.label}, rewritten`} className="reveal-img zoomable" onClick={() => setZoom(aussified)} />
           ) : (
             <div className="placeholder">
               <button className="translate big" disabled={working} onClick={aussify}>
@@ -173,6 +181,11 @@ export function ImageLab({ scene }: { scene: ImageScene }) {
         {error && <div className="error">{error}</div>}
         {showLesson && <div className="lesson">{ch.lesson}</div>}
       </div>
+      {zoom && (
+        <div className="zoom-overlay" role="dialog" aria-label="Picture, full screen" onClick={() => setZoom(null)}>
+          <img src={zoom} alt="" />
+        </div>
+      )}
     </div>
   );
 }

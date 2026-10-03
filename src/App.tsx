@@ -16,6 +16,7 @@ import { Golden } from "./components/Golden";
 import { Review } from "./components/Review";
 import { Improve } from "./components/Improve";
 import { Rerun } from "./components/Rerun";
+import { toggleStageSize } from "./lib/stage";
 
 export function App() {
   const sceneIndex = useStore((s) => s.sceneIndex);
@@ -88,6 +89,9 @@ export function App() {
           break;
         case "t":
           s.toggleTheme();
+          break;
+        case "z":
+          toggleStageSize();
           break;
         case "o":
           window.open(`/?presenter#${s.sceneIndex}`, "strine-presenter", "width=1100,height=800");

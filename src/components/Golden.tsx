@@ -18,16 +18,18 @@ export function Golden({ scene }: { scene: GoldenScene }) {
   const build = useStore((s) => s.build);
   const sources = [...new Set(scene.examples.map((e) => e.source))];
   const explained = scene.explain?.length ?? 0;
-  const visible = explained && build <= explained ? build : sources.length;
+  const done = !explained || build > explained;
+  // While explaining, rows arrive one per click. After that, the explained rows stay and
+  // everything else collapses to a count: a wall of fourteen cards is unreadable from the back.
+  const shownSources = done ? (explained ? scene.explain!.map((e) => e.source) : sources) : sources.slice(0, build);
   const current = explained && build >= 1 && build <= explained ? scene.explain![build - 1] : null;
+  const rest = scene.examples.filter((e) => !shownSources.includes(e.source));
+  const restCount = (label: GoldenExample["label"]) => rest.filter((e) => e.label === label).length;
 
   return (
     <div className="workbench">
       <h2>
-        {scene.title}{" "}
-        <span style={{ color: "var(--muted)", fontWeight: 400 }}>
-          · {visible === sources.length ? `${scene.examples.length} real answers, marked by people who know, with why` : "real answers, marked by people who know"}
-        </span>
+        {scene.title} <span style={{ color: "var(--muted)", fontWeight: 400 }}>· real answers, marked by people who know, with why</span>
       </h2>
       <div className="golden">
         <div className="golden-head" />
@@ -36,13 +38,20 @@ export function Golden({ scene }: { scene: GoldenScene }) {
             {c.title}
           </div>
         ))}
-        {sources.slice(0, visible).map((src) => (
+        {shownSources.map((src) => (
           <Fragment key={src}>
-            <Row source={src} examples={scene.examples.filter((e) => e.source === src)} showScores={visible < sources.length || !explained} />
+            <Row source={src} examples={scene.examples.filter((e) => e.source === src)} showScores={!done} />
             {current?.source === src && <div className="golden-explain">{current.text}</div>}
           </Fragment>
         ))}
       </div>
+      {done && rest.length > 0 && (
+        <div className="golden-more">
+          <strong>+ {rest.length} more answers</strong> for {new Set(rest.map((e) => e.source)).size} more phrases:{" "}
+          <span className="good">{restCount("good")} good</span> · <span className="borderline">{restCount("borderline")} borderline</span> ·{" "}
+          <span className="bad">{restCount("bad")} bad</span>, each with a reason why.
+        </div>
+      )}
     </div>
   );
 }

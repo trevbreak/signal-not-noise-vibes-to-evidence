@@ -1,0 +1,36 @@
+<!doctype html><html><head><meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@600;800;900&family=Permanent+Marker&family=Kalam:wght@700&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#222}
+#art{width:1200px;height:900px;position:relative;overflow:hidden;background:#8a6a4a;font-family:Inter,sans-serif}
+.board{position:absolute;left:40px;top:40px;width:1120px;height:820px;background:#f6f7f5;border:16px solid #c9cdd1;border-radius:6px;
+  box-shadow:0 18px 40px rgba(0,0,0,.4);box-sizing:border-box;padding:20px 24px}
+.title{font-family:"Permanent Marker",cursive;font-size:40px;color:#1d3f8f;display:flex;justify-content:space-between;align-items:baseline;margin-bottom:12px}
+.title small{font-size:28px;color:#b3261e}
+.cols{display:grid;grid-template-columns:repeat(4,1fr);height:670px;border-top:4px solid #333}
+.col{border-right:4px solid #333;padding:12px 12px 0;display:flex;flex-direction:column;gap:14px;align-items:center}
+.col:last-child{border-right:0}
+.h{font-family:"Permanent Marker",cursive;font-size:30px;color:#222;text-align:center;line-height:1.1}
+.h span{display:block;font-size:24px;color:#b3261e}
+.card{width:205px;min-height:104px;padding:14px 14px;box-sizing:border-box;font-family:Kalam,cursive;font-size:24px;line-height:1.15;color:#222;
+  box-shadow:0 6px 10px rgba(0,0,0,.22)}
+.y{background:#ffe766}.p{background:#ffb3cf}.g{background:#b9f0a6}.b{background:#a9dcff}
+.r1{transform:rotate(-2deg)}.r2{transform:rotate(1.5deg)}.r3{transform:rotate(-1deg)}.r4{transform:rotate(2.5deg)}
+</style></head><body><div id="art"><div class="board">
+<div class="title"><span>SPRINT 14</span><small>ends Thu 16 Oct!</small></div>
+<div class="cols">
+ <div class="col"><div class="h">TO DO<span>&nbsp;</span></div>
+  <div class="card y r1">Update pricing page: $49/mo → $59/mo</div>
+  <div class="card y r2">Fix login bug</div>
+  <div class="card p r3">Pay down tech debt</div></div>
+ <div class="col"><div class="h">DOING<span>WIP limit: 3</span></div>
+  <div class="card b r2">Search filters</div>
+  <div class="card b r4">Dark mode</div>
+  <div class="card b r1">Release notes v2.4</div></div>
+ <div class="col"><div class="h">REVIEW<span>WIP limit: 2</span></div>
+  <div class="card g r3">Password reset email</div>
+  <div class="card g r2">Accessibility fixes</div></div>
+ <div class="col"><div class="h">DONE<span>(tested!)</span></div>
+  <div class="card y r4">New search page</div>
+  <div class="card y r1">Onboarding tour</div></div>
+</div></div></div></body></html>

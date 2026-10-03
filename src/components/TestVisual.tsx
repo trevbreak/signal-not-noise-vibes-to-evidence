@@ -1,7 +1,7 @@
 import { RUBRIC, V } from "../scenes";
 
 // The worked example on "Turn the guide into judges": one bad answer, seen as a test,
-// against the marking guide, by three kinds of judge, and against an invariant.
+// against the marking guide, by three kinds of judge, and against an automatic fail.
 
 const { source: SOURCE, answer: ANSWER, marks: MARKS } = V.testExample;
 const lineName = (id: string) => RUBRIC.find((d) => d.id === id)?.name ?? id;
@@ -73,7 +73,7 @@ export function TestVisual({ step }: { step: number }) {
       )}
       {step === 4 && (
         <div className="tv-card">
-          <div className="tv-label">The red lights</div>
+          <div className="tv-label">The automatic fails</div>
           <div className="tv-line">
             <span>{lineName("voice")}</span>
             <Tick ok={true} />
@@ -83,10 +83,10 @@ export function TestVisual({ step }: { step: number }) {
             <Tick ok={true} />
           </div>
           <div className="tv-line red">
-            <span>🚦 {lineName("numbers")}</span>
+            <span>⛔ {lineName("numbers")}</span>
             <Tick ok={false} />
           </div>
-          <div className="tv-verdict">Fail. Ran a red light, however good the rest was.</div>
+          <div className="tv-verdict">Fail. One automatic fail, however good the rest was.</div>
         </div>
       )}
     </div>

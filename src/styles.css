@@ -6,6 +6,7 @@
   --text: #f4efe4;
   --muted: #98a39d;
   --accent: #f2a541;
+  --borderline: #facc15;
   --accent-ink: #1a1206;
   --pass: #4ade80;
   --pass-bg: rgba(74, 222, 128, 0.12);
@@ -30,6 +31,7 @@
   --text: #1b1f1d;
   --muted: #69716c;
   --accent: #c47410;
+  --borderline: #a16207;
   --accent-ink: #fffaf0;
   --pass: #15803d;
   --pass-bg: rgba(21, 128, 61, 0.1);
@@ -490,13 +492,13 @@ button { cursor: pointer; }
 .golden { display: grid; grid-template-columns: 13rem 1fr 1fr 1fr; gap: 0.5rem 0.7rem; align-items: start; }
 .golden-head { font-weight: 800; font-size: 1rem; text-transform: uppercase; letter-spacing: 0.08em; padding: 0.2rem 0.4rem; }
 .golden-head.good { color: var(--pass); }
-.golden-head.borderline { color: var(--accent); }
+.golden-head.borderline { color: var(--borderline); }
 .golden-head.bad { color: var(--fail); }
 .golden-src { font-weight: 700; font-size: 0.95rem; padding: 0.55rem 0 0; border-top: 1px solid var(--line); line-height: 1.3; }
 .golden-cell { display: grid; gap: 0.4rem; border-top: 1px solid var(--line); padding-top: 0.45rem; min-height: 2rem; }
 .golden-card { border-radius: 10px; padding: 0.5rem 0.7rem; border-left: 4px solid; background: var(--panel); animation: rise 0.4s ease both; }
 .golden-card.good { border-color: var(--pass); }
-.golden-card.borderline { border-color: var(--accent); }
+.golden-card.borderline { border-color: var(--borderline); border-style: dashed; }
 .golden-card.bad { border-color: var(--fail); }
 .golden-out { font-weight: 600; font-size: 0.95rem; line-height: 1.3; }
 .golden-why { color: var(--muted); font-size: 0.8rem; margin-top: 0.25rem; line-height: 1.3; }
@@ -689,11 +691,11 @@ mark.misheard { background: var(--fail-bg); color: var(--fail); border-radius: 3
 .sc-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.1rem; align-items: start; }
 .sc { background: var(--panel); border: 1px solid var(--line); border-top: 5px solid; border-radius: 14px; padding: 0.9rem 1rem; display: grid; gap: 0.5rem; }
 .sc.good { border-top-color: var(--pass); }
-.sc.borderline { border-top-color: var(--accent); }
+.sc.borderline { border-top-color: var(--borderline); }
 .sc.bad { border-top-color: var(--fail); }
 .sc-label { font-size: 0.8rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; }
 .sc-label.good, .sc-verdict.good { color: var(--pass); }
-.sc-label.borderline, .sc-verdict.borderline { color: var(--accent); }
+.sc-label.borderline, .sc-verdict.borderline { color: var(--borderline); }
 .sc-label.bad, .sc-verdict.bad { color: var(--fail); }
 .sc-src { color: var(--muted); font-size: 0.9rem; }
 .sc-out { font-size: 1.15rem; font-weight: 700; line-height: 1.3; min-height: 4.5rem; }
@@ -769,3 +771,44 @@ mark.misheard { background: var(--fail-bg); color: var(--fail); border-radius: 3
 .compare-out { font-size: 1.05rem; line-height: 1.3; }
 .compare-out.before { opacity: 0.75; }
 .compare-out.now { font-weight: 700; color: #8a3b0a; }
+
+/* ── Stage readiness ─────────────────────────────────────────────────────────
+   Stage size (Z): the projector's text scaled up for a room. 0.95vw → 1.25vw is
+   18px → 22px of base text on a 1920-wide screen. */
+html.stage-size { font-size: clamp(15px, 1.15vw, 28px); }
+/* At stage size the instructions can run long (Version 3+): they scroll, so the phrases always fit. */
+html.stage-size .instructions .reveal, html.stage-size .instructions textarea { max-height: 34vh; overflow: auto; }
+
+/* The meters are the talk's running gag: big enough to notice from the back. */
+.meters { width: 19rem; gap: 0.35rem; }
+.meter { grid-template-columns: 5.6rem 1fr 3.2rem; font-size: 0.95rem; font-weight: 600; }
+.meter .track { height: 0.85rem; }
+.stepper { font-size: 0.9rem; }
+
+/* Presenter: beats and the act clock. */
+.presenter .beats { margin: 0; padding-left: 1.4rem; display: grid; gap: 0.35rem; }
+.presenter .beats strong { color: var(--accent); }
+.presenter .checkpoint { font-size: 1rem; color: var(--muted); padding: 0.3rem 0.7rem; border: 1px solid var(--line); border-radius: 10px; }
+.presenter .checkpoint.late { color: var(--fail); border-color: var(--fail); }
+
+/* Golden examples: the explained rows stay, the rest is a count. */
+.golden-more { margin-top: 0.6rem; font-size: 1.15rem; color: var(--muted); padding: 0.8rem 1rem; border: 1px dashed var(--line); border-radius: 12px; }
+.golden-more strong { color: var(--text); }
+.golden-more .good { color: var(--pass); }
+.golden-more .borderline { color: var(--borderline); }
+.golden-more .bad { color: var(--fail); }
+
+/* "Better? Worse? Both.": the side-by-side the claim rests on. */
+.slide .evidence { margin-top: 1.6rem; display: grid; gap: 0.3rem; max-width: 72rem; font-size: 1rem; }
+.evidence-head, .evidence-row { display: grid; grid-template-columns: 1fr 1.3fr 1.3fr; gap: 1rem; align-items: start; }
+.evidence-head { color: var(--muted); font-family: var(--mono); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.06em; }
+.evidence-head::before { content: ""; display: block; }
+.evidence-row { border-top: 1px solid var(--line); padding-top: 0.35rem; }
+.evidence-src { color: var(--muted); }
+.evidence-out.now { color: var(--text); font-weight: 600; }
+.evidence .pline { display: block; }
+
+/* Pictures: click to see them full screen. */
+.imgcard img.zoomable { cursor: zoom-in; }
+.zoom-overlay { position: fixed; inset: 0; z-index: 50; background: rgba(0, 0, 0, 0.88); display: grid; place-items: center; cursor: zoom-out; }
+.zoom-overlay img { max-width: 96vw; max-height: 94vh; object-fit: contain; }

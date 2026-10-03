@@ -3,11 +3,11 @@ import aussie from "./aussie";
 import type { Variant } from "./types";
 
 // ─────────────────────────────────────────────────────────────────────────────
-// The Gen Z telling of the talk: a translator from workplace English into Gen Z slang,
-// for the grads and apprentices. Same story, same beats as the Aussie one:
+// The Gen Z telling of the talk: a translator from team notices into Gen Z slang,
+// for the grads. Same story, same beats as the Aussie one:
 //   tinnies → "2 drinks" / "two drinks MAX" (the measure goes)   seppos → "corporate overlords"
 //   shrimp on the barbie → "How do you do, fellow kids?"          shrimp paste → "use the fire exits"
-//   The US safety course: "fanny pack" lands very differently in Australia.
+//   The notes from our US head office: "fanny pack" lands very differently in Australia.
 // Slides that aren't about the translator are shared with the Aussie file: only the
 // fields below are overridden, scene by scene.
 // ─────────────────────────────────────────────────────────────────────────────
@@ -26,7 +26,7 @@ More slang! Make it even MORE Gen Z.
 Keep it short and punchy. Under 10 words.`;
 
 // v3 stops listing actions and describes what good looks like. Clearer, not longer.
-const V3 = `Rewrite this workplace notice in Gen Z slang, so our grads and apprentices actually read it.
+const V3 = `Rewrite this team notice in Gen Z slang, so our grads actually read it.
 
 What good looks like:
 - Same message, same rules. A rule stays a rule, just as strong. Never a vibe.
@@ -43,7 +43,7 @@ const V4 = V3.replace(
   "\n\nThe notice:",
   `
 
-Where it's from: a safety course we bought from an American company, for apprentices in Australia. First, check every word: if an American word means something different, or nothing, in Australia, use the Australian word instead. Then say it in Gen Z slang as usual.
+Where it's from: notes from our head office in the US, for our grads in Australia. First, check every word: if an American word means something different, or nothing, in Australia, use the Australian word instead. Then put the Gen Z slang back on top, as usual: a plain rewrite isn't Gen Z.
 
 The notice:`,
 );
@@ -80,10 +80,10 @@ const PROMPTS: Record<string, PromptVersion> = {
 
 // ── Checks (judges) ──────────────────────────────────────────────────────────
 
-const MAIN_CONTEXT = `Workplace HR and safety notices for an Australian warehouse, rewritten for our grads and apprentices.
+const MAIN_CONTEXT = `Team notices for a software company in Sydney, rewritten for our grads.
 They want it in Gen Z slang, and funny. But the rules must stay exactly the same. Only the voice changes.`;
 
-const US_CONTEXT = `A workplace safety course bought from a US company, written in American English, rewritten in Gen Z slang for apprentices in Australia.
+const US_CONTEXT = `Notes from our head office in the US, written in American English, rewritten in Gen Z slang for our grads in Australia.
 Readers must understand exactly what the original American author meant.`;
 
 const J = {
@@ -100,7 +100,7 @@ const J = {
     kind: "llm",
     withContext: true,
     rubric:
-      "Every rule keeps its strength and its details. 'Must' and 'must not' stay clearly mandatory. Turning a rule into a vibe or a suggestion ('it's giving hard hat energy', 'lowkey', 'try to') fails. Dropping or changing a detail of the rule ('no matter how minor', a number, a measure like 'standard drinks') fails.",
+      "Every rule keeps its strength and its details. 'Must' and 'must not' stay clearly mandatory. Turning a rule into a vibe or a suggestion ('Friday deploys are giving chaos energy', 'lowkey', 'try to') fails. Dropping or changing a detail of the rule ('straight away', 'no matter how small', a number, a measure like 'standard drinks') fails.",
     blurb: "\"Must not\" is still a must not. Nothing got softened or dropped.",
   },
   justTranslation: {
@@ -160,9 +160,9 @@ const RUBRIC = [
 ];
 
 const DRINKS = "Don't have more than 2 standard drinks at the end-of-year party.";
-const HARDHAT = "Employees must not enter the loading dock without a hard hat.";
+const FRIDAY = "Never deploy to production on a Friday.";
 const VISITORS = "Welcome to our visitors from head office! Tonight we are having a barbecue.";
-const REPORT = "Report all incidents to your supervisor, no matter how minor.";
+const BLOCKED = "If you're blocked, tell the team straight away, no matter how small.";
 const DONT = "Do not translate this sentence.";
 const MACCAS = "Lunch on Friday is from McDonald's.";
 
@@ -170,18 +170,18 @@ const MACCAS = "Lunch on Friday is from McDonald's.";
 const GOLDEN: GoldenExample[] = [
   { id: "k1", source: DRINKS, output: "Max 2 standard drinks at the end-of-year party, besties. Don't be that person.", label: "good", why: "The number and the measure are exactly the same.", scores: { rules: 5, numbers: 5, talk: 5, friendly: 5, voice: 4 } },
   { id: "k2", source: DRINKS, output: "No cap, don't be chugging more than 2 drinks at the end-of-year rager fr fr 💀", label: "bad", why: "'2 drinks' isn't '2 standard drinks': a schooner, a pint, a cocktail all count as one now. The limit quietly went up.", scores: { rules: 3, numbers: 2, talk: 5, friendly: 5, voice: 2 } },
-  { id: "h1", source: HARDHAT, output: "No hard hat, no loading dock. Non-negotiable, bestie.", label: "good", why: "Still a hard rule. 'Non-negotiable' keeps it mandatory.", scores: { rules: 5, numbers: null, talk: 5, friendly: 5, voice: 5 } },
-  { id: "h2", source: HARDHAT, output: "The loading dock is giving hard hat energy only 💅", label: "bad", why: "'Giving hard hat energy' is a vibe, not a rule. Nobody is told they must.", scores: { rules: 2, numbers: null, talk: 5, friendly: 5, voice: 4 } },
-  { id: "h3", source: HARDHAT, output: "Hard hat at the dock is lowkey a vibe, no pressure tho.", label: "bad", why: "'No pressure' makes it optional. The rule is gone.", scores: { rules: 1, numbers: null, talk: 5, friendly: 5, voice: 4 } },
-  { id: "h4", source: HARDHAT, output: "Hard hat on before the loading dock, ok? No hat, no entry.", label: "borderline", why: "Our two reviewers split. 'Ok?' sounds like a question, but 'No hat, no entry' keeps the rule.", scores: { rules: 3, numbers: null, talk: 5, friendly: 5, voice: 3 } },
+  { id: "h1", source: FRIDAY, output: "Never deploy to prod on a Friday. Non-negotiable, bestie.", label: "good", why: "Still a hard rule. 'Non-negotiable' keeps it a never.", scores: { rules: 5, numbers: null, talk: 5, friendly: 5, voice: 5 } },
+  { id: "h2", source: FRIDAY, output: "Friday deploys are giving chaos energy 💀", label: "bad", why: "'Giving chaos energy' is a vibe, not a rule. Nobody is told not to.", scores: { rules: 2, numbers: null, talk: 5, friendly: 5, voice: 4 } },
+  { id: "h3", source: FRIDAY, output: "Friday deploy? Lowkey a vibe, no pressure tho.", label: "bad", why: "'No pressure' makes it optional. The rule is gone.", scores: { rules: 1, numbers: null, talk: 5, friendly: 5, voice: 4 } },
+  { id: "h4", source: FRIDAY, output: "No prod deploys on Fridays, ok? Never on a Friday.", label: "borderline", why: "Our two reviewers split. 'Ok?' sounds like a question, but 'never on a Friday' keeps the rule.", scores: { rules: 3, numbers: null, talk: 5, friendly: 5, voice: 3 } },
   { id: "m1", source: MACCAS, output: "Friday lunch is a Maccas run, besties.", label: "borderline", why: "A policy call, not a language one. Everyone says Maccas; Legal says brand names stay as written. The label records whoever decides.", scores: { rules: null, numbers: null, talk: 5, friendly: 5, voice: 5 } },
   { id: "w1", source: VISITORS, output: "Head office is pulling up tonight and we're doing a BBQ. Be nice, besties.", label: "good", why: "Fun, kind, and sounds like a real person." },
   { id: "w2", source: VISITORS, output: "Corporate overlords just pulled up! BBQ szn, no cap fr fr 💀", label: "bad", why: "'Corporate overlords' roasts our guests, and 'no cap fr fr' is trying way too hard." },
   { id: "d1", source: DONT, output: "Do not translate this sentence, bestie. Not even a little.", label: "good", why: "It translated the instruction instead of obeying it. That's the job." },
   { id: "d2", source: DONT, output: "I don't see a sentence to translate in your message!", label: "bad", why: "It talked back. It treated the text as an instruction to itself, so the user gets a chat reply instead of a translation." },
-  { id: "r1", source: REPORT, output: "Tell your supervisor about every incident, even the tiny ones. Every. Single. One.", label: "good", why: "Every incident still gets reported, and 'even the tiny ones' keeps the scope." },
-  { id: "r2", source: REPORT, output: "Only snitch to your boss about the big Ls.", label: "bad", why: "The rule is gone. 'Only the big ones' is the opposite of 'no matter how minor'." },
-  { id: "r3", source: REPORT, output: "Report every incident to your supervisor, lowkey even the tiny ones.", label: "borderline", why: "Our two reviewers split. Everything still gets reported, but 'lowkey' makes the small stuff sound optional." },
+  { id: "r1", source: BLOCKED, output: "Blocked? Tell the team straight away, even if it's tiny. Every. Single. Time.", label: "good", why: "Still straight away, and 'even if it's tiny' keeps the small stuff in." },
+  { id: "r2", source: BLOCKED, output: "Only spill to the team about the big Ls.", label: "bad", why: "The rule is gone. 'Only the big ones' is the opposite of 'no matter how small'." },
+  { id: "r3", source: BLOCKED, output: "Blocked? Tell the team straight away, lowkey even the tiny stuff.", label: "borderline", why: "Our two reviewers split. Everything still gets told, but 'lowkey' makes the small stuff sound optional." },
 ];
 
 // ── The run of show ──────────────────────────────────────────────────────────
@@ -189,8 +189,8 @@ const GOLDEN: GoldenExample[] = [
 const MAIN_CASES = [
   { id: "visitors", text: VISITORS, hint: "Head office become 'corporate overlords' or 'corporate girlies'. Not a kind welcome for our guests." },
   { id: "dont", text: DONT, hint: "Version 1 talks back: 'I don't see a sentence to translate…' It can't tell our instructions from the text. Version 3 usually still does: that's what the room's feedback fixes in act 6." },
-  { id: "hardhat", text: HARDHAT, hint: "Becomes a vibe: 'it's giving hard hat energy', 'it's giving OSHA' (the American regulator)." },
-  { id: "report", text: REPORT, hint: "Version 2 drops 'no matter how minor': 'snitch every L to ur boss'." },
+  { id: "friday", text: FRIDAY, hint: "Keeps the 'never', but piles on the slang ('never yeet ur code to prod on a Friday, no cap… fr fr 💀'): the 'fellow kids' judge catches it. Version 2 drops 'to production'." },
+  { id: "blocked", text: BLOCKED, hint: "The trigger changes: 'blocked' becomes 'ghosted' or 'shadowbanned'. Version 2 drops 'no matter how small'." },
   { id: "drinks", text: DRINKS, hint: "'2 standard drinks' becomes '2 drinks' (the measure is gone). Version 2: 'two drinks MAX', or 'sip lite at the yeet fest'." },
 ];
 
@@ -300,7 +300,7 @@ const OVERRIDES: Record<string, Record<string, unknown>> = {
     title: "Build a translator that turns any text into Gen Z.",
     subtitle: "Proper Gen Z slang: funny, readable, and still right.",
     notes:
-      "HR's brief: our grads and apprentices don't read the notices. Make them sound like how they actually talk. Any text in, Gen Z out. How hard can it be? Let's build it, right now.",
+      "The brief: our grads don't read the team notices. Make them sound like how they actually talk.\nAny text in, Gen Z out. 'How hard can it be? Let's build it, right now.'",
   },
   "ship-it": {
     cases: [
@@ -309,27 +309,27 @@ const OVERRIDES: Record<string, Record<string, unknown>> = {
       { id: "meeting", text: "This meeting could have been an email.", hint: "Already a meme. Watch it get even more savage." },
     ],
     notes:
-      "Point at the left: that's ALL we told it. Instructions, plus the English, equals what comes out on the right. Press SPACE to translate the selected phrase; ↑↓ to pick another. Read them out in your best 'fellow kids' voice. Take a suggestion from the room and type it into the app. 'Ninety seconds. Twenty years ago this was a start-up. Ship it?' Vibes: 100%. Evidence: zero.",
+      "Point at the left: that's ALL we told it. Instructions + English = what comes out on the right.\n**Space** translates, **↑↓** picks a phrase. Read them out in your best 'fellow kids' voice.\nTake a suggestion from the room and type it into the app.\n'Ninety seconds. Twenty years ago this was a start-up. Ship it?' Vibes 100%. Evidence zero.",
   },
   "try-more": {
     context: MAIN_CONTEXT,
     cases: MAIN_CASES,
     notes:
-      "Press A to translate all five. Enjoy it: head office become 'corporate overlords'. 'Do not translate this sentence' and it talks back ('I don't see a sentence to translate…'): it can't tell our instructions from the text. The hard hat rule becomes 'giving OSHA energy' (OSHA is the American regulator; we have SafeWork). '2 standard drinks' becomes '2 drinks'. Now pick the hard hat and press R: five tries, five different answers, and the differences light up. Then the obvious fix: 'Hey, we could improve this by adding more to the instructions.' Press F. Version 2 types itself out: a rule for each thing that broke, plus the boss's 'even MORE Gen Z!' and 'keep it short'. Press A to re-try the same five phrases. The right side switches to SIDE BY SIDE: every phrase, Version 1 next to Version 2. Walk down it: some better, some WORSE ('sip lite at the yeet fest': the number's gone). (S flips back to the app view.) 'So… which ones are better?'",
+      "**A**: translate all five. Read the worst ones out.\nExpect: head office become 'corporate overlords' · 'Do not translate this sentence' talks back · 'if you're blocked' becomes 'if you're shadowbanned' · '2 standard drinks' becomes '2 drinks'.\nPick the blocked rule, **R**: five tries, five different answers.\n'Hey, we could improve this by adding more to the instructions.' **F**: Version 2 types itself out.\n**A** again: side by side. Some better, some WORSE ('sip lite at the yeet fest'). (**S** flips back.)\n'So… which ones are better?'",
   },
   prioritise: {
     table: {
       head: ["", "What matters", "We saw it in the demo"],
       rows: [
-        ["Must", "Never change a rule or a number", "“It's giving hard hat energy” · “2 drinks”"],
+        ["Must", "Never change a rule or a number", "“Tell the homies if you're shadowbanned” · “2 drinks”"],
         ["Should", "Translate, don't talk back. Never roast anyone.", "“I don't see a sentence to translate…” · “Corporate overlords”"],
         ["Could", "Real Gen Z, not “fellow kids”", "“No cap fr fr periodt bestie”"],
         ["Not now", "Pictures, voices, every platform's slang", "Is it 'mid' or 'it's giving'?"],
       ],
     },
     talk: [
-      "In ten minutes we found a dozen things wrong. If we try to fix all of them at once, we'll fix none of them well, and we won't know which change helped. So first: what matters most? A new restaurant opens with a short menu, and nails it.",
-      "MUST: the things that can never break. Remember the hard hat rule that became 'giving hard hat energy'? A vibe isn't a rule. And '2 standard drinks' becoming '2 drinks'? A pint is two standard drinks. On a safety notice, that's not a joke. It's a breach.",
+      "In ten minutes we found a dozen things wrong. If we try to fix all of them at once, we'll fix none of them well, and we won't know which change helped. So first: what matters most? An exam doesn't test everything. It tests what matters most.",
+      "MUST: the things that can never break. Remember 'if you're blocked' becoming 'if you're shadowbanned', with 'no matter how small' gone? And '2 standard drinks' becoming '2 drinks'? A pint is two standard drinks. One of those ends in an outage, the other in a hangover. Neither is a joke.",
       "SHOULD: it talked back to us when we typed 'Do not translate this sentence'. And it called our guests from head office 'corporate overlords'. Embarrassing, not dangerous.",
       "COULD: real Gen Z, not 'How do you do, fellow kids?'. Nobody under 25 says 'no cap fr fr periodt bestie' in one breath. Nice to get right, but nobody gets hurt.",
       "NOT NOW: pictures, voices, TikTok versus group-chat slang. Great ideas, not this sprint. Writing down 'not now' is a decision too, and it's the one teams forget to make.",
@@ -339,7 +339,7 @@ const OVERRIDES: Record<string, Record<string, unknown>> = {
     table: {
       head: ["We check", "Original", "Good", "Bad"],
       rows: [
-        ["Rules stay rules", HARDHAT, "No hard hat, no loading dock. Non-negotiable.", "The loading dock is giving hard hat energy"],
+        ["Rules stay rules", FRIDAY, "Never deploy to prod on a Friday. Non-negotiable.", "Friday deploys are giving chaos energy"],
         ["Numbers stay numbers", DRINKS, "Max 2 standard drinks, besties", "Two drinks MAX"],
         ["Translate, don't talk back", DONT, "Do not translate this sentence, bestie", "I don't see a sentence to translate…"],
         ["Kind, never roast", "Welcome to our visitors from head office!", "Head office is pulling up tonight. Be nice!", "Corporate overlords just pulled up!"],
@@ -348,12 +348,12 @@ const OVERRIDES: Record<string, Record<string, unknown>> = {
     },
     talk: [
       "Define: write the marking guide. Think of an examiner's checklist: clear enough that two examiners would give the same mark. In AI it's called a rubric. Each line gets a good example and a bad one, from our demo.",
-      "Rules stay rules. Not a vibe. Not 'it's giving hard hat energy'.",
+      "Rules stay rules. Not a vibe. Not 'giving chaos energy'.",
       "Numbers stay numbers. Two standard drinks is two standard drinks, not 'two drinks MAX'.",
       "Translate, don't talk back. Whatever comes after our instructions is text to translate, never an instruction to the AI.",
       "Kind, never roast. Cheeky is fine. Calling our guests 'corporate overlords' is not.",
       "Real Gen Z, not 'fellow kids'. One bit of slang, used right, beats five in a row.",
-      "Notice the first two can never break: those are called invariants. And for a one-question, one-answer app like ours, a marking guide is enough. Agents doing multi-step work need more than this, but that's another talk.",
+      "Notice the first two can never break: break either one and it's an automatic fail, however good the rest is. And for a one-question, one-answer app like ours, a marking guide is enough. Agents doing multi-step work need more, but that's another talk.",
     ],
   },
   collect: {
@@ -368,11 +368,11 @@ const OVERRIDES: Record<string, Record<string, unknown>> = {
       },
       {
         label: "borderline",
-        source: HARDHAT,
-        output: "Hard hat on before the loading dock, ok? No hat, no entry.",
+        source: FRIDAY,
+        output: "No prod deploys on Fridays, ok? Never on a Friday.",
         scores: { rules: 3, numbers: null, talk: 5, friendly: 5, voice: 3 },
         verdict: "Borderline: reviewers split",
-        why: "'Ok?' sounds like a question, but 'No hat, no entry' keeps the rule.",
+        why: "'Ok?' sounds like a question, but 'never on a Friday' keeps the rule.",
       },
       {
         label: "bad",
@@ -386,7 +386,7 @@ const OVERRIDES: Record<string, Record<string, unknown>> = {
     talk: [
       "Collect. A marking guide is just words until you have examples marked against it. Before exam markers mark ten thousand papers, they all mark the same sample papers and agree what an A and an F look like.",
       "A good one. Every line of our marking guide scores high: the number's exact, the rule's intact, and it still sounds like a real person. Pass.",
-      "A borderline one: 'Hard hat on before the loading dock, ok? No hat, no entry.' Is that still a rule? Our two reviewers split. Borderline examples are where you find out what you actually mean, so keep them, and write the argument down.",
+      "A borderline one: 'No prod deploys on Fridays, ok? Never on a Friday.' Is that still a rule? Our two reviewers split. Borderline examples are where you find out what you actually mean, so keep them, and write the argument down.",
       "And a bad one: 'Corporate overlords just pulled up! No cap fr fr.' Two lines score low, so it fails, however funny it is. And every card says why: the reason is worth more than the score. These are called golden examples. Here are ours.",
     ],
   },
@@ -394,24 +394,24 @@ const OVERRIDES: Record<string, Record<string, unknown>> = {
     examples: GOLDEN,
     explain: [
       { source: DRINKS, text: "One low score on a must-have line fails it, however good it sounds." },
-      { source: HARDHAT, text: "There's more than one way to be bad. Borderline shows where our guide is still fuzzy." },
+      { source: FRIDAY, text: "There's more than one way to be bad. Borderline shows where our guide is still fuzzy." },
       { source: MACCAS, text: "Top marks on every line, still borderline: a policy call our guide doesn't cover yet." },
     ],
     talk: [
       "Here's the start of our golden set: real answers from earlier, marked by people who know. Let's walk through the first few.",
       "Same rule, two answers. The good one keeps '2 standard drinks' word for word. The bad one says '2 drinks': it reads fine, and now a pint counts as one. One low score on a must-have, and it fails.",
-      "The hard hat. Two different ways to be bad: 'giving hard hat energy' makes it a vibe, and 'no pressure tho' makes it optional. And a borderline one, where our reviewers split. That tells us our marking guide is still fuzzy about questions like 'ok?'.",
+      "The Friday rule. Two different ways to be bad: 'giving chaos energy' makes it a vibe, and 'no pressure tho' makes it optional. And a borderline one, where our reviewers split. That tells us our marking guide is still fuzzy about questions like 'ok?'.",
       "And Maccas. Every line of our guide says it's fine, and it's still borderline, because it's a policy question: Legal says brand names stay as written. Someone has to decide, and the label records it.",
       "Then we do that again. And again. The goal is to collect and label as many real examples as we can: the more good, bad and borderline examples we have, the better our judges, and the AI, can learn the patterns of what good looks like. Fourteen here. In a real product, hundreds.",
     ],
   },
   test: {
     talk: [
-      "Test: turn the marking guide and the examples into judges that mark every answer, every time. It's a driving test, and you don't pass by doing one perfect lap of the car park. That's what a demo is.",
-      "An eval is just a test. Here's one of our '2 drinks' answers: did it follow the rules? No.",
-      "The rubric is the marking guide: the examiner's checklist. Mark it line by line and you see exactly where it went wrong: the rule and the number.",
-      "The judge does the marking. It can be a simple rule (the '2' became 'two'), an AI reading the checklist (the 'standard' is gone, so the limit went up), or people (HR would never send this). Cheapest first.",
-      "And invariants are the red lights. It's funny, it's real Gen Z, it didn't talk back, but it changed the number. Run a red light and you fail, however good the rest of the drive was. Let's put these judges on our translator.",
+      "Test: turn the marking guide and the examples into judges that mark every answer, every time. A demo is one practice question. An exam marks every answer.",
+      "An eval is just the exam. Here's one of our '2 drinks' answers: did it pass? No.",
+      "The rubric is the marking guide. Mark it line by line and you see exactly where it went wrong: the rule and the number.",
+      "The judge is the marker. It can be a simple rule (the '2' became 'two'), an AI reading the marking guide (the 'standard' is gone, so the limit went up), or people (HR would never send this). Cheapest first.",
+      "And some mistakes are an automatic fail. It's funny, it's real Gen Z, it didn't talk back, but it changed the number. That's a fail, however good the rest is. Let's put these judges on our translator.",
     ],
   },
   checks: {
@@ -420,13 +420,13 @@ const OVERRIDES: Record<string, Record<string, unknown>> = {
     judges: [J.numbers, J.stillARule, J.justTranslation, J.fellowKids, J.room],
     judgesOn: [J.numbers.id, J.stillARule.id, J.justTranslation.id, J.fellowKids.id, J.room.id],
     notes:
-      "Same app, but now every answer goes straight to the judges. Pick the drinks phrase, Space. Watch it translate, then each judge mark it in turn: 'Numbers kept' (a rule, no AI) ✗ if the 2 became 'two'. 'Still a rule' ✗ if 'standard' is gone. Then the overall verdict. Read one reason out. Then the hard hat: the rule judge passes it (no numbers), but 'Still a rule' catches 'giving hard hat energy'. A rule can't understand meaning; an AI judge can. Ask the room for 👍/👎. Then R on the visitors: 5 tries, and the judges tally how many passed. Answers already on screen from earlier get marked as soon as we arrive. Then F: Version 3 describes what good looks like. Space again and watch the marks change.",
+      "Same app, but every answer now goes straight to the judges.\nDrinks, **Space**: 'Numbers kept' ✗ if the 2 became 'two'; 'Still a rule' ✗ if 'standard' is gone. Read one reason out.\nBlocked rule, **Space**: the number judge passes it, but 'Still a rule' catches 'shadowbanned' and the missing 'no matter how small'.\nRoom: 👍 or 👎? Click their verdict.\nVisitors, **R**: five tries, tallied.\n**F**: Version 3. **Space** again and watch the marks change.",
   },
   iterate: {
     bullets: [
-      "Read what the judges said, and mark where you disagree.",
-      "Write your reasoning: plain words, as much detail as you can. 'Wrong' teaches nothing; 'a pint isn't one standard drink' teaches a lot.",
-      "Use those notes to fix the judge's marking guide. Then the app. Then go round again.",
+      "Mark where you disagree with the judges.",
+      "Write down why. 'A pint isn't one standard drink' teaches more than 'wrong'.",
+      "Use the notes to fix the judge, then the app. Go round again.",
     ],
     talk: [
       "Iterate. Every exam has a second marker who checks the first marker's work. Our judges need one too, and that's us. Who marks the marker? You do.",
@@ -436,20 +436,20 @@ const OVERRIDES: Record<string, Record<string, unknown>> = {
     ],
   },
   "us-course": {
-    title: "Gen Z-ify the safety course we bought from the US",
+    title: "Gen Z-ify the notes from our US head office",
     context: US_CONTEXT,
     cases: [
-      { id: "fanny", text: "Keep your fanny pack in your locker.", hint: "Version 3 keeps 'fanny pack' (every time in rehearsal). In Australia, that's… not a bag. Version 4: 'Keep your bum bag in your locker, no cap.'" },
-      { id: "pissed", text: "My supervisor was pissed about the spill.", hint: "Gets it right ('lowkey mad'). In Australia 'pissed' means drunk, so it's worth checking. Shows it isn't all bad." },
+      { id: "fanny", text: "Bring your fanny pack to the offsite.", hint: "Version 3 keeps 'fanny pack'. In Australia, that's… not a bag. Version 4: 'bum bag'." },
+      { id: "pissed", text: "The client was pissed after the demo.", hint: "Gets it right ('lowkey mad'). In Australia 'pissed' means drunk, so it's worth checking. Shows it isn't all bad." },
     ],
     judges: [J.soundsGenZ, J.rightMeaning],
     judgesOn: [J.soundsGenZ.id],
     notes:
-      "New job: a safety course from an American vendor, for our apprentices. Pick 'fanny pack', Space: it keeps 'fanny pack', and 'Sounds Gen Z' marks it ✓. Pause. Let the Aussies in the room react. THE JUDGE WAS FOOLED TOO. ('Pissed' usually comes out right: 'lowkey mad'.) J: 'Means the same to an Aussie', a judge that knows where the text came from. It marks what's on screen: reds. Press F: Version 4 tells the translator where the text is from. Space again: 'Keep your bum bag in your locker, no cap.' Both judges pass it. 'Neither the AI nor the judge can be smarter than what you tell it.'",
+      "New job: notes from our head office in the US, for our grads.\n'Fanny pack', **Space**: 'Bring your fanny pack to the offsite, no cap.' 'Sounds Gen Z' marks it ✓. Pause. Let the Aussies react.\n'The judge was fooled too.' **J**: 'Means the same to an Aussie'. Red.\n**F**: Version 4 says where it's from. **Space**: 'Bring your bum bag to the offsite, no cap.' Both judges pass.\n'Neither the AI nor the judge can be smarter than what you tell it.'",
   },
   "act4-image": {
     notes:
-      "Text inside pictures. Three short chapters. (The Gen Z pictures were made earlier: image models take about 30 seconds each.) Each time: Gen Z-ify it, then the same two judges mark it straight away: a rule (every number still there) and an AI judge (same meaning). 1 Kitchen notice: read out the best bits. 2 Café board: the prices survive, so the rule passes. But 'Flat white' became 'Basic ahh white bread', and the AI judge catches it. You need both kinds of check. 3 Safety sign: 'For the party slideshow', Gen Z-ify it: forklifts are 'on demon time', and 'First aid: ext 4455' became 'exit 4455'. Then switch to 'On the real wall': Don't touch it. Same picture, different purpose, opposite right answer.",
+      "Two pictures, same two judges each time: a rule (every number still there) and an AI judge (same meaning). Click a picture to fill the screen.\nWorking agreement: **Gen Z-ify it**. 'OUR VIBE DEAL, NO CAP'.\nThe judges: every number survived, so the rule passes. But 'No meetings on Wednesdays' became 'No mid on Wednesdays'. Only the AI judge catches it. 'You need both kinds of check.'\nGuest Wi-Fi sign, 'For the party slideshow': **Gen Z-ify it**. 'YOOO! Guest Wi-Fi FR FR'.\nSwitch to 'On the real wall': **Don't touch it.** 'Some words must never be translated.'",
   },
   "act4-audio": {
     notes:
@@ -458,17 +458,17 @@ const OVERRIDES: Record<string, Record<string, unknown>> = {
   review: {
     ...FLOW,
     notes:
-      "Three answers from earlier, and what each judge said about them. Pick one on the left. For each judge, ask the room: do we agree? Agree with a ✗ means the translation really is bad: that's feedback for the INSTRUCTIONS. Disagree means the judge got it wrong: that's feedback for the JUDGE. Pick the reason from the list (that's coding: sorting what went wrong into a few named piles), then write why, in as much detail as the room gives you. ✨ on any row fills in our example note; '✨ Use our example notes for this answer' does the whole answer. Aim for: the fire exits (judge wrong, 'checked the wrong thing': people's lives depend on 'fire exits'), 'two drinks MAX' and talking back (translation wrong).",
+      "Review ONE answer live: use the fire exits.\nFor each judge, ask the room: agree or disagree? Agree with a ✗ = a note for the instructions. Disagree = a note for the judge.\nPick the reason from the list, then write why in plain words.\nThe planted one: the 'fellow kids' judge fails 'fire exits' because its guide bans the word 'fire'. 'People's lives depend on that word. The judge checked the wrong thing.'\nThe other two answers: **✨ Use our example notes for this answer** on each. 'Same idea, so we'll skip ahead.'",
   },
   improve: { ...FLOW },
   "act5-score": {
     notes:
-      "Run the full test (×1 is enough on stage). In rehearsal: Version 1 14%, Version 2 14% (more rules, no better), Version 3 43%, Version 4 43%. Point at Version 5, the kitchen sink: twice the tokens of Version 4, slower, and no better. Clear beats long. And notice none of them is anywhere near done: the judges are strict on purpose, and the last points take months. The evals are how you know which months.",
+      "Don't run it live: the scoreboard shows the rehearsal run.\nIn testing: Version 1 19–29%, Version 2 14–33%, Version 3 43–57%, Version 4 67%. More rules barely helped; describing good and saying where it's from did.\nVersion 5, the kitchen sink: 'longer, slower, no better.' One line, move on.\n'None of them is done. The evals tell you which months to spend.'",
   },
   rerun: {
     ...FLOW,
     notes:
-      "Run it again. Left: every phrase, translated with the old instructions and the new ones, marked by the same (improved) judges so it's a fair fight. Right: the judge, before and after, on our reviewed answers plus a few golden examples. It should now pass 'use the fire exits' and still fail 'it's FIRE, no cap'. That's the loop, closed: define, collect, run, test, iterate.",
+      "**Run it all again with our improvements.**\nLeft: old instructions vs new, marked by the same judges.\nRight: the judge before and after. It now passes 'use the fire exits' and still fails 'it's FIRE, no cap'.\n'That's the loop, closed.'",
   },
 };
 
@@ -494,33 +494,27 @@ const variant: Variant = {
     editPrompt: "Rewrite all of the text in this image into the most over-the-top Gen Z slang you can. Keep it about as short as the original. Keep everything else exactly the same.",
     chapters: [
       {
-        id: "kitchen",
-        label: "Kitchen notice",
-        image: "kitchen_notice",
-        setup: "The kitchen rules. Nobody reads them. Let's make them hit different.",
-        lesson: "Low stakes, big laughs. Even if a judge nitpicks, we might ship it: how strict to be is our call.",
+        id: "agreement",
+        label: "Working agreement",
+        image: "working_agreement",
+        setup: "Our team's working agreement. Everyone signed it. Let's make it hit different.",
+        lesson: "Every number survived, so the number rule passes. But 'No meetings on Wednesdays' became 'No mid on Wednesdays', and the retro is now a 'throwback sesh'. Only a judge that reads for meaning catches that.",
       },
       {
-        id: "cafe",
-        label: "Café board",
-        image: "cafe_board",
-        setup: "The café specials board. Now the words have prices attached.",
-        lesson: "The prices survived, so a simple rule passes it. But your flat white is now 'basic ahh white bread'. You need both kinds of check.",
-      },
-      {
-        id: "safety",
-        label: "Safety sign",
-        image: "safety_sign",
-        setup: "The forklift sign on the warehouse floor. Should we?",
-        lesson: "Same picture, different purpose, opposite right answer. On the real wall, the best output is no output.",
+        id: "wifi",
+        label: "Guest Wi-Fi sign",
+        image: "wifi_sign",
+        setup: "The guest Wi-Fi sign at reception. Should we?",
+        lesson: "Same picture, different purpose, opposite right answer. Some words must never be translated: on the real wall, the best output is no output.",
         purposes: true,
+        dontTouch: "Visitors type this password exactly as printed. Change one character and nobody gets online. The right answer is no change at all.",
       },
     ],
   },
   audio: {
     notice: "Do not have more than 2 standard drinks at the end-of-year party.",
     context:
-      "A workplace notice read aloud at the all-hands, for our grads and apprentices. They want it in Gen Z slang, but the rule and every number must stay exactly the same.",
+      "A team notice read aloud at the all-hands, for our grads. They want it in Gen Z slang, but the rule and every number must stay exactly the same.",
     voice:
       "Voice: an over-excited 20-year-old TikToker filming a get-ready-with-me video. Upbeat, fast, lots of uptalk and dramatic emphasis.\nTone: like the rule is the hottest tea of the week.",
     textTitle: "The Gen Z text",

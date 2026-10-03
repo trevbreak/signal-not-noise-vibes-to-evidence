@@ -8,9 +8,9 @@ Other translators the talk could use. Each was tested live on the talk's real ph
 - Funny *with* the audience, never *at* them.
 - Reliable, funny failures for: a number or measure changing, a rule going soft, talking back, rudeness to guests, a cliché, a judge whose marking guide bans a word that's sometimes legitimate, and a "same words, different meaning" act 4.
 
-**Built:** 🦘 Aussie slang ([src/variants/aussie.ts](../src/variants/aussie.ts)), 💅 Gen Z slang ([src/variants/genz.ts](../src/variants/genz.ts)) and 🚢 Product manager ([src/variants/pm.ts](../src/variants/pm.ts)).
+**Built:** 🦘 Aussie slang ([src/variants/aussie.ts](../src/variants/aussie.ts)), 💅 Gen Z slang ([src/variants/genz.ts](../src/variants/genz.ts)) and ☝️ Product manager ([src/variants/pm.ts](../src/variants/pm.ts)).
 
-**What we learned about prompting a persona:** asking for a *style* ("product manager speak") gets vocabulary: generic buzzword soup. Asking for *behaviour* ("everything's a quick win, deadlines get pulled in, scope gets added, tech debt can wait") gets the character, and its failures are the jokes.
+**What we learned about prompting a persona:** asking for a *style* ("product manager speak") gets vocabulary: generic buzzword soup. Listing the persona's *catchphrases* gets them played straight back: "ship it" in 61% of answers, then "hey team 👋" in 97%, then "obviously" in 58%. Describing what the persona *does* ("second-guesses the numbers, treats estimates as promises, promises customers things the team never agreed to, takes the credit") gets the character, its failures are the jokes, and every line is different. Ban the one crutch opener by name ("don't open with 'Look'").
 
 ---
 

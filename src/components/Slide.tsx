@@ -1,6 +1,7 @@
-import { LOOP, LOOP_GROUPS } from "../scenes";
+import { LOOP, LOOP_GROUPS, PROMPTS, SCENES } from "../scenes";
 import { useStore } from "../lib/store";
-import type { SlideScene } from "../lib/types";
+import type { LabScene, SlideScene } from "../lib/types";
+import { Pretty } from "./Lab";
 import { RubricScores } from "./Scores";
 import { TestVisual } from "./TestVisual";
 
@@ -79,6 +80,7 @@ export function Slide({ scene }: { scene: SlideScene }) {
           ))}
         </div>
       )}
+      {scene.evidence === "compare" && <Evidence />}
       {scene.footnote && <p className={`footnote ${footnoteShown ? "in" : "veiled"}`}>{scene.footnote}</p>}
     </div>
   );
@@ -108,6 +110,38 @@ function Loop({ build }: { build: number }) {
       {build >= 1 && group("define")}
       <ol className="loop-run">{box("run", build >= 1)}</ol>
       {build >= 2 && group("test")}
+    </div>
+  );
+}
+
+/**
+ * The claim's evidence: the side-by-side the room just watched in "Let's try a few more",
+ * read from that lab. Nothing on screen until it has been run.
+ */
+function Evidence() {
+  const scene = SCENES.find((s): s is LabScene => s.kind === "lab" && !!s.compare);
+  const lab = useStore((s) => (scene ? s.labs[scene.labId ?? scene.id] : undefined));
+  if (!scene || !lab || !Object.keys(lab.before).length) return null;
+  const rows = scene.cases.filter((c) => lab.before[c.id] && lab.results[c.id]?.[0]?.output);
+  if (!rows.length) return null;
+  const beforeLabel = Object.values(lab.before)[0]?.label ?? "Before";
+  return (
+    <div className="evidence" aria-label="What we just saw, side by side">
+      <div className="evidence-head">
+        <span>{beforeLabel}</span>
+        <span>{PROMPTS[scene.versions[lab.versionIdx]]?.label ?? "Now"}</span>
+      </div>
+      {rows.map((c) => (
+        <div key={c.id} className="evidence-row">
+          <div className="evidence-src">{c.text}</div>
+          <div className="evidence-out">
+            <Pretty text={lab.before[c.id].output} />
+          </div>
+          <div className="evidence-out now">
+            <Pretty text={lab.results[c.id][0].output ?? ""} />
+          </div>
+        </div>
+      ))}
     </div>
   );
 }

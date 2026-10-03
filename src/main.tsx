@@ -10,14 +10,18 @@ import { revealJudge, runScene } from "./lib/runner";
 import { selectedCase, TRIES } from "./components/Lab";
 import { movePhrase } from "./lib/store";
 import { SCENES } from "./scenes";
+import { applyStageSize, toggleStageSize } from "./lib/stage";
 
 
 // Commands sent from the presenter window run here, in the projector window that owns the lab state.
+if (!isPresenter) applyStageSize();
+
 startSync((command) => {
   const s = useStore.getState();
   const scene = SCENES[s.sceneIndex];
   if (command === "replay") return s.toggleReplay();
   if (command === "reset") return s.resetLabs(), resetFlow();
+  if (command === "zoom") return toggleStageSize();
   if (command.startsWith("model:")) return s.setModelOverride(command.slice(6));
   if (command.startsWith("variant:")) return switchVariant(command.slice(8) as VariantId);
   if (scene.kind !== "lab") return;

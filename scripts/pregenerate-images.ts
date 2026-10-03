@@ -33,7 +33,7 @@ const VARIANTS: Record<string, { dir: string; prompt: string }> = {
   pm: {
     dir: "pmified",
     prompt:
-      "Rewrite all of the text in this image into over-the-top product manager speak: everything's a quick win, ship it, deadlines get pulled in. Keep it about as short as the original. Keep everything else exactly the same.",
+      "Rewrite all of the text in this image the way a pushy, know-it-all product manager would say it: second-guess the numbers, slip in one more small thing, promise things nobody agreed to, take the credit. Keep it about as short as the original. Keep everything else exactly the same.",
   },
   agile: {
     dir: "agilified",
@@ -45,7 +45,9 @@ const variant = VARIANTS[process.argv.includes("--variant") ? variantArg : "auss
 if (!variant) throw new Error(`Unknown variant: ${variantArg}. Try: ${Object.keys(VARIANTS).join(", ")}`);
 fs.mkdirSync(path.join("images", variant.dir), { recursive: true });
 
-const JOBS = ["kitchen_notice", "cafe_board", "safety_sign"];
+// Keep in step with `images.chapters` in the variant files. (The parked Agile telling still uses
+// the old kitchen_notice, cafe_board and safety_sign pictures.)
+const JOBS = process.argv.includes("--old") ? ["kitchen_notice", "cafe_board", "safety_sign"] : ["working_agreement", "kanban_board", "wifi_sign"];
 
 await Promise.all(
   JOBS.map(async (name) => {

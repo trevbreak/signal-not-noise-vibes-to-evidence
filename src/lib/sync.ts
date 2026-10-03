@@ -3,7 +3,7 @@ import { useStore } from "./store";
 // Keeps the projector window and the presenter window (?presenter) on the same scene.
 // The presenter window can also send lab commands (run, fix…) that the projector window executes.
 
-export type Command = "run" | "run10" | "fix" | "unfix" | "replay" | "judge" | "reset" | "all" | "up" | "down" | "compare" | `model:${string}` | `variant:${string}`;
+export type Command = "run" | "run10" | "fix" | "unfix" | "replay" | "judge" | "reset" | "all" | "up" | "down" | "compare" | "zoom" | `model:${string}` | `variant:${string}`;
 type Msg = { type: "scene"; index: number; build: number } | { type: "command"; command: Command } | { type: "hello" };
 
 const channel = typeof BroadcastChannel !== "undefined" ? new BroadcastChannel("strine-o-matic") : null;
