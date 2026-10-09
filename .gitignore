@@ -4,3 +4,4 @@ dist
 traces-export*.json
 .gstack/
 .run/
+tsconfig.tsbuildinfo

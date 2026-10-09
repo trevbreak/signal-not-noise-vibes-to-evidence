@@ -1,0 +1,166 @@
+<title>Stage Palettes</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+  /* Layout: four candidates, each as the same two screens (the stamped notice, and a black-hold thesis line),
+     with its token strip and a short case. The page follows the viewer's theme; each candidate carries its own fixed stage tokens. */
+  :root {
+    --bg: #f5f1ea; --paper: #fbf9f4; --fg: #1c1a16; --muted: #6b655a; --line: #dcd5c7; --accent: #b8530f; --accent-soft: #f3dcc8;
+    --display: "Bricolage Grotesque", "Helvetica Neue", Arial, sans-serif; --body: "IBM Plex Sans", "Segoe UI", Roboto, sans-serif; --mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+  }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --bg: #17181a; --paper: #1f2124; --fg: #ece8df; --muted: #a39c8f; --line: #35383c; --accent: #f0a04b; --accent-soft: #3a2a1a; color-scheme: dark; } }
+  :root[data-theme="dark"] { --bg: #17181a; --paper: #1f2124; --fg: #ece8df; --muted: #a39c8f; --line: #35383c; --accent: #f0a04b; --accent-soft: #3a2a1a; color-scheme: dark; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--fg); font-family: var(--body); line-height: 1.5; font-size: 17px; }
+  .wrap { max-width: 1120px; margin: 0 auto; padding-block: 3rem 5rem; padding-inline: 20px; }
+  h1, h2, h3 { font-family: var(--display); letter-spacing: -0.02em; text-wrap: balance; margin: 0; }
+  h1 { font-size: clamp(2.4rem, 6vw, 4rem); line-height: 1; font-weight: 800; }
+  h2 { font-size: clamp(1.5rem, 3vw, 2rem); line-height: 1.1; margin: 3.5rem 0 0.6rem; font-weight: 700; }
+  h3 { font-size: 1.1rem; font-weight: 700; }
+  p { max-width: 68ch; margin: 0 0 1rem; }
+  .lede { font-size: 1.2rem; max-width: 62ch; }
+  .eyebrow { font-family: var(--mono); font-size: 0.78rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); margin-bottom: 0.8rem; }
+  .note { color: var(--muted); font-size: 0.95rem; }
+  ul { max-width: 68ch; padding-left: 1.3rem; } li { margin-bottom: 0.4rem; }
+  .cand { margin: 2rem 0 3rem; }
+  .cand-head { display: flex; flex-wrap: wrap; gap: 0.4rem 1.2rem; align-items: baseline; margin-bottom: 0.6rem; }
+  .cand-head .tag { font-family: var(--mono); font-size: 0.75rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); }
+  .screens { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); gap: 1rem; align-items: start; }
+  @media (max-width: 760px) { .screens { grid-template-columns: 1fr; } }
+  .tokens { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 0.8rem 0; }
+  .tok { display: flex; align-items: center; gap: 0.45rem; font: 500 0.75rem var(--mono); color: var(--muted); }
+  .tok i { width: 1.4rem; height: 1.4rem; border-radius: 4px; border: 1px solid rgba(0,0,0,0.12); }
+  .case { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; font-size: 0.95rem; max-width: 70ch; }
+  @media (max-width: 600px) { .case { grid-template-columns: 1fr; } }
+  .case b { display: block; font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.2rem; }
+  .decide { background: var(--accent-soft); border-radius: 10px; padding: 1.2rem 1.4rem; margin: 1.5rem 0; }
+  table { border-collapse: collapse; width: 100%; font-size: 0.93rem; }
+  th { text-align: left; font-family: var(--mono); font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); padding: 0.5rem 0.8rem 0.5rem 0; border-bottom: 1px solid var(--line); }
+  td { padding: 0.55rem 0.8rem 0.55rem 0; border-bottom: 1px solid var(--line); vertical-align: top; }
+  .scroll { overflow-x: auto; }
+
+  /* ── The stage, parameterised ─────────────────────────────── */
+  .stage { container-type: inline-size; aspect-ratio: 16 / 9; width: 100%; border-radius: 8px; overflow: hidden; position: relative; font-family: var(--display); background: var(--s-bg); color: var(--s-ink); box-shadow: 0 8px 24px rgba(0,0,0,0.14); }
+  .stage * { box-sizing: border-box; }
+  .dial { position: absolute; top: 3cqw; right: 3cqw; width: 14cqw; font-family: var(--mono); font-size: 1.15cqw; color: var(--s-muted); }
+  .dial .face { aspect-ratio: 2/1; border-radius: 100cqw 100cqw 0 0; border: 0.5cqw solid var(--s-card); border-bottom: 0; position: relative; overflow: hidden; background: linear-gradient(90deg, var(--s-vibes), var(--s-pass)); }
+  .dial .face::after { content: ""; position: absolute; inset: 0; background: var(--s-bg); opacity: 0.72; }
+  .dial .needle { position: absolute; left: 50%; bottom: 0; width: 0.45cqw; height: 92%; background: var(--s-ink); transform-origin: bottom center; transform: rotate(14deg); z-index: 1; }
+  .dial .lab { display: flex; justify-content: space-between; margin-top: 0.3cqw; }
+  .center { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding: 9cqw 8cqw 4cqw; gap: 2.2cqw; text-align: center; }
+  .card { background: var(--s-card); color: var(--s-ink); border-radius: 1.4cqw; padding: 2.6cqw 3.6cqw; width: 64cqw; text-align: left; box-shadow: var(--s-shadow); border: 0.15cqw solid var(--s-edge); }
+  .card .wm { font: 500 1.1cqw var(--mono); letter-spacing: 0.1em; text-transform: uppercase; color: var(--s-muted); margin-bottom: 1.2cqw; }
+  .card .en { font-size: 2.2cqw; color: var(--s-muted); margin-bottom: 0.9cqw; }
+  .card .out { font-size: 3.3cqw; font-weight: 700; line-height: 1.15; }
+  .stamps { display: flex; gap: 1.2cqw; width: 64cqw; }
+  .stamp { flex: 1; border-radius: 1cqw; padding: 1.3cqw 0.8cqw; font-size: 1.55cqw; text-align: center; border: 0.25cqw solid; background: var(--s-card); line-height: 1.2; }
+  .stamp b { display: block; font-size: 2.4cqw; } .stamp small { color: var(--s-muted); font-size: 1.2cqw; }
+  .stamp.ok { border-color: var(--s-pass); color: var(--s-pass); } .stamp.no { border-color: var(--s-fail); color: var(--s-fail); } .stamp.people { border-color: var(--s-people); color: var(--s-people); }
+  .verdict { font-size: 4cqw; font-weight: 800; letter-spacing: -0.02em; color: var(--s-fail); }
+  .hold { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; padding: 8cqw; text-align: center; background: var(--s-hold); color: var(--s-hold-ink); }
+  .hold .big { font-size: 7cqw; font-weight: 800; line-height: 1; letter-spacing: -0.03em; }
+  .hold .big span { display: block; font-size: 0.55em; color: var(--s-hold-accent, var(--s-accent)); margin-top: 1.2cqw; font-weight: 700; }
+
+  /* A · Stage (the current direction) */
+  .pal-a { --s-bg: #121512; --s-card: #1b201c; --s-edge: transparent; --s-ink: #f3eee2; --s-muted: #9aa39b; --s-accent: #f2a541; --s-vibes: #f472b6; --s-pass: #4ade80; --s-fail: #ff6b5b; --s-people: #f59ac8; --s-hold: #121512; --s-hold-ink: #f3eee2; --s-shadow: none; }
+  /* B · Noticeboard: warm paper, ink, a marker orange */
+  .pal-b { --s-bg: #f3eee3; --s-card: #fffdf8; --s-edge: #e4dccb; --s-ink: #1d1b17; --s-muted: #6f6758; --s-accent: #d9480f; --s-vibes: #e8699a; --s-pass: #1f7a45; --s-fail: #c2362b; --s-people: #b83280; --s-hold: #1d1b17; --s-hold-ink: #f3eee3; --s-shadow: 0 0.6cqw 1.8cqw rgba(60, 40, 0, 0.1); }
+  /* C · Chalk: cool light grey, navy ink, cobalt */
+  .pal-c { --s-bg: #eceff2; --s-card: #ffffff; --s-edge: #d6dbe1; --s-ink: #141c26; --s-muted: #5d6673; --s-accent: #1f4fd8; --s-vibes: #d9488c; --s-pass: #15803d; --s-fail: #c2410c; --s-people: #b83280; --s-hold: #141c26; --s-hold-ink: #eceff2; --s-shadow: 0 0.6cqw 1.8cqw rgba(20, 30, 50, 0.1); }
+  /* D · Marker: a flat yellow ground, ink on top */
+  .pal-d { --s-bg: #f4c843; --s-card: #fff8e6; --s-edge: #e0b53a; --s-ink: #1a1813; --s-muted: #6b5d2c; --s-accent: #1a1813; --s-vibes: #d7378a; --s-pass: #1b6b3a; --s-fail: #b8321f; --s-people: #a52a7a; --s-hold: #1a1813; --s-hold-ink: #f4c843; --s-hold-accent: #f4c843; --s-shadow: 0 0.6cqw 1.6cqw rgba(80, 60, 0, 0.18); }
+  .pal-d .dial .face::after { opacity: 0.55; }
+</style>
+
+<div class="wrap">
+  <div class="eyebrow">Signal not Noise · the stage's colour</div>
+  <h1>Four grounds for the same scene.</h1>
+  <p class="lede" style="margin-top:1.2rem">The same two screens in each candidate: the stamped notice from beat 3.2, which carries every element (needle, card, stamps, verdict, the app wordmark), and the black hold that ends each movement. Verdict colours, judge colours and type stay fixed across all four; only the ground, the ink and the one accent change. Pick with the room in mind, not the laptop.</p>
+  <p class="note">One fact about projectors shapes this: ambient light lifts a dark ground toward grey and flattens its contrast, while a light ground loses almost nothing. Conference rooms are rarely dark. A saturated ground is the riskiest: cheap projectors band and shift it.</p>
+
+  <!-- A -->
+  <section class="cand">
+    <div class="cand-head"><span class="tag">A</span><h2 style="margin:0">Stage</h2><span class="note">the current direction</span></div>
+    <div class="screens">
+      <div class="stage pal-a">
+        <div class="dial"><div class="face"><div class="needle"></div></div><div class="lab"><span>vibes</span><span>evidence</span></div></div>
+        <div class="center">
+          <div class="card"><div class="wm">Magic PM Translator</div><div class="en">Annual leave needs 4 weeks' notice.</div><div class="out">Two weeks is plenty. I've already told the team, so we're good.</div></div>
+          <div class="stamps"><div class="stamp no"><b>✗</b>Numbers<br><small>the 4 is gone</small></div><div class="stamp no"><b>✗</b>Still a rule<br><small>notice period halved</small></div><div class="stamp no"><b>✗</b>Nothing added<br><small>"told the team"</small></div><div class="stamp ok"><b>✓</b>Sounds PM</div><div class="stamp people"><b>?</b>The room</div></div>
+          <div class="verdict">FAIL</div>
+        </div>
+      </div>
+      <div class="stage pal-a"><div class="hold"><div class="big">The demo is not the evidence.<span>Say what good looks like.</span></div></div></div>
+    </div>
+    <div class="tokens"><span class="tok"><i style="background:#121512"></i>ground</span><span class="tok"><i style="background:#1b201c"></i>card</span><span class="tok"><i style="background:#f3eee2"></i>ink</span><span class="tok"><i style="background:#f2a541"></i>accent</span><span class="tok"><i style="background:#4ade80"></i>pass</span><span class="tok"><i style="background:#ff6b5b"></i>fail</span><span class="tok"><i style="background:#f59ac8"></i>people</span></div>
+    <div class="case"><div><b>For</b>Verdict colours glow. Feels like a stage, which suits the game-show open. Holds are free: the ground already is black.</div><div><b>Against</b>Every dark deck at a conference looks like this one. Ambient light greys it. The thesis holds lose their contrast with the beats, since everything is already dark.</div></div>
+  </section>
+
+  <!-- B -->
+  <section class="cand">
+    <div class="cand-head"><span class="tag">B</span><h2 style="margin:0">Noticeboard</h2><span class="note">warm paper, ink, a marker orange</span></div>
+    <div class="screens">
+      <div class="stage pal-b">
+        <div class="dial"><div class="face"><div class="needle"></div></div><div class="lab"><span>vibes</span><span>evidence</span></div></div>
+        <div class="center">
+          <div class="card"><div class="wm">Magic PM Translator</div><div class="en">Annual leave needs 4 weeks' notice.</div><div class="out">Two weeks is plenty. I've already told the team, so we're good.</div></div>
+          <div class="stamps"><div class="stamp no"><b>✗</b>Numbers<br><small>the 4 is gone</small></div><div class="stamp no"><b>✗</b>Still a rule<br><small>notice period halved</small></div><div class="stamp no"><b>✗</b>Nothing added<br><small>"told the team"</small></div><div class="stamp ok"><b>✓</b>Sounds PM</div><div class="stamp people"><b>?</b>The room</div></div>
+          <div class="verdict">FAIL</div>
+        </div>
+      </div>
+      <div class="stage pal-b"><div class="hold"><div class="big">The demo is not the evidence.<span>Say what good looks like.</span></div></div></div>
+    </div>
+    <div class="tokens"><span class="tok"><i style="background:#f3eee3"></i>ground</span><span class="tok"><i style="background:#fffdf8"></i>card</span><span class="tok"><i style="background:#1d1b17"></i>ink</span><span class="tok"><i style="background:#d9480f"></i>accent</span><span class="tok"><i style="background:#1f7a45"></i>pass</span><span class="tok"><i style="background:#c2362b"></i>fail</span><span class="tok"><i style="background:#b83280"></i>people</span></div>
+    <div class="case"><div><b>For</b>The subject's own material: team notices are paper on a wall, and the cards read as notices. Survives a bright room. The holds become real cuts: paper to black and back is the strongest contrast available, so the thesis lines hit harder than in any other candidate.</div><div><b>Against</b>Stamps on white lose their glow; they read as print, not light. The gradient needle needs taming on paper (shown with the ground washed over it). Warm cream is a common choice, so the accent and type have to carry the character.</div></div>
+  </section>
+
+  <!-- C -->
+  <section class="cand">
+    <div class="cand-head"><span class="tag">C</span><h2 style="margin:0">Chalk</h2><span class="note">cool light grey, navy ink, cobalt</span></div>
+    <div class="screens">
+      <div class="stage pal-c">
+        <div class="dial"><div class="face"><div class="needle"></div></div><div class="lab"><span>vibes</span><span>evidence</span></div></div>
+        <div class="center">
+          <div class="card"><div class="wm">Magic PM Translator</div><div class="en">Annual leave needs 4 weeks' notice.</div><div class="out">Two weeks is plenty. I've already told the team, so we're good.</div></div>
+          <div class="stamps"><div class="stamp no"><b>✗</b>Numbers<br><small>the 4 is gone</small></div><div class="stamp no"><b>✗</b>Still a rule<br><small>notice period halved</small></div><div class="stamp no"><b>✗</b>Nothing added<br><small>"told the team"</small></div><div class="stamp ok"><b>✓</b>Sounds PM</div><div class="stamp people"><b>?</b>The room</div></div>
+          <div class="verdict">FAIL</div>
+        </div>
+      </div>
+      <div class="stage pal-c"><div class="hold"><div class="big">The demo is not the evidence.<span>Say what good looks like.</span></div></div></div>
+    </div>
+    <div class="tokens"><span class="tok"><i style="background:#eceff2"></i>ground</span><span class="tok"><i style="background:#ffffff"></i>card</span><span class="tok"><i style="background:#141c26"></i>ink</span><span class="tok"><i style="background:#1f4fd8"></i>accent</span><span class="tok"><i style="background:#15803d"></i>pass</span><span class="tok"><i style="background:#c2410c"></i>fail</span><span class="tok"><i style="background:#b83280"></i>people</span></div>
+    <div class="case"><div><b>For</b>Cleanest read from the back row: white cards on cool grey is the highest-contrast light option. Cobalt is a strong, uncommon accent that keeps clear of the verdict reds and greens. Reads as software, which the judges and the montage are.</div><div><b>Against</b>Cooler and more corporate; the PM jokes land in a warmer room. The grey can look like an unstyled default if the type isn't doing the work. Least connection to the "notice on a wall" idea.</div></div>
+  </section>
+
+  <!-- D -->
+  <section class="cand">
+    <div class="cand-head"><span class="tag">D</span><h2 style="margin:0">Marker</h2><span class="note">a flat yellow ground, ink on top</span></div>
+    <div class="screens">
+      <div class="stage pal-d">
+        <div class="dial"><div class="face"><div class="needle"></div></div><div class="lab"><span>vibes</span><span>evidence</span></div></div>
+        <div class="center">
+          <div class="card"><div class="wm">Magic PM Translator</div><div class="en">Annual leave needs 4 weeks' notice.</div><div class="out">Two weeks is plenty. I've already told the team, so we're good.</div></div>
+          <div class="stamps"><div class="stamp no"><b>✗</b>Numbers<br><small>the 4 is gone</small></div><div class="stamp no"><b>✗</b>Still a rule<br><small>notice period halved</small></div><div class="stamp no"><b>✗</b>Nothing added<br><small>"told the team"</small></div><div class="stamp ok"><b>✓</b>Sounds PM</div><div class="stamp people"><b>?</b>The room</div></div>
+          <div class="verdict">FAIL</div>
+        </div>
+      </div>
+      <div class="stage pal-d"><div class="hold"><div class="big">The demo is not the evidence.<span>Say what good looks like.</span></div></div></div>
+    </div>
+    <div class="tokens"><span class="tok"><i style="background:#f4c843"></i>ground</span><span class="tok"><i style="background:#fff8e6"></i>card</span><span class="tok"><i style="background:#1a1813"></i>ink</span><span class="tok"><i style="background:#1a1813"></i>accent (ink)</span><span class="tok"><i style="background:#1b6b3a"></i>pass</span><span class="tok"><i style="background:#b8321f"></i>fail</span><span class="tok"><i style="background:#a52a7a"></i>people</span></div>
+    <div class="case"><div><b>For</b>Nobody else's deck looks like this. A yellow sticky note is the most literal "notice" there is, and the holds (yellow on black) are a signature. The accent is the ink itself, so nothing competes with the verdicts.</div><div><b>Against</b>Twenty-five minutes of yellow is tiring, and a strong ground steals attention from the one card that should own the screen. Red and green sit uneasily on yellow. The highest projector risk: saturated grounds band and shift.</div></div>
+  </section>
+
+  <h2>What stays fixed whichever ground you choose</h2>
+  <div class="scroll"><table>
+    <thead><tr><th>Role</th><th>Rule</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr><td>Pass, fail, borderline</td><td>Green, red, amber, always with ✓ ✗ ?</td><td>Colour-blind viewers and far rows read the glyph, not the hue</td></tr>
+      <tr><td>Judges</td><td>Rule amber, AI blue, people pink</td><td>Three kinds of judge need three hues that are not the verdict hues</td></tr>
+      <tr><td>Accent</td><td>One hue, used for the needle, captions and the live caret only</td><td>If the accent appears on a verdict, "look here" and "this failed" collide</td></tr>
+      <tr><td>Type</td><td>Bricolage Grotesque for everything the room reads; IBM Plex Mono for labels, counters and what we told it</td><td>Mono marks "a person or the machine typed this"; the display face marks "read this"</td></tr>
+      <tr><td>The wordmark</td><td>"MAGIC PM TRANSLATOR" in mono caps on the card, nothing else</td><td>The app has no logo; the notice is the brand</td></tr>
+      <tr><td>Holds</td><td>Full-bleed black (or ink), the ground's colour for the line</td><td>The cut has to be a real cut</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="decide"><h3>My call: B, the noticeboard, with C's cards.</h3><p style="margin:0.4rem 0 0">Light ground for the room, warm because the jokes are warm, cards white-ish so the stamps have an edge to sit on, and the burnt-orange accent only on the needle and captions. The thing that makes it not another cream deck is the cut to black on every hold: paper, paper, paper, black, and the thesis line. If you want more edge, D's hold (yellow line on black) can be the title card and the close only, with B everywhere else.</p></div>
+</div>

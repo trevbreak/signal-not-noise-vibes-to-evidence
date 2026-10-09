@@ -6,10 +6,13 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
-    "typecheck": "tsc -b --noEmit"
+    "typecheck": "tsc -b --noEmit",
+    "talk-track": "npx --yes tsx@4.19.2 scripts/talk-track.ts > docs/talk-track.md"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.131.0",
+    "@fontsource-variable/bricolage-grotesque": "5.3.0",
+    "@fontsource/ibm-plex-mono": "5.3.0",
     "idb-keyval": "^6.3.0",
     "openai": "^7.27.0",
     "react": "^19.3.0",

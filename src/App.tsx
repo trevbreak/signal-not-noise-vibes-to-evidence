@@ -94,7 +94,7 @@ export function App() {
           toggleStageSize();
           break;
         case "o":
-          window.open(`/?presenter#${s.sceneIndex}`, "strine-presenter", "width=1100,height=800");
+          window.open(`/?legacy&presenter#${s.sceneIndex}`, "strine-presenter", "width=1100,height=800");
           break;
       }
     };

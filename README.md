@@ -1,13 +1,50 @@
-# Magic Aussie Translator
+# Your AI feature works in the demo. Now prove it.
 
-The live app for the talk **"Your AI Feature Works in the Demo. Now Prove It."** It's the slides and the eval toolset in one.
+The talk for **Signal not Noise**, Brisbane: a visual story that teaches the room what evals are by fooling them with a demo, then getting them to write the rules, mark the answers and overrule a judge. It runs live in the browser, with a presenter window on the laptop.
 
-- **Talk track** (what to say, slide by slide): [docs/talk-track.md](docs/talk-track.md)
-- **Run of show** (beats, timings, rehearsal checklist): [docs/run-of-show.md](docs/run-of-show.md)
+- **How the talk runs** (setup, keys, the room's moments and their fallbacks, the checklist for the day): [docs/presenting.md](docs/presenting.md)
+- **Talk track** (every press of the clicker, with what to say): [docs/talk-track.md](docs/talk-track.md), generated from the app by `npm run talk-track`
+- **How it was designed:** the [storyboard](docs/storyboard-v2.html), the [motion treatment](docs/motion-treatment.html), the [palettes](docs/palettes.html) and the [implementation plan](docs/implementation-plan.md)
 
-There are three tellings of the talk: **🦘 Aussie slang**, **💅 Gen Z slang** and **☝️ Product manager**. See [Switching tellings](#switching-tellings). Other translators we tried, and could come back to, are in [docs/variant-ideas.md](docs/variant-ideas.md).
+## Run it
 
-## Setup
+```
+npm install
+cp .env.example .env     # ANTHROPIC_API_KEY: the room's own notices are translated live
+./app.sh start           # http://localhost:5173  (./app.sh stop | restart | status | logs)
+```
+
+Open `http://localhost:5173` on the projector and press **F** for full screen. Press **O** to open the presenter window on the laptop. → and ← (or a clicker) move through the talk, one step at a time.
+
+The talk keeps its place and everything the room typed or voted across a refresh. **Reset talk** in the presenter window starts it again from the title card. Without an API key the talk still runs: only the room's own notices need the network, and they show a fallback line if a call fails.
+
+## How it's built
+
+| Where | What |
+| --- | --- |
+| [src/talk/content.ts](src/talk/content.ts) | The whole talk: every beat and step, the presenter lines, where the needle sits, and every planted answer. Edit the talk here. |
+| [src/talk/beats.tsx](src/talk/beats.tsx) | One view per kind of beat, each a pure function of (beat, step, the room's input), so ← and → always land on the right picture |
+| [src/talk/Stage.tsx](src/talk/Stage.tsx) | The 16:9 canvas (everything in `cqw`, so it's identical on any projector), the needle, and the moves: type, deal, stamp, expose, fly, hold |
+| [src/talk/talk.css](src/talk/talk.css) | The palette (warm paper, ink, burnt orange; yellow on black for the title and close) and every stage style |
+| [src/talk/store.ts](src/talk/store.ts), [sync.ts](src/talk/sync.ts) | The state, saving, and the two windows: the projector owns the state, the presenter sends actions |
+| [src/talk/live.ts](src/talk/live.ts) | The only live calls: the room's notices, translated with Version 1 and judged |
+| [src/talk/Presenter.tsx](src/talk/Presenter.tsx) | The presenter window |
+
+Fonts are bundled locally, so the talk doesn't need the venue's Wi-Fi to look right. API keys stay in the Vite dev server ([server/plugin.ts](server/plugin.ts)); the browser only calls `/api/*`.
+
+| Role | Default model | Env var |
+| --- | --- | --- |
+| The translator (the room's notices) | `claude-haiku-4-5` | `TRANSLATOR_MODEL` |
+| The judge for the room's notices | `claude-opus-5-5` | `JUDGE_MODEL` |
+
+## The earlier lab version
+
+The first version of the talk was a working eval lab: three tellings (Aussie, Gen Z, PM), live judges, pictures and voice. It's still here, unchanged, at `http://localhost:5173/?legacy` (presenter: `?legacy&presenter`). Its docs are in [docs/legacy/](docs/legacy/). The new talk borrows its PM prompts and recorded answers from [src/variants/pm.ts](src/variants/pm.ts).
+
+<details>
+<summary>The lab version's README</summary>
+
+### Setup
 
 ```
 npm install
@@ -38,7 +75,7 @@ Keys stay in the Vite dev server ([server/plugin.ts](server/plugin.ts)); the bro
 | Voice | `gpt-4o-mini-tts` | `OPENAI_TTS_MODEL` |
 | Listening back (speech to text) | `gpt-4o-transcribe` | `OPENAI_STT_MODEL` |
 
-## Presenting
+### Presenting
 
 Open the app on the projector, then press **O** to open the presenter view on your laptop. That window shows the timer, notes and case hints, and drives the projector.
 
@@ -65,13 +102,13 @@ Some scenes are cut from the running order for time but kept in the code: the vo
 
 **From the presenter view (easiest on the day):** in the presenter window, use the dropdown at the top right, left of the "translator model…" picker. It shows **🦘 Aussie slang**, **💅 Gen Z slang** or **☝️ Product manager**. Pick one and confirm: both windows reload in that mode.
 
-**From the address bar:** open `http://localhost:5173/?variant=genz` (or `?variant=aussie`, `?variant=pm`). The presenter window takes the same setting: `http://localhost:5173/?presenter&variant=genz`.
+**From the address bar:** open `http://localhost:5173/?legacy&variant=genz` (or `?variant=aussie`, `?variant=pm`). The presenter window takes the same setting: `http://localhost:5173/?legacy&presenter&variant=genz`.
 
 Either way, the browser remembers your choice, so plain `http://localhost:5173/` opens in the last mode you picked. You can tell which mode you're in from the app's name: **Magic Aussie Translator 🦘**, **Magic Gen Z Translator 💅** or **Magic PM Translator ☝️**.
 
 Each mode keeps its own saved demo state, so switching never mixes the two. Press **Reset demo** after switching if you want that mode to start clean.
 
-## Rehearsal and offline safety
+### Rehearsal and offline safety
 
 *   Every API response is recorded in IndexedDB. **P** replays them, picking at random, so "Try it 5 times" in replay reproduces the rehearsal pass rate.
 *   Image edits and TTS are cached as files in `generated/`. Delete a file to force a fresh generation.
@@ -79,7 +116,7 @@ Each mode keeps its own saved demo state, so switching never mixes the two. Pres
 *   Lab state (instructions, answers, before/after) survives a page refresh.
 *   The act 6 review (your agree/disagree answers, coding and improved versions) also survives a refresh. **Reset demo** clears it.
 
-## Editing the talk
+### Editing the talk
 
 The rewritten pictures (working agreement, Kanban board, guest Wi-Fi sign) are pre-generated, so nobody waits ~30s on stage: `node scripts/pregenerate-images.ts --variant aussie` (or `genz`, `pm`; add `--force` to redo them). The image API allows about 5 pictures a minute, so run one telling at a time. They land in `images/aussified/`, `images/genzified/` and `images/pmified/`. Check every one before the talk.
 
@@ -93,6 +130,8 @@ The talk has three tellings with the same story and the same screens, but a diff
 
 Switch from the picker in the presenter view (both windows reload), or open `/?variant=genz`. The choice is remembered. Each variant keeps its own saved demo state and traces. Recorded rehearsal answers are keyed by the exact request, so replay works for both, but rehearse each variant you plan to use.
 
-The Gen Z and PM files only override the scenes that mention the translator. Slides that don't (the title, the loop, the exam slide…) come from the Aussie file, so edit those once there. An **Agile coach** telling is built but parked ([src/variants/agile.ts](src/variants/agile.ts)): see [docs/variant-ideas.md](docs/variant-ideas.md) for why, and how to bring it back.
+The Gen Z and PM files only override the scenes that mention the translator. Slides that don't (the title, the loop, the exam slide…) come from the Aussie file, so edit those once there. An **Agile coach** telling is built but parked ([src/variants/agile.ts](src/variants/agile.ts)): see [docs/legacy/variant-ideas.md](docs/legacy/variant-ideas.md) for why, and how to bring it back.
 
 Each variant file holds the versions of the instructions, phrases, checks (rule / AI judge / people), golden examples, the act 6 review answers (with what each judge *should* say, which drives the ✨ example notes), the picture, voice and test-slide examples, and speaker notes. [src/scenes.ts](src/scenes.ts) holds the shared loop and re-exports the running variant. The pictures are HTML in [images/src/](images/src/). The code judges are in [src/lib/checks.ts](src/lib/checks.ts).
+
+</details>
