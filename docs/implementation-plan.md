@@ -1,5 +1,7 @@
 # Implementation plan: the stage rebuild
 
+> **Status: built.** The talk lives in `src/talk/`; how to run it is in [presenting.md](presenting.md). Where the build differs from this plan: the palette is the noticeboard with whiter cards and yellow on black for the title and close; the needle is the one persistent element (hand-driven in 1.3, no microphone); the context beat (3.4) is cut; scenes are pure functions of (beat, step, room) rather than persistent slots, which made ← and → exact; and planted answers are static data in `content.ts` rather than IndexedDB recordings, so they need no keys and no network.
+
 The talk has been rethought as a story where the room is the hero and one notice is followed from applause to evidence. The arc is in [storyboard-v2.html](storyboard-v2.html), the motion in [motion-treatment.html](motion-treatment.html), and the colour candidates in [palettes.html](palettes.html). This is the plan to build it on the existing app.
 
 ## Decisions already made

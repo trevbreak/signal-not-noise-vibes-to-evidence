@@ -18,7 +18,7 @@
   --human: #f59ac8;
   --add: rgba(74, 222, 128, 0.16);
   --shadow: 0 1px 0 rgba(255, 255, 255, 0.03) inset, 0 10px 30px rgba(0, 0, 0, 0.25);
-  --display: "Bricolage Grotesque", ui-sans-serif, system-ui, sans-serif;
+  --display: "Bricolage Grotesque Variable", "Bricolage Grotesque", ui-sans-serif, system-ui, sans-serif;
   --mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
   color-scheme: dark;
 }
