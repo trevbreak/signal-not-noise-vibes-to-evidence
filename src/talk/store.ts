@@ -19,7 +19,8 @@ export type Room = {
   rules: string[];
   notNow: string;
   votes: Partial<Record<VoteKey, number>>;
-  thumbs: "up" | "down" | null;
+  /** The room's thumbs on Version 1's answer and on Version 3's. */
+  thumbs: Partial<Record<"fail" | "pass", "up" | "down">>;
   /** Where the needle stopped when the room shouted stop (1.3). */
   needleFrozen: number | null;
 };
@@ -39,7 +40,7 @@ export type TalkState = {
 export const MAX_ROOM_NOTICES = 2;
 export const MAX_NOTICE_LENGTH = 90;
 
-export const freshRoom = (): Room => ({ notices: [], rules: ["", "", "", ""], notNow: "", votes: {}, thumbs: null, needleFrozen: null });
+export const freshRoom = (): Room => ({ notices: [], rules: ["", "", "", ""], notNow: "", votes: {}, thumbs: {}, needleFrozen: null });
 
 const initial = (): TalkState => ({ beat: 0, step: 0, dir: 0, room: freshRoom(), blackout: false, editing: null, draft: "" });
 
@@ -50,7 +51,7 @@ type Actions = {
   prev: () => void;
   goTo: (beat: number, step?: number) => void;
   setVote: (key: VoteKey, n: number) => void;
-  setThumbs: (t: "up" | "down") => void;
+  setThumbs: (which: "fail" | "pass", t: "up" | "down") => void;
   nudge: (delta: number) => void;
   setNeedleFrozen: (v: number | null) => void;
   startEdit: () => void;
@@ -100,7 +101,7 @@ export const useTalk = create<Talk>((set, get) => {
     },
 
     setVote: (key, n) => room({ votes: { ...get().room.votes, [key]: Math.max(1, Math.min(5, n)) } }),
-    setThumbs: (t) => room({ thumbs: t }),
+    setThumbs: (which, t) => room({ thumbs: { ...get().room.thumbs, [which]: t } }),
     nudge: (delta) => {
       const v = get().room.needleFrozen ?? 80;
       room({ needleFrozen: Math.max(0, Math.min(100, v + delta)) });
@@ -151,7 +152,7 @@ export const useTalk = create<Talk>((set, get) => {
     upDown: (up) => {
       const st = stepOf(get());
       if (st.thumbs) {
-        get().setThumbs(up ? "up" : "down");
+        get().setThumbs(st.thumbs, up ? "up" : "down");
         if (st.advance) get().next();
       } else if (st.nudge) {
         get().nudge(up ? 5 : -5);
@@ -173,7 +174,8 @@ export function restore() {
       useTalk.setState({
         beat: saved.beat,
         step: Math.min(saved.step, BEATS[saved.beat].steps.length - 1),
-        room: { ...freshRoom(), ...saved.room },
+        // Saved by an earlier build, thumbs was a single value: start it fresh.
+        room: { ...freshRoom(), ...saved.room, thumbs: typeof saved.room?.thumbs === "object" && saved.room.thumbs ? saved.room.thumbs : {} },
         dir: 0,
       });
     }

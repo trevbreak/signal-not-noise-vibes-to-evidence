@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
+import { createContext, useContext, useEffect, useLayoutEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
 import { BEATS, NEEDLE_AT } from "./content";
 import { stepOf, type TalkState } from "./store";
 import { BEAT_VIEWS } from "./beats";
@@ -7,6 +7,8 @@ import { BEAT_VIEWS } from "./beats";
 // (beat, step, the room's input), so ← and → always land on exactly the right picture.
 
 export const Instant = createContext(false);
+/** Everything that plays an entrance animation. */
+const ENTRANCES = '[class*="a-"], .loop-path, .mrow, .beat-in';
 export const useInstant = () => useContext(Instant);
 
 export function Stage({ state, instant, onFreeze, className = "" }: {
@@ -22,9 +24,16 @@ export function Stage({ state, instant, onFreeze, className = "" }: {
   const View = BEAT_VIEWS[beat.kind];
   const still = instant ?? state.dir !== 1;
   const mode = step.needleMode ?? beat.needle;
+  // Anything shown at its end state (going back, or a jump) is finished for good. Without this, the next
+  // → would let it replay its entrance delay and blink out for a few seconds.
+  const canvas = useRef<HTMLDivElement>(null);
+  useLayoutEffect(() => {
+    if (!still || !canvas.current) return;
+    canvas.current.querySelectorAll(ENTRANCES).forEach((el) => el.setAttribute("data-done", ""));
+  });
   return (
     <Instant.Provider value={still}>
-      <div className={`canvas ${beat.dark ? "dark" : ""} ${still ? "instant" : ""} ${className}`} data-beat={beat.id} data-step={state.step}>
+      <div ref={canvas} className={`canvas ${beat.dark ? "dark" : ""} ${still ? "instant" : ""} ${className}`} data-beat={beat.id} data-step={state.step}>
         <div className={`layer ${beat.dark ? "" : "beat-in"}`} key={beat.id}>
           <View beat={beat} step={state.step} state={state} />
         </div>

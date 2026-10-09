@@ -61,7 +61,7 @@ Every moment the room feeds the talk has something planted first, so the beat la
 | 2.2 | “What must never change?” | All four cards and their judges exist; E retypes a card in the room's words | Press → and our wording types in |
 | 2.3 | “Hands up: good or bad?” | Three recorded answers, chosen so B splits a room | → uses the usual splits (A good, B split, C bad) |
 | 3.1 | nothing | 25 recorded rows; the room's notices are judged live and spliced near the end | If their notices failed, the montage runs without them |
-| 3.2 | “Thumbs?” | The fail and the pass are recordings | → counts as thumbs down |
+| 3.2 | “Thumbs?”, on Version 1’s answer and again on Version 3’s | The fail and the pass are recordings | On Version 1’s, → counts as thumbs down. On Version 3’s, no answer leaves the room’s stamp at “?”, and thumbs down turns the verdict to Fail |
 | 4.1 | “Agree or disagree?” | A judge whose guide bans the words “tech debt” | → counts as disagree |
 
 The only live AI calls in the whole talk are the room's own notices in 1.2: one translation each with Version 1, then one judging call so they can appear in the montage. Everything else on screen is planted, so the story doesn't depend on the network.

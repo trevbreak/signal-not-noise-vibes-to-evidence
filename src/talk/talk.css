@@ -383,3 +383,9 @@ button, input, textarea { font: inherit; color: inherit; }
 .cost { position: absolute; left: 6cqw; right: 6cqw; top: 33.5cqw; display: grid; grid-template-columns: auto 1fr auto; gap: 1.4cqw; align-items: center; font-family: var(--mono); font-size: 1.15cqw; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
 .cost i { height: 0.25cqw; background: linear-gradient(90deg, var(--rule), var(--ai), var(--people)); border-radius: 99cqw; position: relative; }
 .cost i::after { content: ""; position: absolute; right: -0.2cqw; top: -0.55cqw; border: 0.65cqw solid transparent; border-left-color: var(--people); border-right: 0; }
+
+/* An entrance's delay is for that element only: its children don't inherit it (they set their own). */
+.a-rise > *, .a-fade > *, .a-grow > *, .a-deal > *, .a-stamp > *, .a-drop > *, .a-descend > * { --d: 0s; }
+
+/* Shown at its end state by going back or jumping: never replay the entrance (see Stage.tsx). */
+.canvas [data-done] { animation: none !important; }

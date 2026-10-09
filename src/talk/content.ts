@@ -223,8 +223,8 @@ export type Step = {
   /** Keys 1 to 5 set this vote; with `advance`, a vote also plays the next step. */
   vote?: VoteKey;
   advance?: boolean;
-  /** ↑ ↓ set the room's thumbs. */
-  thumbs?: boolean;
+  /** ↑ ↓ set the room's thumbs on this answer: Version 1's (fail) or Version 3's (pass). */
+  thumbs?: "fail" | "pass";
   /** ↑ ↓ nudge the needle (1.3). */
   nudge?: boolean;
   /** Overrides the beat's needle size for this step. */
@@ -404,9 +404,9 @@ export const BEATS: Beat[] = [
     steps: [
       { say: "“Now slow down. The one that fooled you.”" },
       { say: "Stamps land one at a time. Read each reason. “The rule judge: the 4 is gone. Notice period halved. Told the team. And it passed ‘sounds like a PM’ with flying colours.”", needle: 52 },
-      { say: "“Room, last stamp. Thumbs?” Wait for them, then ↑ or ↓ (→ for thumbs down).", thumbs: true, advance: true, keys: "↑ thumbs up · ↓ thumbs down" },
-      { say: "The room's stamp lands, then: “Fail. Nobody fooled this time.”", thumbs: true, needle: 56, keys: "↑ ↓ change the room's call" },
-      { say: "“Version 3 doesn't add rules. It describes what good looks like, using your rules and your examples.” The answer rewrites and the stamps land again.", needle: 62 },
+      { say: "“Room, last stamp. Thumbs?” Wait for them, then ↑ or ↓ (→ for thumbs down).", thumbs: "fail", advance: true, keys: "↑ thumbs up · ↓ thumbs down" },
+      { say: "The room's stamp lands, then: “Fail. Nobody fooled this time.”", thumbs: "fail", needle: 56, keys: "↑ ↓ change the room's call" },
+      { say: "“Version 3 doesn't add rules. It describes what good looks like, using your rules and your examples.” The answer rewrites and the stamps land again. “Room: thumbs this time?” ↑ or ↓.", needle: 62, thumbs: "pass", keys: "↑ thumbs up · ↓ thumbs down" },
     ],
   },
   {

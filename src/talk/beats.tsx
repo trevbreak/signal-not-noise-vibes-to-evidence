@@ -700,7 +700,10 @@ function JudgesView({ step, state }: P) {
 function StampedView({ step, state }: P) {
   const pass = step >= 4;
   const data = pass ? STAMPED_PASS : STAMPED_FAIL;
-  const up = state.room.thumbs === "up";
+  // The room's call on this answer. On Version 1's, → without one counts as thumbs down.
+  const call = state.room.thumbs[pass ? "pass" : "fail"] ?? (pass ? undefined : "down");
+  const roomAnswered = pass ? step >= 4 && !!call : step >= 3;
+  const fails = pass ? call === "down" : true;
   return (
     <div className="judged" data-box="judged">
       <span className="chip a-fade" key={pass ? "v3" : "v1"}>
@@ -719,11 +722,10 @@ function StampedView({ step, state }: P) {
           ))}
         {step >= 1 && (
           <div className="a-stamp" style={d(pass ? 3.1 : 4.6)}>
-            {pass ? (
-              <Stamp id="room" wait why="not asked this time" />
-            ) : step >= 3 ? (
-              <div className="a-stamp" key={up ? "up" : "down"}>
-                <Stamp id="room" pass={up} why={up ? "thumbs up" : "thumbs down"} />
+            {roomAnswered ? (
+              // Keyed by the call, so a new answer lands with its own stamp, straight away.
+              <div className="a-stamp" key={call} style={d(0)}>
+                <Stamp id="room" pass={call === "up"} why={call === "up" ? "thumbs up" : "thumbs down"} />
               </div>
             ) : (
               <Stamp id="room" wait why="thumbs?" />
@@ -733,8 +735,8 @@ function StampedView({ step, state }: P) {
       </div>
       <div className="verdict-slot">
         {step >= 3 && (
-          <div className={`verdict ${pass ? "pass" : "fail"} a-stamp`} key={pass ? "vp" : "vf"} style={d(pass ? 3.6 : 0.9)}>
-            {pass ? "Pass" : "Fail"}
+          <div className={`verdict ${fails ? "fail" : "pass"} a-stamp`} key={`${pass}-${fails}`} style={d(pass && !call ? 3.6 : fails && !pass ? 0.9 : 0.3)}>
+            {fails ? "Fail" : "Pass"}
           </div>
         )}
       </div>

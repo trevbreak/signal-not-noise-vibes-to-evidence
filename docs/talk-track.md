@@ -132,7 +132,7 @@ Each numbered line is one press of → (or the clicker). Quoted words are what t
 2. Stamps land one at a time. Read each reason. “The rule judge: the 4 is gone. Notice period halved. Told the team. And it passed ‘sounds like a PM’ with flying colours.”
 3. “Room, last stamp. Thumbs?” Wait for them, then ↑ or ↓ (→ for thumbs down). *(keys: ↑ thumbs up · ↓ thumbs down)*
 4. The room's stamp lands, then: “Fail. Nobody fooled this time.” *(keys: ↑ ↓ change the room's call)*
-5. “Version 3 doesn't add rules. It describes what good looks like, using your rules and your examples.” The answer rewrites and the stamps land again.
+5. “Version 3 doesn't add rules. It describes what good looks like, using your rules and your examples.” The answer rewrites and the stamps land again. “Room: thumbs this time?” ↑ or ↓. *(keys: ↑ thumbs up · ↓ thumbs down)*
 
 ### 3.2 · Better, and proven
 

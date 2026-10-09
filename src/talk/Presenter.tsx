@@ -204,12 +204,15 @@ function Controls({ state }: { state: TalkState }) {
       )}
       {step.thumbs && (
         <div className="pv-ctl">
-          <div className="pv-label">The room's thumbs {state.room.thumbs ? "" : "(→ uses thumbs down)"}</div>
+          <div className="pv-label">
+            The room's thumbs on {step.thumbs === "pass" ? "Version 3's" : "Version 1's"} answer
+            {state.room.thumbs[step.thumbs] ? "" : step.thumbs === "fail" ? " (→ uses thumbs down)" : " (not asked yet)"}
+          </div>
           <div className="pv-row">
-            <button className={`pv-btn ${state.room.thumbs === "up" ? "on" : ""}`} onClick={() => dispatch("upDown", true)}>
+            <button className={`pv-btn ${state.room.thumbs[step.thumbs] === "up" ? "on" : ""}`} onClick={() => dispatch("upDown", true)}>
               <kbd>↑</kbd> Thumbs up
             </button>
-            <button className={`pv-btn ${state.room.thumbs === "down" ? "on" : ""}`} onClick={() => dispatch("upDown", false)}>
+            <button className={`pv-btn ${state.room.thumbs[step.thumbs] === "down" ? "on" : ""}`} onClick={() => dispatch("upDown", false)}>
               <kbd>↓</kbd> Thumbs down
             </button>
           </div>
