@@ -1,0 +1,667 @@
+<title>Fool the Room</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+  /* Layout: a review document. Running text in one measure; every storyboard beat is a dark 16:9 "stage" frame
+     on the left with its notes on the right, so the page reads like a film storyboard. */
+  :root {
+    --bg: #f5f1ea;
+    --paper: #fbf9f4;
+    --fg: #1c1a16;
+    --muted: #6b655a;
+    --line: #dcd5c7;
+    --accent: #b8530f;
+    --accent-soft: #f3dcc8;
+    --good: #2f7d4f;
+    --bad: #b3362c;
+    --mid: #a3730b;
+    /* The stage: the proposed screen's own look. One visual world, so it never changes with the page theme. */
+    --stage: #121512;
+    --stage-2: #1b201c;
+    --stage-fg: #f3eee2;
+    --stage-muted: #9aa39b;
+    --stage-accent: #f2a541;
+    --stage-good: #4ade80;
+    --stage-bad: #ff6b5b;
+    --stage-mid: #facc15;
+    --display: "Bricolage Grotesque", "Helvetica Neue", Arial, sans-serif;
+    --body: "IBM Plex Sans", "Segoe UI", Roboto, sans-serif;
+    --mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #17181a; --paper: #1f2124; --fg: #ece8df; --muted: #a39c8f; --line: #35383c;
+      --accent: #f0a04b; --accent-soft: #3a2a1a; --good: #6fcf97; --bad: #f08a7e; --mid: #e3b341; color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #17181a; --paper: #1f2124; --fg: #ece8df; --muted: #a39c8f; --line: #35383c;
+    --accent: #f0a04b; --accent-soft: #3a2a1a; --good: #6fcf97; --bad: #f08a7e; --mid: #e3b341; color-scheme: dark;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--fg); font-family: var(--body); line-height: 1.5; font-size: 17px; }
+  .wrap { max-width: 1120px; margin: 0 auto; padding-block: 3rem 5rem; padding-inline: 20px; }
+  h1, h2, h3 { font-family: var(--display); letter-spacing: -0.02em; text-wrap: balance; margin: 0; }
+  h1 { font-size: clamp(2.4rem, 6vw, 4.2rem); line-height: 1; font-weight: 800; }
+  h2 { font-size: clamp(1.6rem, 3vw, 2.2rem); line-height: 1.1; margin-top: 4rem; margin-bottom: 1rem; font-weight: 700; }
+  h3 { font-size: 1.25rem; font-weight: 700; }
+  p { max-width: 68ch; margin: 0 0 1rem; }
+  .lede { font-size: 1.25rem; max-width: 60ch; color: var(--fg); }
+  .eyebrow { font-family: var(--mono); font-size: 0.78rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); margin-bottom: 0.8rem; }
+  .note { color: var(--muted); font-size: 0.95rem; }
+  strong { font-weight: 600; }
+  ul, ol { max-width: 68ch; padding-left: 1.3rem; }
+  li { margin-bottom: 0.4rem; }
+  table { border-collapse: collapse; width: 100%; font-size: 0.95rem; }
+  th { text-align: left; font-family: var(--mono); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); padding: 0.5rem 0.8rem 0.5rem 0; border-bottom: 1px solid var(--line); }
+  td { padding: 0.6rem 0.8rem 0.6rem 0; border-bottom: 1px solid var(--line); vertical-align: top; }
+  .scroll { overflow-x: auto; }
+  kbd { font-family: var(--mono); font-size: 0.8em; border: 1px solid var(--line); border-radius: 4px; padding: 0 0.35em; background: var(--paper); }
+
+  /* Challenge cards */
+  .challenges { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem; margin: 1.5rem 0; }
+  .challenge { background: var(--paper); border: 1px solid var(--line); border-radius: 10px; padding: 1.1rem 1.2rem; }
+  .challenge h3 { margin-bottom: 0.5rem; }
+  .challenge p { font-size: 0.95rem; margin-bottom: 0.5rem; }
+  .challenge .so { color: var(--accent); font-weight: 600; font-size: 0.95rem; }
+
+  /* The arc */
+  .arc { background: var(--paper); border: 1px solid var(--line); border-radius: 10px; padding: 1.2rem; margin: 1.5rem 0; overflow-x: auto; }
+  .arc svg { width: 100%; height: auto; display: block; }
+
+  /* Storyboard rows */
+  .movement { margin-top: 3.5rem; padding-top: 1.5rem; border-top: 2px solid var(--fg); }
+  .movement-head { display: flex; flex-wrap: wrap; gap: 0.5rem 1.5rem; align-items: baseline; margin-bottom: 0.4rem; }
+  .movement-head .time { font-family: var(--mono); color: var(--muted); font-size: 0.9rem; }
+  .beat { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 1.5rem; margin: 1.8rem 0 2.6rem; align-items: start; }
+  @media (max-width: 760px) { .beat { grid-template-columns: 1fr; } }
+  .beat h3 { display: flex; gap: 0.6rem; align-items: baseline; margin-bottom: 0.6rem; }
+  .beat h3 .n { font-family: var(--mono); font-size: 0.8rem; color: var(--muted); font-weight: 400; }
+  .beat .say { border-left: 3px solid var(--accent); padding: 0.1rem 0 0.1rem 0.9rem; margin: 0.6rem 0; font-style: italic; max-width: 56ch; }
+  .beat .say p { margin-bottom: 0.4rem; }
+  .beat dl { display: grid; grid-template-columns: auto 1fr; gap: 0.25rem 0.8rem; font-size: 0.92rem; margin: 0.6rem 0 0; }
+  .beat dt { font-family: var(--mono); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); padding-top: 0.15rem; }
+  .beat dd { margin: 0; }
+
+  /* The stage frame: a 16:9 box; everything inside is sized in container units so it scales with the column. */
+  .frame { container-type: inline-size; aspect-ratio: 16 / 9; width: 100%; max-width: 100%; background: var(--stage); color: var(--stage-fg); border-radius: 8px; position: relative; overflow: hidden; font-family: var(--display); box-shadow: 0 10px 30px rgba(0,0,0,0.18); }
+  .frame * { box-sizing: border-box; }
+  .hud { position: absolute; top: 3cqw; left: 3.5cqw; right: 3.5cqw; display: flex; justify-content: space-between; align-items: center; font-size: 1.6cqw; color: var(--stage-muted); }
+  .hud .loop { display: flex; gap: 0.6cqw; align-items: center; }
+  .hud .loop span { width: 1.4cqw; height: 1.4cqw; border-radius: 50%; border: 0.25cqw solid var(--stage-muted); }
+  .hud .loop span.on { background: var(--stage-accent); border-color: var(--stage-accent); }
+  .hud .loop span.gap { border-style: dashed; opacity: 0.5; }
+  .meters { display: grid; gap: 0.5cqw; font-family: var(--mono); font-size: 1.4cqw; }
+  .meter { display: grid; grid-template-columns: 7cqw 14cqw auto; align-items: center; gap: 0.8cqw; }
+  .meter i { height: 0.9cqw; background: var(--stage-2); border-radius: 99px; display: block; overflow: hidden; }
+  .meter i b { display: block; height: 100%; }
+  .meter.v i b { background: linear-gradient(90deg, #f472b6, var(--stage-accent)); }
+  .meter.e i b { background: var(--stage-good); }
+  .center { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 8cqw; text-align: center; gap: 2cqw; }
+  .big { font-size: 7cqw; font-weight: 800; line-height: 1; letter-spacing: -0.03em; text-wrap: balance; }
+  .mid { font-size: 4.2cqw; font-weight: 700; line-height: 1.1; letter-spacing: -0.02em; text-wrap: balance; }
+  .sub { font-size: 2.6cqw; color: var(--stage-muted); }
+  .amber { color: var(--stage-accent); }
+  .card { background: var(--stage-2); border-radius: 1.4cqw; padding: 3cqw 4cqw; width: 70cqw; text-align: left; }
+  .card .en { font-size: 2.4cqw; color: var(--stage-muted); margin-bottom: 1.2cqw; }
+  .card .out { font-size: 3.6cqw; font-weight: 700; line-height: 1.15; }
+  .hl { background: rgba(255,107,91,0.25); outline: 0.3cqw solid var(--stage-bad); border-radius: 0.4cqw; padding: 0 0.3cqw; }
+  .hl.ok { background: rgba(74,222,128,0.2); outline-color: var(--stage-good); }
+  .caption { position: absolute; left: 0; right: 0; bottom: 4cqw; text-align: center; font-size: 2.6cqw; color: var(--stage-accent); font-weight: 700; }
+  .instr { position: absolute; left: 4cqw; top: 14cqw; width: 36cqw; background: var(--stage-2); border-radius: 1cqw; padding: 2cqw; font-family: var(--mono); font-size: 1.7cqw; line-height: 1.45; color: var(--stage-fg); }
+  .instr small { display: block; font-size: 1.2cqw; color: var(--stage-muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.8cqw; }
+  .cursor { display: inline-block; width: 0.8cqw; height: 1.8cqw; background: var(--stage-accent); vertical-align: text-bottom; }
+  .dial { width: 26cqw; height: 13cqw; border-radius: 13cqw 13cqw 0 0; border: 1.2cqw solid var(--stage-2); border-bottom: 0; position: relative; }
+  .dial::after { content: ""; position: absolute; left: 50%; bottom: 0; width: 0.5cqw; height: 11cqw; background: var(--stage-accent); transform-origin: bottom; transform: rotate(78deg); }
+  .fan { display: flex; gap: 1.2cqw; width: 88cqw; }
+  .fan .c { flex: 1; background: var(--stage-2); border-radius: 1cqw; padding: 1.8cqw; font-size: 1.75cqw; line-height: 1.3; text-align: left; min-width: 0; }
+  .stamps { display: flex; gap: 1.2cqw; width: 70cqw; justify-content: space-between; }
+  .stamp { flex: 1; border-radius: 1cqw; padding: 1.4cqw 1cqw; font-size: 1.7cqw; text-align: center; border: 0.25cqw solid var(--stage-2); background: var(--stage-2); }
+  .stamp b { display: block; font-size: 2.4cqw; }
+  .stamp.ok { border-color: var(--stage-good); color: var(--stage-good); }
+  .stamp.no { border-color: var(--stage-bad); color: var(--stage-bad); }
+  .stamp.wait { color: var(--stage-muted); }
+  .votebar { display: flex; width: 70cqw; height: 2.6cqw; border-radius: 99px; overflow: hidden; font-size: 1.4cqw; font-family: var(--mono); }
+  .votebar span { display: flex; align-items: center; justify-content: center; color: #111; }
+  .votebar .g { background: var(--stage-good); } .votebar .m { background: var(--stage-mid); } .votebar .b { background: var(--stage-bad); }
+  .rules { display: grid; grid-template-columns: 1fr 1fr; gap: 1.4cqw; width: 80cqw; }
+  .rule { background: var(--stage-2); border-radius: 1cqw; padding: 2cqw 2.4cqw; font-size: 2.6cqw; font-weight: 700; text-align: left; position: relative; }
+  .rule.seal::after { content: "instant fail"; position: absolute; right: 1.5cqw; top: 1.2cqw; font-size: 1.2cqw; font-family: var(--mono); color: var(--stage-bad); border: 0.2cqw solid var(--stage-bad); border-radius: 99px; padding: 0.2cqw 0.8cqw; transform: rotate(-6deg); }
+  .rule.ghost { opacity: 0.35; border: 0.2cqw dashed var(--stage-muted); background: transparent; }
+  .wall { display: grid; grid-template-columns: 1fr 1fr 1.3fr; gap: 1.5cqw; width: 88cqw; text-align: left; }
+  .wall h5 { margin: 0 0 0.8cqw; font-size: 1.6cqw; font-family: var(--mono); letter-spacing: 0.08em; text-transform: uppercase; }
+  .wall .g h5 { color: var(--stage-good); } .wall .m h5 { color: var(--stage-mid); } .wall .b h5 { color: var(--stage-bad); }
+  .wall .k { background: var(--stage-2); border-radius: 0.8cqw; padding: 1.2cqw 1.4cqw; font-size: 1.5cqw; margin-bottom: 0.9cqw; line-height: 1.3; }
+  .wall .k small { display: block; color: var(--stage-muted); font-size: 1.25cqw; margin-top: 0.4cqw; }
+  .bars { display: grid; grid-template-columns: 14cqw 1fr 8cqw; gap: 1cqw 1.5cqw; width: 76cqw; align-items: center; font-size: 2.2cqw; text-align: left; }
+  .bars i { height: 3cqw; background: var(--stage-2); border-radius: 0.5cqw; display: block; overflow: hidden; }
+  .bars i b { display: block; height: 100%; background: var(--stage-good); }
+  .bars .n { font-family: var(--mono); text-align: right; }
+  .bins { display: grid; grid-template-columns: 1fr 1fr; gap: 2cqw; width: 76cqw; }
+  .bin { border: 0.25cqw dashed var(--stage-muted); border-radius: 1.2cqw; padding: 2cqw; font-size: 2cqw; text-align: left; min-height: 14cqw; }
+  .bin h6 { margin: 0 0 1cqw; font-size: 2.2cqw; color: var(--stage-accent); }
+  .bin .n { background: var(--stage-2); border-radius: 0.6cqw; padding: 0.8cqw 1cqw; font-size: 1.6cqw; margin-top: 0.6cqw; }
+  .loopsvg { width: 60cqw; height: auto; }
+
+  /* Crowd table and plan */
+  .phase { display: grid; grid-template-columns: 7rem 1fr; gap: 1rem; padding: 1rem 0; border-bottom: 1px solid var(--line); }
+  .phase .ph { font-family: var(--mono); font-size: 0.8rem; color: var(--accent); letter-spacing: 0.06em; text-transform: uppercase; padding-top: 0.2rem; }
+  .phase ul { margin: 0.3rem 0 0; }
+  @media (max-width: 600px) { .phase { grid-template-columns: 1fr; } }
+  .decide { background: var(--accent-soft); border-radius: 10px; padding: 1.2rem 1.4rem; margin: 1.5rem 0; }
+  .decide h3 { margin-bottom: 0.4rem; }
+  @media (prefers-reduced-motion: no-preference) { .cursor { animation: blink 1s steps(2) infinite; } }
+  @keyframes blink { 50% { opacity: 0; } }
+</style>
+
+<div class="wrap">
+  <div class="eyebrow">Signal not Noise · Brisbane · a rethink of the 25 minutes</div>
+  <h1>Fool the room. Then teach it to never be fooled again.</h1>
+  <p class="lede" style="margin-top:1.2rem">The strongest version of this talk is not a tour of an eval app. It is a story where the <strong>room is the hero</strong>: they get fooled by a demo in minute three, they write the rules in minute eight, their rules become the judges in minute fourteen, and they overrule a judge in minute nineteen. The app is the thing being tamed. The screen shows one object at a time, and judgement visibly moves from applause to evidence.</p>
+  <p class="note">This page is the playback for review: the challenges to the current framing, the proposed arc, a frame-by-frame storyboard with the presenter line for each beat, the crowd moments and their fallbacks, and the build plan. Frames are drawn in the proposed stage language, with the PM telling as the running example.</p>
+
+  <h2>Five challenges to the current thinking</h2>
+  <div class="challenges">
+    <div class="challenge">
+      <h3>The app is the hero. It should be the obstacle.</h3>
+      <p>Today the audience watches you operate software: pick a phrase, press a key, wait, read. That is a tutorial, and tutorials feel like "a supercharged PowerPoint" however good the UI is. Busy screens are the symptom; the cause is that the app carries the story.</p>
+      <p class="so">So: make the room the protagonist. Every act is something the room does to the translator, and the screen shows their judgement as a first-class object.</p>
+    </div>
+    <div class="challenge">
+      <h3>The game show is the villain, not the format.</h3>
+      <p>A full game-show frame is fun for three minutes and cheesy for twenty-five. But an applause-o-meter is exactly the thing evals replace: judgement by vibes.</p>
+      <p class="so">So: open as a game show, then break it. The applause meter stays on screen as "Vibes" and withers as "Evidence" grows. Leaving the game show behind is the story.</p>
+    </div>
+    <div class="challenge">
+      <h3>The fooled moment is buried in act 1. It is the hook.</h3>
+      <p>The retellable moment of this talk is "the whole room cheered, and nobody noticed the notice period had halved". Right now that happens quietly in a five-phrase list.</p>
+      <p class="so">So: get the room to vote "ship it" on a real notice, then zoom in on the number that changed. "You all just approved that." Thesis delivered in minute three, with the room complicit.</p>
+    </div>
+    <div class="challenge">
+      <h3>Eighteen ideas is a course. Four is a talk.</h3>
+      <p>Prioritise, define, collect, rubric, golden, invariants, three judge types, context, pictures, voice, gates. The previous review counted eighteen named ideas. A room keeps about four.</p>
+      <p class="so">So: four movements, each with one idea the room can say back: <em>vibes miss what matters · say what good looks like (with bad examples) · turn your rules into tireless judges · check the checker and go round again.</em> Pictures and voice go.</p>
+    </div>
+    <div class="challenge">
+      <h3>One honest risk: the PM persona is told to change numbers.</h3>
+      <p>The PM prompt asks the model to "second-guess the numbers". When "4 weeks" becomes "2 weeks", a sceptic says you asked for it. The Aussie telling's "tinnies" is emergent drift, which is the real lesson.</p>
+      <p class="so">So: keep the PM voice, but test a Version 1 that describes only the voice ("confident, know-it-all, talks to the dev team") and see if the numbers still drift. If they do, PM wins. If not, the fooled moment needs the Aussie telling. Decision below.</p>
+    </div>
+    <div class="challenge">
+      <h3>Live rule-writing is lower risk than it feels.</h3>
+      <p>Ask "what must never change when we translate a notice?" and every room says the same five things: the numbers, the dates, the rules, don't add anything, don't be rude. You already have judges for all five.</p>
+      <p class="so">So: do it live, with the five cards pre-built and the room's wording typed onto them. Anything new goes on a dashed "later" card, which is itself a lesson about prioritising.</p>
+    </div>
+  </div>
+
+  <h2>The arc</h2>
+  <p>Five movements. The two meters are the spine: Vibes starts full and Evidence starts empty, and they cross in movement three. The loop is the one mental model, and it is drawn with a gap until the room fills it.</p>
+  <div class="arc">
+    <svg viewBox="0 0 1000 300" role="img" aria-label="Five movements over 25 minutes; Vibes falls from full to low and Evidence rises from empty to high, crossing in movement 3">
+      <defs>
+        <linearGradient id="gv" x1="0" x2="1"><stop offset="0" stop-color="#f472b6"/><stop offset="1" stop-color="#f2a541"/></linearGradient>
+      </defs>
+      <g font-family="IBM Plex Mono, monospace" font-size="13" fill="currentColor">
+        <!-- movement bands -->
+        <g fill="var(--line)" opacity="0.6">
+          <rect x="60" y="40" width="120" height="180"/>
+          <rect x="190" y="40" width="200" height="180"/>
+          <rect x="400" y="40" width="220" height="180"/>
+          <rect x="630" y="40" width="200" height="180"/>
+          <rect x="840" y="40" width="120" height="180"/>
+        </g>
+        <g font-family="Bricolage Grotesque, sans-serif" font-weight="700" font-size="15" fill="var(--fg)">
+          <text x="120" y="66" text-anchor="middle">1 · Fooled</text>
+          <text x="290" y="66" text-anchor="middle">2 · Say what good is</text>
+          <text x="510" y="66" text-anchor="middle">3 · Make it tireless</text>
+          <text x="730" y="66" text-anchor="middle">4 · Check the checker</text>
+          <text x="900" y="66" text-anchor="middle">5 · Ship it?</text>
+        </g>
+        <g fill="var(--muted)" font-size="12">
+          <text x="120" y="245" text-anchor="middle">0–4 min</text>
+          <text x="290" y="245" text-anchor="middle">4–10 min</text>
+          <text x="510" y="245" text-anchor="middle">10–16 min</text>
+          <text x="730" y="245" text-anchor="middle">16–22 min</text>
+          <text x="900" y="245" text-anchor="middle">22–25 min</text>
+        </g>
+        <!-- Vibes: full, drops at the reveal, keeps sliding -->
+        <path d="M60 90 L150 90 L175 150 L390 165 L620 185 L830 200 L960 205" fill="none" stroke="url(#gv)" stroke-width="5" stroke-linecap="round"/>
+        <!-- Evidence: zero, rises as rules and judges arrive -->
+        <path d="M60 210 L180 210 L390 170 L620 120 L830 95 L960 90" fill="none" stroke="#2f9e5f" stroke-width="5" stroke-linecap="round"/>
+        <text x="62" y="84" fill="#d9731c" font-weight="600">Vibes</text>
+        <text x="62" y="232" fill="#2f9e5f" font-weight="600">Evidence</text>
+        <!-- crowd moments -->
+        <g fill="var(--accent)">
+          <circle cx="135" cy="90" r="6"/><circle cx="165" cy="130" r="6"/>
+          <circle cx="240" cy="178" r="6"/><circle cx="330" cy="172" r="6"/>
+          <circle cx="560" cy="135" r="6"/>
+          <circle cx="690" cy="108" r="6"/>
+        </g>
+        <g fill="var(--muted)" font-size="11">
+          <text x="135" y="282" text-anchor="middle">applause</text>
+          <text x="240" y="268" text-anchor="middle">write the rules</text>
+          <text x="330" y="282" text-anchor="middle">be the judge</text>
+          <text x="560" y="268" text-anchor="middle">thumbs</text>
+          <text x="690" y="282" text-anchor="middle">overrule</text>
+        </g>
+      </g>
+    </svg>
+    <p class="note" style="margin:0.8rem 0 0">Orange dots are the six moments the room acts. Each one changes what is on screen, and the room can see its own judgement land.</p>
+  </div>
+
+  <h2>The stage grammar</h2>
+  <p>One layout for the whole talk, so the room never re-learns the screen. Everything that is not the current object is gone: no instruction panel, no phrase list, no footer dots, no stepper of six words. Those move to the presenter view.</p>
+  <ul>
+    <li><strong>The card</strong> sits in the middle: the English in grey, what came out in white, at 50-plus point. It is the only thing the room reads.</li>
+    <li><strong>Judgement arrives from the edges.</strong> The room's vote appears as a bar under the card. Later, the judges appear as a row of stamps under the card. The instruction note slides in from the left only when the instructions are the point.</li>
+    <li><strong>The HUD</strong> is two things: the loop glyph top-left (four dots, the current station lit, the "define" dot dashed until the room fills it) and the two meters top-right, big enough to read from the back.</li>
+    <li><strong>Progressive disclosure.</strong> The "full lab" exists only on the last working screen, and the room watched every piece arrive. That is the mental model: the lab was built in front of them, by them.</li>
+    <li><strong>Transitions carry meaning.</strong> Rule cards morph into judge stamps. Answers fly into the good/borderline/bad columns. The loop glyph completes a lap when the feedback is applied. One orchestrated move per beat, nothing ambient.</li>
+  </ul>
+
+  <!-- ───────────────────────── MOVEMENT 1 ───────────────────────── -->
+  <section class="movement">
+    <div class="movement-head"><h2 style="margin:0">1 · Fooled</h2><span class="time">0:00–4:00 · the room ships a bug</span></div>
+    <p>The game show. Build it in a minute, get three laughs, ask for applause, then show them what they just approved.</p>
+
+    <div class="beat">
+      <div class="frame">
+        <div class="center"><div class="big">Hands up if an AI demo blew your mind this year.</div><div class="sub">Keep them up if production was just as good.</div></div>
+      </div>
+      <div>
+        <h3><span class="n">1.1</span>Cold open</h3>
+        <div class="say"><p>"Hands up if an AI demo blew your mind this year. Keep them up if, when it went live, it was just as good."</p><p>"That gap is the next 25 minutes. And I'm going to start by fooling you with one."</p></div>
+        <dl><dt>Screen</dt><dd>Black. One line. No title yet; the title comes after the reveal.</dd><dt>Time</dt><dd>0:30</dd></dl>
+      </div>
+    </div>
+
+    <div class="beat">
+      <div class="frame">
+        <div class="hud"><div class="loop"><span class="gap"></span><span class="on"></span><span></span><span></span></div><div class="meters"><div class="meter v">Vibes<i><b style="width:100%"></b></i>100</div><div class="meter e">Evidence<i><b style="width:0"></b></i>0</div></div></div>
+        <div class="instr"><small>The instructions · 0:58</small>Rewrite this the way a confident, know-it-all product manager would say it to the dev team. One sentence.<span class="cursor"></span></div>
+        <div class="center" style="padding-left:44cqw;padding-top:12cqw;align-items:flex-start;justify-content:flex-start">
+          <div class="card" style="width:50cqw;padding:2.4cqw 3cqw"><div class="en" style="font-size:2cqw">Good morning team, lunch is provided today.</div><div class="out" style="font-size:3cqw">Lunch is on me today. You're welcome, obviously.</div></div>
+        </div>
+      </div>
+      <div>
+        <h3><span class="n">1.2</span>Build it in a minute</h3>
+        <div class="say"><p>"Nobody reads the delivery team's notices. The brief: make them sound like the one person everyone definitely listens to. The product manager."</p><p>"Here's the whole product. One sentence of instructions. Watch the clock."</p></div>
+        <dl><dt>Screen</dt><dd>The instruction note types itself (left). The card runs (right). A small timer in the note's label.</dd><dt>Room</dt><dd>Three notices, then "give me one": type it, run it. Replay mode by default; live for the room's own.</dd><dt>Time</dt><dd>1:30</dd></dl>
+      </div>
+    </div>
+
+    <div class="beat">
+      <div class="frame">
+        <div class="hud"><div class="loop"><span class="gap"></span><span class="on"></span><span></span><span></span></div><div class="meters"><div class="meter v">Vibes<i><b style="width:100%"></b></i>100</div><div class="meter e">Evidence<i><b style="width:0"></b></i>0</div></div></div>
+        <div class="center"><div class="big">Ship it?</div><div class="dial"></div><div class="sub">applause-o-meter</div></div>
+      </div>
+      <div>
+        <h3><span class="n">1.3</span>Ship it?</h3>
+        <div class="say"><p>"Ninety seconds. Twenty years ago that was a start-up. Ship it? Let me hear you."</p></div>
+        <dl><dt>Screen</dt><dd>A dial that swings with the room's noise. Vibes pins at 100. Evidence sits at 0 and nobody mentions it yet.</dd><dt>Room</dt><dd>Applause. The dial is driven by the laptop mic; the presenter view has a slider as fallback.</dd><dt>Time</dt><dd>0:30</dd></dl>
+      </div>
+    </div>
+
+    <div class="beat">
+      <div class="frame">
+        <div class="hud"><div class="loop"><span class="gap"></span><span class="on"></span><span></span><span></span></div><div class="meters"><div class="meter v">Vibes<i><b style="width:55%"></b></i>55</div><div class="meter e">Evidence<i><b style="width:0"></b></i>0</div></div></div>
+        <div class="center"><div class="card"><div class="en">Annual leave needs <span class="hl ok">4 weeks'</span> notice.</div><div class="out">Two weeks is plenty. I've <span class="hl">already told the team</span>, so we're good.</div></div></div>
+        <div class="caption">You all just approved this.</div>
+      </div>
+      <div>
+        <h3><span class="n">1.4</span>The reveal</h3>
+        <div class="say"><p>"One of the three you cheered for was this one. Read it again."</p><p>"The notice period halved. It sounds completely sure of itself. And a room full of experts clapped. That's the whole talk: <strong>the demo is not the evidence.</strong>"</p></div>
+        <dl><dt>Screen</dt><dd>The card from 1.2 comes back alone, the changed number outlined. The Vibes meter drops visibly for the first time.</dd><dt>Then</dt><dd>Title card: "Your AI feature works in the demo. Now prove it."</dd><dt>Time</dt><dd>1:00</dd></dl>
+      </div>
+    </div>
+
+    <div class="beat">
+      <div class="frame">
+        <div class="hud"><div class="loop"><span class="gap"></span><span class="on"></span><span></span><span></span></div><div class="meters"><div class="meter v">Vibes<i><b style="width:50%"></b></i>50</div><div class="meter e">Evidence<i><b style="width:0"></b></i>0</div></div></div>
+        <div class="center">
+          <div class="sub">"Never deploy to production on a Friday." × 5</div>
+          <div class="fan">
+            <div class="c">We're obviously not shipping Friday, I told the client <span class="hl">Monday</span>.</div>
+            <div class="c">Friday deploys are <span class="hl">fine if you're organized</span>.</div>
+            <div class="c">Never on a Friday. Trust me, I've seen this movie.</div>
+            <div class="c">Not <span class="hl">this</span> Friday. Next week's fine.</div>
+            <div class="c">No Friday deploys, <span class="hl">unless it's small</span>.</div>
+          </div>
+          <div class="mid">5 tries. 5 answers.</div>
+        </div>
+      </div>
+      <div>
+        <h3><span class="n">1.5</span>Five tries, five answers</h3>
+        <div class="say"><p>"Maybe we got unlucky. Same notice, five times." <em>Cards deal out.</em> "One is right. Four are different kinds of wrong. So one good answer in a demo tells you almost nothing."</p><p>"We could add more rules. Let's try." <em>The note grows: don't change numbers, don't talk back, keep it short.</em> "Some got better. Some got worse. Can anyone tell me which? …Neither can I. That's the problem."</p></div>
+        <dl><dt>Screen</dt><dd>Five cards dealt in a fan, the dangerous words outlined. Then the instruction note piles up rules and the before/after pairs show as two columns with "?" between them.</dd><dt>Time</dt><dd>1:30</dd></dl>
+      </div>
+    </div>
+  </section>
+
+  <!-- ───────────────────────── MOVEMENT 2 ───────────────────────── -->
+  <section class="movement">
+    <div class="movement-head"><h2 style="margin:0">2 · Say what good is</h2><span class="time">4:00–10:00 · the room writes the rules and marks the papers</span></div>
+    <p>The turn. The loop with a gap, then the room fills it: rules, then examples, then the discovery that the rules don't settle everything.</p>
+
+    <div class="beat">
+      <div class="frame">
+        <div class="center">
+          <svg class="loopsvg" viewBox="0 0 400 220" aria-label="A loop of Build, Measure, Learn with a dashed empty station labelled Define good">
+            <path d="M200 40 A110 80 0 1 1 199 40" fill="none" stroke="#2a3430" stroke-width="3"/>
+            <g font-family="Bricolage Grotesque, sans-serif" font-weight="700" font-size="18" text-anchor="middle">
+              <circle cx="310" cy="110" r="34" fill="#f2a541"/><text x="310" y="116" fill="#1a1206">Build</text>
+              <circle cx="200" cy="190" r="34" fill="#1b201c" stroke="#9aa39b" stroke-width="2"/><text x="200" y="196" fill="#f3eee2">Measure</text>
+              <circle cx="90" cy="110" r="34" fill="#1b201c" stroke="#9aa39b" stroke-width="2"/><text x="90" y="116" fill="#f3eee2">Learn</text>
+              <circle cx="200" cy="40" r="34" fill="none" stroke="#9aa39b" stroke-width="2" stroke-dasharray="6 5" opacity="0.6"/><text x="200" y="46" fill="#9aa39b" opacity="0.8" font-size="15">Define</text>
+            </g>
+            <text x="200" y="12" font-family="IBM Plex Mono, monospace" font-size="11" fill="#9aa39b" text-anchor="middle">what good looks like</text>
+          </svg>
+          <div class="mid">We skipped straight to Build.</div>
+        </div>
+      </div>
+      <div>
+        <h3><span class="n">2.1</span>The loop with a gap</h3>
+        <div class="say"><p>"Build, measure, learn. You know this loop. Here's what we did: we built, we ran it, we hoped."</p><p>"We never said what good looks like. So we can't measure. So we can't learn. That dashed circle is the whole gap between demo good and production good. Let's fill it. Together."</p></div>
+        <dl><dt>Screen</dt><dd>The loop, large, Build lit, Define dashed. From here the same glyph lives top-left on every screen with the current station lit.</dd><dt>Time</dt><dd>0:45</dd></dl>
+      </div>
+    </div>
+
+    <div class="beat">
+      <div class="frame">
+        <div class="hud"><div class="loop"><span class="on gap"></span><span></span><span></span><span></span></div><div class="meters"><div class="meter v">Vibes<i><b style="width:45%"></b></i>45</div><div class="meter e">Evidence<i><b style="width:15%"></b></i>15</div></div></div>
+        <div class="center">
+          <div class="sub">What must never change when we translate a notice?</div>
+          <div class="rules">
+            <div class="rule seal">Numbers and dates stay put</div>
+            <div class="rule seal">A rule stays a rule</div>
+            <div class="rule">Nothing added, nothing promised</div>
+            <div class="rule">Still sounds like a PM<span class="cursor"></span></div>
+            <div class="rule ghost">Not now: pictures, voice, …</div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <h3><span class="n">2.2</span>The room writes the rules</h3>
+        <div class="say"><p>"Stop telling it what to do. Describe what a good answer looks like. You've all read these notices. What must never change? Shout."</p><p><em>Type their words onto the cards as they come.</em> "Numbers. Dates. The rule itself. Nothing added. And it should still sound like a PM, or nobody reads it."</p><p>"Two of these are different. Break the number or the rule and it doesn't matter how good the rest is: instant fail. In eval-speak that's an invariant. You'll only hear that word once."</p></div>
+        <dl><dt>Screen</dt><dd>Cards appear as the room speaks, typed live. Two get the red "instant fail" seal. Anything off-list lands on the dashed "not now" card.</dd><dt>Room</dt><dd>Shout-outs. Five pre-built cards; the room's wording goes on them. Fallback: the presenter says the five.</dd><dt>Time</dt><dd>1:45</dd></dl>
+      </div>
+    </div>
+
+    <div class="beat">
+      <div class="frame">
+        <div class="hud"><div class="loop"><span class="on gap"></span><span></span><span></span><span></span></div><div class="meters"><div class="meter v">Vibes<i><b style="width:45%"></b></i>45</div><div class="meter e">Evidence<i><b style="width:22%"></b></i>22</div></div></div>
+        <div class="center" style="gap:1.4cqw">
+          <div class="sub">Never deploy to production on a Friday.</div>
+          <div class="card" style="padding:1.6cqw 3cqw"><div class="out" style="font-size:2.6cqw">A · Never on a Friday. Trust me, I've seen this movie before.</div></div>
+          <div class="votebar"><span class="g" style="width:92%">good</span><span class="m" style="width:5%"></span><span class="b" style="width:3%"></span></div>
+          <div class="card" style="padding:1.6cqw 3cqw"><div class="out" style="font-size:2.6cqw">B · Let's avoid deploying to production on Fridays, obviously.</div></div>
+          <div class="votebar"><span class="g" style="width:48%">good</span><span class="m" style="width:12%"></span><span class="b" style="width:40%">bad</span></div>
+          <div class="card" style="padding:1.6cqw 3cqw"><div class="out" style="font-size:2.6cqw">C · Friday deploys are totally fine if you're organized.</div></div>
+          <div class="votebar"><span class="g" style="width:4%"></span><span class="m" style="width:6%"></span><span class="b" style="width:90%">bad</span></div>
+        </div>
+      </div>
+      <div>
+        <h3><span class="n">2.3</span>Be the judge</h3>
+        <div class="say"><p>"Now mark some papers against your own rules. Same notice, three answers. Hands up for A: good or bad?" <em>Set the bar.</em> "B?" <em>The room splits.</em> "C?"</p><p>"A is good. C reversed the rule: bad, and here's why. B… half of you said fine, half said no. 'Let's avoid' is not 'never'. Is it?"</p></div>
+        <dl><dt>Screen</dt><dd>Three answers, a vote bar under each. The presenter sets each bar from the hands with the keys <kbd>1</kbd>–<kbd>5</kbd> (mostly good … mostly bad). Reveal the written verdict and reason after each.</dd><dt>Time</dt><dd>1:30</dd></dl>
+      </div>
+    </div>
+
+    <div class="beat">
+      <div class="frame">
+        <div class="hud"><div class="loop"><span class="on gap"></span><span></span><span></span><span></span></div><div class="meters"><div class="meter v">Vibes<i><b style="width:45%"></b></i>45</div><div class="meter e">Evidence<i><b style="width:25%"></b></i>25</div></div></div>
+        <div class="center"><div class="card"><div class="en">Let's avoid deploying to production on Fridays, obviously.</div><div class="votebar" style="width:100%;height:4cqw;font-size:2cqw"><span class="g" style="width:48%">48% good</span><span class="m" style="width:4%"></span><span class="b" style="width:48%">48% bad</span></div></div><div class="mid">This split is a product decision.<br><span class="amber">No model makes it for you.</span></div></div>
+      </div>
+      <div>
+        <h3><span class="n">2.4</span>The split</h3>
+        <div class="say"><p>"That split is the most valuable thing that's happened so far. It's not a language question. It's a decision: is 'avoid' good enough for our deploy rule? Someone in your organisation has to make that call, and the people who know the work are the ones to make it."</p><p>"So we keep the borderline ones, and we write the argument down."</p></div>
+        <dl><dt>Screen</dt><dd>The borderline answer alone, with the room's 48/48 bar. One line of statement.</dd><dt>Time</dt><dd>0:45</dd></dl>
+      </div>
+    </div>
+
+    <div class="beat">
+      <div class="frame">
+        <div class="hud"><div class="loop"><span class="on gap"></span><span></span><span></span><span></span></div><div class="meters"><div class="meter v">Vibes<i><b style="width:45%"></b></i>45</div><div class="meter e">Evidence<i><b style="width:30%"></b></i>30</div></div></div>
+        <div class="center" style="justify-content:flex-start;padding-top:11cqw">
+          <div class="wall">
+            <div class="g"><h5>Good · 4</h5><div class="k">4 weeks' notice. Non-negotiable, I've checked.<small>number exact, attitude in the tone</small></div><div class="k">Never on a Friday. Trust me.<small>still a never</small></div></div>
+            <div class="m"><h5>Borderline · 3</h5><div class="k">Let's avoid deploying on Fridays, obviously.<small>room split 48/48: is "avoid" a rule?</small></div><div class="k">Friday lunch is Maccas, obviously.<small>top marks, still a policy call</small></div></div>
+            <div class="b"><h5>Bad · 7, each with why</h5><div class="k">Two weeks is plenty, I've told the team.<small>number halved, sounds certain</small></div><div class="k">Friday deploys are fine if you're organized.<small>rule reversed</small></div><div class="k">I already told them we'd demo the new feature.<small>promise nobody made</small></div><div class="k">I don't see a notice to rewrite.<small>talked back instead of translating</small></div></div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <h3><span class="n">2.5</span>The golden wall</h3>
+        <div class="say"><p>"Here's what we've built in six minutes: real answers, sorted, each with a reason. These are golden examples."</p><p>"Notice which column is biggest. Good examples tell the machine what to copy. <strong>Bad examples with the reason tell it what to avoid, and that's worth more.</strong> Borderline ones tell you where your rules are still fuzzy. Fourteen here. In a real product, hundreds, and you never stop collecting."</p></div>
+        <dl><dt>Screen</dt><dd>Three columns. The bad column is widest and every card carries its "why". The room's own split from 2.4 is on the borderline card.</dd><dt>Time</dt><dd>1:15</dd></dl>
+      </div>
+    </div>
+  </section>
+
+  <!-- ───────────────────────── MOVEMENT 3 ───────────────────────── -->
+  <section class="movement">
+    <div class="movement-head"><h2 style="margin:0">3 · Make it tireless</h2><span class="time">10:00–16:00 · the room's rules become judges</span></div>
+    <p>The room can't vote on ten thousand notices. Their rules become the judges, and for the first time "it got better" comes with proof.</p>
+
+    <div class="beat">
+      <div class="frame">
+        <div class="hud"><div class="loop"><span></span><span></span><span class="on"></span><span></span></div><div class="meters"><div class="meter v">Vibes<i><b style="width:42%"></b></i>42</div><div class="meter e">Evidence<i><b style="width:35%"></b></i>35</div></div></div>
+        <div class="center">
+          <div class="sub">Your rules, as judges</div>
+          <div class="stamps">
+            <div class="stamp" style="border-color:#f2a541;color:#f2a541"><b>Rule</b>code: are the numbers still there?</div>
+            <div class="stamp" style="border-color:#8fb3ff;color:#8fb3ff"><b>AI judge</b>reads your rule and your examples</div>
+            <div class="stamp" style="border-color:#f59ac8;color:#f59ac8"><b>People</b>you, for the ones that split</div>
+          </div>
+          <div class="sub">cheapest first</div>
+        </div>
+      </div>
+      <div>
+        <h3><span class="n">3.1</span>Turn the rules into judges</h3>
+        <div class="say"><p>"You just marked three papers. Production is ten thousand a day. So we make your rules tireless."</p><p>"Three kinds of judge. A plain rule: is the 4 still there? No AI needed. An AI judge that reads your rule and your golden examples. And people, for the ones that split. Cheapest first. This is an eval: your rules, applied to every answer, every time."</p></div>
+        <dl><dt>Screen</dt><dd>The rule cards from 2.2 slide down and morph into three stamps. One transition, nothing else moves.</dd><dt>Time</dt><dd>1:00</dd></dl>
+      </div>
+    </div>
+
+    <div class="beat">
+      <div class="frame">
+        <div class="hud"><div class="loop"><span></span><span></span><span class="on"></span><span></span></div><div class="meters"><div class="meter v">Vibes<i><b style="width:40%"></b></i>40</div><div class="meter e">Evidence<i><b style="width:45%"></b></i>45</div></div></div>
+        <div class="center" style="gap:2.4cqw">
+          <div class="card"><div class="en">Annual leave needs 4 weeks' notice.</div><div class="out">Two weeks is plenty. I've already told the team, so we're good.</div></div>
+          <div class="stamps">
+            <div class="stamp no"><b>✗</b>Numbers kept<br><small>the 4 is gone</small></div>
+            <div class="stamp no"><b>✗</b>Still a rule<br><small>notice period halved</small></div>
+            <div class="stamp no"><b>✗</b>Nothing added<br><small>"told the team"</small></div>
+            <div class="stamp ok"><b>✓</b>Sounds PM</div>
+            <div class="stamp wait"><b>?</b>The room</div>
+          </div>
+          <div class="mid" style="color:var(--stage-bad)">FAIL</div>
+        </div>
+      </div>
+      <div>
+        <h3><span class="n">3.2</span>Every answer gets marked</h3>
+        <div class="say"><p>"Same translator. Now watch what happens to the one that fooled you." <em>Stamps land one by one.</em> "The rule judge: the 4 is gone. The AI judge: notice period halved. It passed 'sounds like a PM' with flying colours, and it's a fail."</p><p>"Room, last stamp: thumbs?" <em>Click the verdict.</em> "Nobody fooled this time."</p></div>
+        <dl><dt>Screen</dt><dd>The card, then the stamp row lands left to right with a one-line reason each, then the verdict. The People stamp waits for the room's thumbs.</dd><dt>Room</dt><dd>Thumbs up or down. <kbd>↑</kbd>/<kbd>↓</kbd> sets it.</dd><dt>Time</dt><dd>1:30</dd></dl>
+      </div>
+    </div>
+
+    <div class="beat">
+      <div class="frame">
+        <div class="hud"><div class="loop"><span></span><span></span><span class="on"></span><span></span></div><div class="meters"><div class="meter v">Vibes<i><b style="width:35%"></b></i>35</div><div class="meter e">Evidence<i><b style="width:60%"></b></i>60</div></div></div>
+        <div class="center" style="gap:2cqw">
+          <div class="sub">Five tries each · passed every judge</div>
+          <div class="bars">
+            <span>Version 1<br><small style="color:var(--stage-muted)">one line</small></span><i><b style="width:20%"></b></i><span class="n">1 / 5</span>
+            <span>Version 2<br><small style="color:var(--stage-muted)">more rules</small></span><i><b style="width:20%"></b></i><span class="n">1 / 5</span>
+            <span class="amber">Version 3<br><small style="color:var(--stage-muted)">describes good</small></span><i><b style="width:80%"></b></i><span class="n amber">4 / 5</span>
+          </div>
+        </div>
+      </div>
+      <div>
+        <h3><span class="n">3.3</span>Better, and proven</h3>
+        <div class="say"><p>"Five tries, every judge, three versions of the instructions. One line: one in five. More rules: one in five. Describing what good looks like, with your examples: four in five."</p><p>"That is the first time in this talk we can say it got better and prove it. Look at the meters."</p></div>
+        <dl><dt>Screen</dt><dd>The instruction note shows Version 3 briefly (it describes good, it doesn't list rules), then the three bars grow. Evidence overtakes Vibes here, and the meters pulse once.</dd><dt>Time</dt><dd>1:30</dd></dl>
+      </div>
+    </div>
+
+    <div class="beat">
+      <div class="frame">
+        <div class="hud"><div class="loop"><span></span><span></span><span class="on"></span><span></span></div><div class="meters"><div class="meter v">Vibes<i><b style="width:35%"></b></i>35</div><div class="meter e">Evidence<i><b style="width:60%"></b></i>60</div></div></div>
+        <div class="center"><div class="card"><div class="en">Engineers: "Our estimate is 3 weeks, but it could be 5."</div><div class="out">We're looking at 3 weeks, <span class="hl">realistically probably 5</span>.</div></div><div class="stamps" style="width:50cqw"><div class="stamp ok"><b>✓</b>Sounds PM</div><div class="stamp no"><b>✗</b>Means what the engineers meant</div></div></div>
+        <div class="caption">A judge can't know what you didn't tell it.</div>
+      </div>
+      <div>
+        <h3><span class="n">3.4</span>Same words, different team <span class="n">(optional, cut first)</span></h3>
+        <div class="say"><p>"One more. The engineers' notes, PM-ified for the rest of the company. 'Our estimate is 3 weeks, could be 5' becomes 'realistically 5'. A guess just became a forecast. And the judge passed it, because it sounds like a PM."</p><p>"Add one line of context, to the translator and to the judge: 'to engineers, an estimate is a guess'. Neither the AI nor the judge can be smarter than what you tell it."</p></div>
+        <dl><dt>Screen</dt><dd>One card, two stamps. The second stamp appears only after "where it's from" is added.</dd><dt>Time</dt><dd>1:30, and the first thing to cut if behind.</dd></dl>
+      </div>
+    </div>
+  </section>
+
+  <!-- ───────────────────────── MOVEMENT 4 ───────────────────────── -->
+  <section class="movement">
+    <div class="movement-head"><h2 style="margin:0">4 · Check the checker</h2><span class="time">16:00–22:00 · the room overrules a judge and closes the loop</span></div>
+    <p>The twist. A judge is confidently wrong. The room catches it, their reasoning goes back into the system, and the loop completes a lap on screen.</p>
+
+    <div class="beat">
+      <div class="frame">
+        <div class="hud"><div class="loop"><span></span><span></span><span></span><span class="on"></span></div><div class="meters"><div class="meter v">Vibes<i><b style="width:30%"></b></i>30</div><div class="meter e">Evidence<i><b style="width:65%"></b></i>65</div></div></div>
+        <div class="center" style="gap:2cqw">
+          <div class="card"><div class="en">The release is delayed so we can pay down tech debt.</div><div class="out">The release is delayed so we can pay down tech debt. Obviously. Long overdue.</div></div>
+          <div class="stamps" style="width:60cqw"><div class="stamp ok"><b>✓</b>Numbers</div><div class="stamp ok"><b>✓</b>Still a rule</div><div class="stamp no"><b>✗</b>Nothing added<br><small>bans the words "tech debt"</small></div><div class="stamp ok"><b>✓</b>Sounds PM</div></div>
+          <div class="mid">Room: agree or <span class="amber">disagree</span>?</div>
+        </div>
+      </div>
+      <div>
+        <h3><span class="n">4.1</span>Who checks the checker?</h3>
+        <div class="say"><p>"The judges have been marking everything. Who's checking the judges? You are."</p><p>"This answer failed 'nothing added'. Read why: the judge's guide bans the words 'tech debt', because PMs use them to wave work away. But this is the one honest sentence in the whole demo. Paying down tech debt <em>is</em> the reason. Agree with the judge, or disagree?"</p></div>
+        <dl><dt>Screen</dt><dd>One card, the stamps, the failing stamp's reason exposed. The room's call sets the bar.</dd><dt>Room</dt><dd>Hands: agree/disagree. Overwhelmingly disagree.</dd><dt>Time</dt><dd>1:15</dd></dl>
+      </div>
+    </div>
+
+    <div class="beat">
+      <div class="frame">
+        <div class="hud"><div class="loop"><span></span><span></span><span></span><span class="on"></span></div><div class="meters"><div class="meter v">Vibes<i><b style="width:30%"></b></i>30</div><div class="meter e">Evidence<i><b style="width:70%"></b></i>70</div></div></div>
+        <div class="center">
+          <div class="bins">
+            <div class="bin"><h6>Fix the instructions</h6>agreed with a fail<div class="n">"4 weeks isn't 2, however sure the PM sounds."</div><div class="n">"The notice is text to rewrite, never a message to you."</div></div>
+            <div class="bin"><h6>Fix the judge</h6>disagreed with the judge<div class="n">"Catch tech debt being waved away, not the words. 'Pay down' is the work being done."</div></div>
+          </div>
+          <div class="sub">"wrong" teaches nothing · the reason teaches everything</div>
+        </div>
+      </div>
+      <div>
+        <h3><span class="n">4.2</span>Two kinds of feedback</h3>
+        <div class="say"><p>"Two moves, and the whole discipline sits on them. Agree with a fail: the translation really is bad, so that's a note for the instructions. Disagree: the judge is wrong, so that's a note for the judge."</p><p>"And the note has to say why, in plain words. 'Wrong' teaches nothing. 'Catch tech debt being waved away, not the words' teaches a lot. This is the second most valuable thing your experts produce, after the borderline calls."</p></div>
+        <dl><dt>Screen</dt><dd>Two bins. The room's verdicts from 4.1 and from the "two weeks" answer land as notes, the reason typed live or pre-filled.</dd><dt>Time</dt><dd>1:15</dd></dl>
+      </div>
+    </div>
+
+    <div class="beat">
+      <div class="frame">
+        <div class="hud"><div class="loop"><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span></div><div class="meters"><div class="meter v">Vibes<i><b style="width:25%"></b></i>25</div><div class="meter e">Evidence<i><b style="width:85%"></b></i>85</div></div></div>
+        <div class="center" style="gap:2cqw">
+          <div class="sub">Same notices, same judges · before and after our notes</div>
+          <div class="bars" style="grid-template-columns:22cqw 1fr 10cqw">
+            <span>Before</span><i><b style="width:17%"></b></i><span class="n">1 / 6</span>
+            <span class="amber">After our feedback</span><i><b style="width:67%"></b></i><span class="n amber">4 / 6</span>
+            <span>Judge agrees with us</span><i><b style="width:100%"></b></i><span class="n">6 / 6</span>
+          </div>
+          <div class="mid">That's the loop, closed.</div>
+        </div>
+      </div>
+      <div>
+        <h3><span class="n">4.3</span>Did our feedback help?</h3>
+        <div class="say"><p>"We never told it how to fix anything. We told it what was wrong and why, and it rewrote the instructions and the judge. Now the only question that matters: did it get better? Not 'does it feel better'."</p><p>"Same notices, same judges, fair fight. One in six to four in six. And the judge now agrees with the room on every example, including shrimp paste's cousin, the honest tech-debt sentence. That's the loop, closed. Define, build, measure, learn."</p></div>
+        <dl><dt>Screen</dt><dd>The instruction and judge diffs flash briefly (added lines highlighted), then the before/after bars. The loop glyph completes one full lap and every station lights.</dd><dt>Time</dt><dd>1:45</dd></dl>
+      </div>
+    </div>
+
+    <div class="beat">
+      <div class="frame">
+        <div class="hud"><div class="loop"><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span></div><div class="meters"><div class="meter v">Vibes<i><b style="width:20%"></b></i>20</div><div class="meter e">Evidence<i><b style="width:90%"></b></i>90</div></div></div>
+        <div class="center" style="gap:2cqw">
+          <div class="sub">Every notice · every version · every judge · from rehearsal</div>
+          <div class="bars">
+            <span>One line</span><i><b style="width:4%"></b></i><span class="n">4%</span>
+            <span>More rules</span><i><b style="width:4%"></b></i><span class="n">4%</span>
+            <span class="amber">Describes good</span><i><b style="width:71%"></b></i><span class="n amber">71%</span>
+            <span>+ where it's from</span><i><b style="width:71%"></b></i><span class="n">71%</span>
+            <span>+ our feedback</span><i><b style="width:83%"></b></i><span class="n">83%</span>
+          </div>
+        </div>
+      </div>
+      <div>
+        <h3><span class="n">4.4</span>Months, not minutes</h3>
+        <div class="say"><p>"Every notice, every version, every judge. We ran this before the talk. More rules: no better than one line. Describing good: the jump. None of them is done."</p><p>"Getting to 80% took us twenty minutes. The last 20 points take months, and the evals are how you know which months were worth it."</p></div>
+        <dl><dt>Screen</dt><dd>Five bars from the rehearsal scoreboard. Nothing runs live.</dd><dt>Time</dt><dd>0:45</dd></dl>
+      </div>
+    </div>
+  </section>
+
+  <!-- ───────────────────────── MOVEMENT 5 ───────────────────────── -->
+  <section class="movement">
+    <div class="movement-head"><h2 style="margin:0">5 · Ship it?</h2><span class="time">22:00–25:00 · the bar is a decision</span></div>
+
+    <div class="beat">
+      <div class="frame">
+        <div class="hud"><div class="loop"><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span></div><div class="meters"><div class="meter v">Vibes<i><b style="width:15%"></b></i>15</div><div class="meter e">Evidence<i><b style="width:95%"></b></i>95</div></div></div>
+        <div class="center" style="gap:2cqw">
+          <div class="mid">Ship it? Depends who it's for.</div>
+          <div class="bars" style="grid-template-columns:26cqw 1fr 14cqw">
+            <span>Friday drinks email</span><i><b style="width:90%"></b></i><span class="n">90% · vibes ok</span>
+            <span>Customer marketing</span><i><b style="width:95%"></b></i><span class="n">95% + brand</span>
+            <span>Policy and compliance</span><i><b style="width:100%;background:var(--stage-bad)"></b></i><span class="n">100% + a human</span>
+          </div>
+          <div class="sub">set the bar before you look at the results</div>
+        </div>
+      </div>
+      <div>
+        <h3><span class="n">5.1</span>The bar is a decision</h3>
+        <div class="say"><p>"So, do we ship it? Depends who it's for. A Friday drinks email: ninety percent and vibes are fine. Customer marketing: ninety-five, plus a brand review. The leave policy: a hundred percent on the instant fails, and a human signs off."</p><p>"Same app. Three bars. Product owns the rules, the people who know the work own the labels, delivery owns the gate. And you set the bar before you look at the results."</p></div>
+        <dl><dt>Time</dt><dd>1:15</dd></dl>
+      </div>
+    </div>
+
+    <div class="beat">
+      <div class="frame">
+        <div class="center"><div class="meters" style="font-size:2.4cqw;gap:1.2cqw"><div class="meter v" style="grid-template-columns:12cqw 40cqw auto;gap:1.5cqw">Vibes<i style="height:2cqw"><b style="width:10%"></b></i>10</div><div class="meter e" style="grid-template-columns:12cqw 40cqw auto;gap:1.5cqw">Evidence<i style="height:2cqw"><b style="width:100%"></b></i>100</div></div><div class="big" style="margin-top:3cqw">The demo is not the evidence.</div><div class="sub">Say what good looks like. Then prove it.</div></div>
+        <div class="caption">This week: one AI feature, five golden examples, a reason for each.</div>
+      </div>
+      <div>
+        <h3><span class="n">5.2</span>Close</h3>
+        <div class="say"><p>"Remember these? Vibes started at a hundred. Evidence at zero. You swapped them. You wrote the rules, you marked the papers, you overruled the judge."</p><p>"The demo is not the evidence. Say what good looks like, then prove it. Homework: this week, pick one AI feature and write five golden examples with a reason each. Three of them bad. That's how it starts. Thank you."</p></div>
+        <dl><dt>Screen</dt><dd>The meters, large, swapped. The thesis. The homework.</dd><dt>Time</dt><dd>1:00. Total 24:00 with 3.4 in, 22:30 without.</dd></dl>
+      </div>
+    </div>
+  </section>
+
+  <h2>The crowd moments and what happens if they don't</h2>
+  <p>Six moments, each with a visible result on screen and a fallback that costs nothing. None of them depends on the network.</p>
+  <div class="scroll"><table>
+    <thead><tr><th>Beat</th><th>The ask</th><th>How it lands on screen</th><th>Presenter control</th><th>If the room is quiet</th></tr></thead>
+    <tbody>
+      <tr><td>1.2</td><td>"Give me a notice"</td><td>Typed onto the card, translated live</td><td>Type and <kbd>Space</kbd></td><td>Use the fourth pre-written one</td></tr>
+      <tr><td>1.3</td><td>"Ship it? Let me hear you"</td><td>The applause dial swings, Vibes pins at 100</td><td>Mic drives it; <kbd>V</kbd> swings it by hand</td><td>Swing it by hand and say "I'll take that as a yes"</td></tr>
+      <tr><td>2.2</td><td>"What must never change?"</td><td>Rule cards typed as they shout</td><td>Type; <kbd>Enter</kbd> seals a card</td><td>Say the five yourself; the cards still appear one by one</td></tr>
+      <tr><td>2.3</td><td>"Hands up: good or bad?"</td><td>A vote bar under each answer</td><td><kbd>1</kbd>–<kbd>5</kbd> sets the split</td><td>Set it to what rehearsal rooms did; the split on B is the point either way</td></tr>
+      <tr><td>3.2</td><td>"Thumbs?"</td><td>The People stamp turns green or red</td><td><kbd>↑</kbd> / <kbd>↓</kbd></td><td>Call it yourself</td></tr>
+      <tr><td>4.1</td><td>"Agree or disagree with the judge?"</td><td>The verdict bar, then a note in a bin</td><td><kbd>A</kbd> / <kbd>D</kbd>, then type or <kbd>✨</kbd> for the prepared note</td><td>"Everyone I've shown this to disagrees." Prepared note</td></tr>
+    </tbody>
+  </table></div>
+  <p class="note" style="margin-top:0.8rem">A phone poll (QR code, live tally) would make 2.3 and 4.1 more precise, but it adds a network dependency and thirty seconds of "scan this". Hands and a presenter-set bar give the same picture with no risk. Worth revisiting only if the room is over 200.</p>
+
+  <h2>Three decisions for you</h2>
+  <div class="decide"><h3>1. PM-speak or Aussie for the fooled moment?</h3><p style="margin:0">PM lands the self-deprecating laugh with this room and makes every failure a familiar one. The risk is that the Version 1 prompt tells the model to second-guess numbers, so the reveal is "you asked for it". Before committing, run a Version 1 that describes only the voice and check whether "4 weeks" still drifts. If it does, PM. If it doesn't, the reveal uses the Aussie "a couple of tinnies" and the rest of the talk stays PM, or the whole talk goes Aussie. The app already supports both tellings, so this is a half-hour test, not a rebuild.</p></div>
+  <div class="decide"><h3>2. The applause-o-meter: mic or hand-driven?</h3><p style="margin:0">The mic version is a genuine laugh and needs no network, but conference AV sometimes blocks laptop mics. Build both: mic by default, <kbd>V</kbd> swings it by hand, and rehearse the hand version so it looks deliberate.</p></div>
+  <div class="decide"><h3>3. Keep 3.4 (context) or bank the ninety seconds?</h3><p style="margin:0">It is a good idea and a weak beat: a fourth failure type after the room has already got the point. The storyboard keeps it as the first cut. My lean is to cut it and spend the time on 2.3, letting the room argue about answer B for longer, which is the moment they will retell.</p></div>
+
+  <h2>What this means for the build</h2>
+  <p>This is a presentation-layer rebuild on the existing machinery. The runner, store, replay mode, judges, variants, presenter window and server stay. What changes is what the projector shows: a stage with one object per beat, a persistent HUD, and crowd controls.</p>
+  <div class="phase"><div class="ph">Keep as is</div><div>Translator and judge calls, replay recording, lab state, the three tellings and their prompts, golden examples and the act 6 review flow, the presenter window, the dev-server key handling, act budgets and the timer.</div></div>
+  <div class="phase"><div class="ph">Phase 1 · Stage shell</div><div>Strip the projector chrome (stepper, footer dots, key badges go to the presenter view). New HUD: loop glyph with four stations and the dashed Define, meters at readable size. Stage typography scale. One transition system (cards fly, stamps land, glyph laps) with reduced-motion fallback.<ul><li>Touches: <code>App.tsx</code>, <code>TopBar.tsx</code>, <code>styles.css</code>, a new <code>Stage.tsx</code></li></ul></div></div>
+  <div class="phase"><div class="ph">Phase 2 · New scene kinds</div><div>Each beat above is a scene kind with its own component, fed by the existing variant data.<ul><li><strong>Build</strong>: typed instruction note plus the card (1.2)</li><li><strong>Card</strong>: one phrase, highlight-on-click, deal five (1.4, 1.5)</li><li><strong>Loop</strong>: the gap, then the lap (2.1, 4.3)</li><li><strong>Rules</strong>: live-typed cards with seals and the "not now" card (2.2)</li><li><strong>Vote</strong>: answers with presenter-set bars and reveal (2.3, 2.4, 4.1)</li><li><strong>Wall</strong>: the golden columns (2.5), replacing <code>Golden.tsx</code></li><li><strong>Judged card</strong>: card plus stamp row and verdict (3.2, 3.4), replacing the right half of <code>Lab.tsx</code></li><li><strong>Bars</strong>: version tally, before/after, scoreboard, gates (3.3, 4.3, 4.4, 5.1)</li><li><strong>Bins</strong>: the two feedback bins (4.2), a slimmer <code>Review.tsx</code> plus <code>Improve.tsx</code></li></ul>Removed from the running order and kept in code: pictures, voice, the kitchen-sink version.</div></div>
+  <div class="phase"><div class="ph">Phase 3 · Crowd controls</div><div>Applause dial (Web Audio on the mic, hand-driven fallback), vote bars on keys 1–5, thumbs on arrows, live rule typing with pre-built cards, the prepared-note shortcut. All recorded for replay.</div></div>
+  <div class="phase"><div class="ph">Phase 4 · Presenter view and docs</div><div>Beats per scene with the keys in bold, the crowd controls as buttons, the act clock against the new budgets. Rewrite the run of show and the talk track to this storyboard; retire the old scene list.</div></div>
+  <div class="phase"><div class="ph">Phase 5 · Rehearse</div><div>Walk it with recording on, screenshot every beat at 1080p and check from the back of a room, then present from replay. The PM-vs-Aussie test in decision 1 happens before Phase 2 starts.</div></div>
+  <p style="margin-top:1.5rem">Rough size: Phases 1 to 3 are four or five focused sessions, Phase 4 one, and the content (prompts, examples, judges) is already written and tested. The biggest unknown is the persona test; the second is how the mic behaves on the venue's AV.</p>
+</div>
