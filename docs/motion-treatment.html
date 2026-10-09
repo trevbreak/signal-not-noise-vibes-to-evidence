@@ -69,14 +69,14 @@
   @media (prefers-reduced-motion: reduce) { .frame [data-in], .frame .zoom, .frame .hl { transition: none; } }
 
   /* stage furniture */
-  .dial { position: absolute; top: 3cqw; left: 50%; transform: translateX(-50%); width: 24cqw; text-align: center; font-family: var(--mono); font-size: 1.4cqw; color: var(--stage-muted); transition: all 0.8s cubic-bezier(.2,.8,.2,1); }
+  .dial { position: absolute; top: 3cqw; left: 0; right: 0; margin-inline: auto; width: 24cqw; text-align: center; font-family: var(--mono); font-size: 1.4cqw; color: var(--stage-muted); transition: all 0.8s cubic-bezier(.2,.8,.2,1); }
   .dial .face { width: 100%; aspect-ratio: 2 / 1; border-radius: 100cqw 100cqw 0 0; border: 0.8cqw solid var(--stage-2); border-bottom: 0; position: relative; overflow: hidden; }
   .dial .face::before { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, #f472b6 0%, var(--stage-accent) 50%, var(--stage-good) 100%); opacity: 0.22; }
   .dial .needle { position: absolute; left: 50%; bottom: 0; width: 0.5cqw; height: 92%; background: var(--stage-fg); transform-origin: bottom center; transform: rotate(var(--deg, -80deg)); transition: transform 1.1s cubic-bezier(.3,.9,.3,1.1); }
   .dial .lab { display: flex; justify-content: space-between; margin-top: 0.4cqw; }
-  .dial.big { width: 52cqw; top: 16cqw; font-size: 2.6cqw; }
+  .dial.big { width: 42cqw; top: 7cqw; font-size: 2.2cqw; }
   .dial.big .face { border-width: 1.4cqw; }
-  .dial.corner { width: 13cqw; left: auto; right: 3cqw; transform: none; font-size: 1.1cqw; }
+  .dial.corner { width: 13cqw; left: auto; right: 3cqw; margin: 0; font-size: 1.1cqw; }
   .center { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 8cqw; text-align: center; gap: 2cqw; }
   .big { font-size: 6.5cqw; font-weight: 800; line-height: 1; letter-spacing: -0.03em; text-wrap: balance; }
   .mid { font-size: 4cqw; font-weight: 700; line-height: 1.1; letter-spacing: -0.02em; text-wrap: balance; }
@@ -100,7 +100,7 @@
   .stamp.rule { border-color: var(--stage-accent); color: var(--stage-accent); } .stamp.ai { border-color: var(--stage-ai); color: var(--stage-ai); } .stamp.people { border-color: var(--stage-people); color: var(--stage-people); }
   .rules { position: absolute; left: 10cqw; right: 10cqw; top: 12cqw; display: grid; grid-template-columns: 1fr 1fr; gap: 1.2cqw; }
   .rule { background: var(--stage-2); border-radius: 1cqw; padding: 1.8cqw 2.2cqw; font-size: 2.4cqw; font-weight: 700; text-align: left; position: relative; min-height: 6.5cqw; }
-  .rule .seal { position: absolute; right: 1.4cqw; top: 1cqw; font-size: 1.1cqw; font-family: var(--mono); color: var(--stage-bad); border: 0.2cqw solid var(--stage-bad); border-radius: 99px; padding: 0.15cqw 0.7cqw; transform: rotate(-8deg); }
+  .rule .seal { position: absolute; right: 1cqw; bottom: -1.1cqw; font-size: 1.1cqw; font-family: var(--mono); color: var(--stage-bad); border: 0.2cqw solid var(--stage-bad); border-radius: 99px; padding: 0.15cqw 0.7cqw; transform: rotate(-8deg); }
   .rule.ghost { opacity: 0.4; border: 0.2cqw dashed var(--stage-muted); background: transparent; font-weight: 500; }
   .votebar { display: flex; width: 100%; height: 2.4cqw; border-radius: 99px; overflow: hidden; background: var(--stage-3); font-size: 1.3cqw; font-family: var(--mono); margin-top: 1cqw; }
   .votebar span { display: flex; align-items: center; justify-content: center; color: #111; width: 0; transition: width 0.9s cubic-bezier(.2,.8,.2,1); overflow: hidden; white-space: nowrap; }
@@ -117,7 +117,7 @@
   .bars i b { display: block; height: 100%; width: 0; background: var(--stage-good); transition: width 1s cubic-bezier(.2,.8,.2,1); }
   .bars .n { font-family: var(--mono); text-align: right; }
   .montage { position: absolute; left: 0; right: 0; top: 9cqw; height: 26cqw; overflow: hidden; }
-  .montage .row { position: absolute; left: 50%; width: 64cqw; transform: translateX(-50%); display: grid; grid-template-columns: 1fr 24cqw; gap: 1.5cqw; align-items: center; font-size: 1.9cqw; text-align: left; }
+  .montage .row { position: absolute; left: 18cqw; width: 64cqw; display: grid; grid-template-columns: 1fr 24cqw; gap: 1.5cqw; align-items: center; font-size: 1.9cqw; text-align: left; }
   .montage .row .t { background: var(--stage-2); border-radius: 0.8cqw; padding: 0.8cqw 1.4cqw; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .montage .row .s { display: flex; gap: 0.5cqw; } .montage .row .s i { flex: 1; height: 2.6cqw; border-radius: 0.4cqw; background: var(--stage-3); }
   .montage .row .s i.ok { background: var(--stage-good); } .montage .row .s i.no { background: var(--stage-bad); }
@@ -224,7 +224,7 @@
     <div class="beat">
       <div class="frame-wrap"><div class="frame" data-loop="8000">
         <div class="dial big fx-grow" data-in="100"><div class="face"><div class="needle" data-needle="200:-80;1400:-60;2600:-40;3600:-15;4400:10;5000:-5;5600:-70;6200:-80"></div></div><div class="lab"><span>vibes</span><span>evidence</span></div></div>
-        <div class="center" style="justify-content:flex-end;padding-bottom:7cqw"><div class="big fx-rise" data-in="300">Ship it?</div><div class="sub fx-rise" data-in="1500">"Tell me when to stop."</div></div>
+        <div class="center" style="justify-content:flex-end;padding-bottom:4cqw;gap:1cqw"><div class="big fx-rise" data-in="300">Ship it?</div><div class="sub fx-rise" data-in="1500">"Tell me when to stop."</div></div>
       </div><button class="replay" type="button">replay</button></div>
       <div>
         <h3><span class="n">1.3</span>Ship it? The room pushes the needle</h3>
@@ -236,12 +236,12 @@
     <div class="beat">
       <div class="frame-wrap"><div class="frame" data-loop="11000">
         <div class="dial corner"><div class="face"><div class="needle" data-needle="0:-80;7200:-45"></div></div><div class="lab"><span>vibes</span><span>evidence</span></div></div>
-        <div class="fan" style="top:18cqw">
+        <div class="fan" style="top:6cqw;left:4cqw;right:4cqw">
           <div class="k fx-deal" data-in="200" data-dim="2600">Good morning team, lunch is provided today.<br><b class="amber">Lunch is on me today. You're welcome.</b></div>
           <div class="k fx-deal" data-in="700" data-dim="2600">We're heading to the pub after work on Friday.<br><b class="amber">Pub, Friday. I've already told the client we're celebrating.</b></div>
           <div class="k fx-deal" data-in="1200" data-out="2600">Annual leave needs 4 weeks' notice.<br><b class="amber">Two weeks is plenty. I've already told the team.</b></div>
         </div>
-        <div class="center" style="justify-content:flex-start;padding-top:17cqw"><div class="card zoom fx-grow" data-in="2700" style="--zs:1.25;--zt:0,6cqw" data-zoom="3300"><div class="en">Annual leave needs <span class="hl ok" data-hl="4600">4 weeks'</span> notice.</div><div class="out">Two weeks is plenty. I've <span class="hl" data-hl="5400">already told the team</span>, so we're good.</div></div></div>
+        <div class="center" style="justify-content:flex-start;padding-top:24cqw"><div class="card zoom fx-grow" data-in="2700" style="--zs:1.25;--zt:0,6cqw" data-zoom="3300"><div class="en">Annual leave needs <span class="hl ok" data-hl="4600">4 weeks'</span> notice.</div><div class="out">Two weeks is plenty. I've <span class="hl" data-hl="5400">already told the team</span>, so we're good.</div></div></div>
         <div class="caption fx-rise" data-in="6800">You all just approved this.</div>
         <div class="black fx-type" data-in="9000"><div class="big">The demo is not the evidence.</div></div>
       </div><button class="replay" type="button">replay</button></div>
@@ -368,7 +368,7 @@
           <div class="rule fx-rise" style="font-size:1.8cqw;min-height:4cqw;padding:1cqw 1.6cqw" data-in="100" data-out="2600">Nothing added, nothing promised</div>
           <div class="rule fx-rise" style="font-size:1.8cqw;min-height:4cqw;padding:1cqw 1.6cqw" data-in="100" data-out="2600">Still sounds like a PM</div>
         </div>
-        <div class="center" style="justify-content:flex-end;padding-bottom:5cqw">
+        <div class="center" style="justify-content:flex-end;padding-bottom:11cqw">
           <div class="stamps fx-drop" data-in="2800"><div class="stamp rule"><b>Rule</b><small>is the 4 still there?</small></div><div class="stamp ai"><b>AI judge</b><small>reads your rule and your examples</small></div><div class="stamp ai"><b>AI judge</b><small>nothing added</small></div><div class="stamp people"><b>People</b><small>you, for the splits</small></div></div>
         </div>
         <div class="montage fx-type" data-in="4800">
@@ -380,7 +380,7 @@
           <div class="row fx-deal" style="top:21cqw" data-in="7300" data-out="8900"><div class="t">Never deploy on a Friday → Never on a Friday. Trust me.</div><div class="s"><i class="ok"></i><i class="ok"></i><i class="ok"></i><i></i></div></div>
         </div>
         <div class="counter fx-rise" data-in="4800"><span data-count="4800:0:30:4600">0</span> notices · <span data-count="4800:0:9:4600">0</span>s</div>
-        <div class="caption fx-rise" data-in="10200">Your rules. Every answer. Every time.</div>
+        <div class="caption fx-rise" data-in="10200" style="bottom:3cqw">Your rules. Every answer. Every time.</div>
       </div><button class="replay" type="button">replay</button></div>
       <div>
         <h3><span class="n">3.1</span>Rules descend into judges, then the montage</h3>
@@ -419,8 +419,8 @@
     <div class="beat">
       <div class="frame-wrap"><div class="frame" data-loop="10000">
         <div class="dial corner"><div class="face"><div class="needle" style="--deg:15deg"></div></div><div class="lab"><span>vibes</span><span>evidence</span></div></div>
-        <div class="center" style="gap:2cqw;justify-content:flex-start;padding-top:8cqw">
-          <div class="card fx-rise" data-in="200"><div class="en">The release is delayed so we can pay down tech debt.</div><div class="out">The release is delayed so we can pay down tech debt. Obviously. Long overdue.</div></div>
+        <div class="center" style="gap:1.6cqw;justify-content:flex-start;padding-top:5cqw">
+          <div class="card fx-rise" data-in="200" style="padding:2cqw 3cqw"><div class="en">The release is delayed so we can pay down tech debt.</div><div class="out">The release is delayed so we can pay down tech debt. Obviously. Long overdue.</div></div>
           <div class="stamps"><div class="stamp ok fx-stamp" data-in="1400"><b>✓</b>Numbers</div><div class="stamp ok fx-stamp" data-in="1900"><b>✓</b>Still a rule</div><div class="stamp no zoom fx-stamp" data-in="2400" style="--zs:1.15" data-zoom="3400"><b>✗</b>Nothing added<br><small data-in="3600" class="fx-type">guide bans the words "tech debt"</small></div><div class="stamp ok fx-stamp" data-in="2900"><b>✓</b>Sounds PM</div></div>
           <div class="mid fx-rise" data-in="5200">Agree, or <span class="amber">disagree</span>?</div>
           <div class="votebar" style="width:50cqw;height:3cqw;font-size:1.6cqw"><span class="g" data-width="7200:8">agree</span><span class="b" data-width="7200:88" style="background:var(--stage-accent)">disagree</span></div>
@@ -456,7 +456,7 @@
     <div class="movement-head"><h2 style="margin:0">5 · Ship it?</h2><span class="time">21:00–23:30</span></div>
     <div class="beat">
       <div class="frame-wrap"><div class="frame" data-loop="11000">
-        <div class="dial big fx-grow" style="top:10cqw" data-in="200"><div class="face"><div class="needle" data-needle="300:60;2000:84"></div></div><div class="lab"><span>vibes</span><span>evidence</span></div></div>
+        <div class="dial big fx-grow" style="top:3cqw" data-in="200"><div class="face"><div class="needle" data-needle="300:60;2000:84"></div></div><div class="lab"><span>vibes</span><span>evidence</span></div></div>
         <div class="center" style="justify-content:flex-end;padding-bottom:6cqw;gap:1.6cqw">
           <div class="card fx-rise" style="width:56cqw;padding:1.6cqw 2.6cqw" data-in="3600"><div class="en">Annual leave needs 4 weeks' notice.</div><div class="out" style="font-size:2.6cqw">Annual leave needs 4 weeks' notice. Non-negotiable, I've checked.</div><div class="stamps" style="width:100%;margin-top:1cqw"><div class="stamp ok" style="padding:0.6cqw;font-size:1.3cqw"><b style="font-size:1.6cqw">✓</b></div><div class="stamp ok" style="padding:0.6cqw;font-size:1.3cqw"><b style="font-size:1.6cqw">✓</b></div><div class="stamp ok" style="padding:0.6cqw;font-size:1.3cqw"><b style="font-size:1.6cqw">✓</b></div><div class="stamp ok" style="padding:0.6cqw;font-size:1.3cqw"><b style="font-size:1.6cqw">✓</b></div><div class="stamp ok" style="padding:0.6cqw;font-size:1.3cqw;border-color:var(--stage-people);color:var(--stage-people)"><b style="font-size:1.6cqw">✓</b></div></div></div>
           <div class="sub fx-rise" data-in="6500">Policy and compliance: 100% on the instant fails, and a human signs off.</div>
