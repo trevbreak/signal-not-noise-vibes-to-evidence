@@ -6,7 +6,7 @@ Each numbered line is one press of → (or the clicker). Quoted words are what t
 
 | Movement | Finish by | Beats |
 | --- | --- | --- |
-| 1 · Fooled | 6 min | 9 beats, 25 presses |
+| 1 · Fooled | 6 min | 9 beats, 24 presses |
 | 2 · Say what good is | 12 min | 6 beats, 21 presses |
 | 3 · Make it tireless | 15.5 min | 4 beats, 12 presses |
 | 4 · Check the checker | 20 min | 6 beats, 17 presses |
@@ -35,10 +35,9 @@ Each numbered line is one press of → (or the clicker). Quoted words are what t
 
 ### 1.3 · Ship it? The needle
 
-1. “Ninety seconds. Twenty years ago that was a start-up. So: ship it?”
-2. “How sure are we? Tell me when to stop.” The needle creeps toward Evidence while they cheer. Wait for someone to shout stop.
-3. Stop. “That much?” ↑ ↓ nudge it if they argue. *(keys: ↑ ↓ nudge)*
-4. “Here's how much of that is evidence.” It snaps to Vibes. “None. That's vibes.”
+1. “Ninety seconds. Twenty years ago that was a start-up. So: ship it? How sure are we? Tell me when to stop.” Tap or hold ↑ to push the needle toward Evidence while they cheer, ↓ to pull it back. → when they say stop. *(keys: ↑ ↓ move the needle · → lock it in)*
+2. Locked. “That much?”
+3. “Here's how much of that is evidence.” It snaps to Vibes. “None. That's vibes.”
 
 ### 1.4 · The reveal
 

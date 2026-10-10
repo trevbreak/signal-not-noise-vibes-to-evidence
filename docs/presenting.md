@@ -41,7 +41,7 @@ The clicker's next and back (→ ←, or PageDown PageUp) always work. Everythin
 | → PageDown Space | Next step |
 | ← PageUp | Back one step (shows its end state at once) |
 | 1–5 | The room's split on a vote: 1 mostly good (or agree) … 5 mostly bad (or disagree) |
-| ↑ ↓ | Thumbs up or down (3.2), or nudge the needle (1.3) |
+| ↑ ↓ | Move the needle (1.3; → locks it in), or thumbs up or down (3.2) |
 | E or Enter | Type the room's words where the step takes them; Enter to keep, Esc to drop |
 | X | Remove the room's last notice (1.2) |
 | B or . | Black screen, and back |
@@ -57,7 +57,7 @@ Every moment the room feeds the talk has something planted first, so the beat la
 | Beat | You ask | Planted | If the room is quiet, or the AI misbehaves |
 | --- | --- | --- | --- |
 | 1.2 | “Give me one from your wall.” | Three of ours run first; the third is the leave notice | Skip it. A failed or slow call shows “The PM is in another meeting. Next!” |
-| 1.3 | “Ship it? Tell me when to stop.” | The needle creeps by itself | Press → to stop it wherever it is; the next press snaps it to Vibes either way |
+| 1.3 | “Ship it? Tell me when to stop.” | You drive the needle: tap or hold ↑ toward Evidence while they cheer, ↓ to pull it back | → locks it wherever it is; the next → snaps it to Vibes either way |
 | 2.2 | “What must never change?” | All four cards and their judges exist; E retypes a card in the room's words | Press → and our wording types in |
 | 2.3 | “Hands up: good or bad?” | Three recorded answers, chosen so B splits a room | → uses the usual splits (A good, B split, C bad) |
 | 3.1 | nothing | 25 recorded rows; the room's notices are judged live and spliced near the end | If their notices failed, the montage runs without them |
@@ -79,7 +79,7 @@ All of it lives in [`src/talk/content.ts`](../src/talk/content.ts).
 
 1. **Run it once end to end with the presenter clock**, out loud, and note where you're behind a checkpoint.
 2. **Try the room's moments for real:** type two notices in 1.2 with the API key set, and watch them arrive in the montage in 3.1.
-3. **Practise the needle in 1.3.** Stop it early and stop it late, so the line works either way.
+3. **Practise the needle in 1.3.** Push it a little and a lot before you lock it, so the line works either way.
 4. **Practise one vote with each key** (1 to 5) and one thumbs, so the keys are in your fingers.
 5. **Press Reset talk** in the presenter window before the real thing. It clears everything the room typed and voted.
 

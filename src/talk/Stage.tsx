@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useLayoutEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
-import { BEATS, NEEDLE_AT } from "./content";
+import { BEATS, HAND_START, NEEDLE_AT } from "./content";
 import { stepOf, type TalkState } from "./store";
 import { BEAT_VIEWS } from "./beats";
 
@@ -11,12 +11,10 @@ export const Instant = createContext(false);
 const ENTRANCES = '[class*="a-"], .loop-path, .mrow, .beat-in';
 export const useInstant = () => useContext(Instant);
 
-export function Stage({ state, instant, onFreeze, className = "" }: {
+export function Stage({ state, instant, className = "" }: {
   state: TalkState;
   /** Show the end state at once (going back, jumping, the presenter's "next" preview). */
   instant?: boolean;
-  /** Projector only: the needle reports where it stopped when the room shouted stop. */
-  onFreeze?: (v: number | null) => void;
   className?: string;
 }) {
   const beat = BEATS[state.beat];
@@ -31,13 +29,14 @@ export function Stage({ state, instant, onFreeze, className = "" }: {
     if (!still || !canvas.current) return;
     canvas.current.querySelectorAll(ENTRANCES).forEach((el) => el.setAttribute("data-done", ""));
   });
+  const target = NEEDLE_AT[state.beat][state.step];
   return (
     <Instant.Provider value={still}>
       <div ref={canvas} className={`canvas ${beat.dark ? "dark" : ""} ${still ? "instant" : ""} ${className}`} data-beat={beat.id} data-step={state.step}>
         <div className={`layer ${beat.dark ? "" : "beat-in"}`} key={beat.id}>
           <View beat={beat} step={state.step} state={state} />
         </div>
-        <Needle mode={mode} target={NEEDLE_AT[state.beat][state.step]} frozen={state.room.needleFrozen} instant={still} onFreeze={onFreeze} />
+        <Needle mode={mode} target={target === "hand" ? (state.room.needleHand ?? HAND_START) : target} instant={still} />
         {state.blackout && <div className="blackout" />}
       </div>
     </Instant.Provider>
@@ -46,48 +45,20 @@ export function Stage({ state, instant, onFreeze, className = "" }: {
 
 // ── The needle ───────────────────────────────────────────────────────────────
 // One dial for the whole talk: VIBES on the left, EVIDENCE on the right. A spring drives it,
-// so it overshoots and settles like a real needle. In 1.3 it creeps while the room cheers,
-// and stops where the presenter stops it.
+// so it overshoots and settles like a real needle. In 1.3 the presenter moves it with ↑ ↓.
 
 const angle = (v: number) => -90 + Math.max(-4, Math.min(104, v)) * 1.8;
 
-function Needle({ mode, target, frozen, instant, onFreeze }: {
-  mode: "hidden" | "corner" | "big";
-  target: number | "creep" | "frozen";
-  frozen: number | null;
-  instant: boolean;
-  onFreeze?: (v: number | null) => void;
-}) {
+function Needle({ mode, target, instant }: { mode: "hidden" | "corner" | "big"; target: number; instant: boolean }) {
   const hand = useRef<SVGGElement>(null);
-  const sim = useRef({ v: typeof target === "number" ? target : 50, vel: 0, goal: typeof target === "number" ? target : 50, creepFrom: 50, creepAt: 0 });
-  const live = useRef({ target, frozen, onFreeze });
-  live.current = { target, frozen, onFreeze };
+  const sim = useRef({ v: target, vel: 0, goal: target });
 
   // Where the needle is heading for this step.
   useEffect(() => {
     const s = sim.current;
-    if (typeof target === "number") {
-      s.goal = target;
-      if (instant) Object.assign(s, { v: target, vel: 0 });
-    } else if (target === "frozen") {
-      if (frozen === null) {
-        s.goal = s.v;
-        s.vel = 0;
-        onFreeze?.(Math.round(s.v));
-      } else {
-        s.goal = frozen;
-        if (instant) Object.assign(s, { v: frozen, vel: 0 });
-      }
-    } else if (target === "creep") {
-      // Coming back to the creep: forget where it stopped last time, and start again.
-      if (frozen !== null) onFreeze?.(null);
-      if (instant) Object.assign(s, { v: 50, vel: 0, goal: 50 });
-      // Time-based, so it creeps at the same speed however often the window gets frames.
-      s.creepFrom = s.v;
-      s.creepAt = performance.now();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [target, frozen, instant]);
+    s.goal = target;
+    if (instant) Object.assign(s, { v: target, vel: 0 });
+  }, [target, instant]);
 
   useEffect(() => {
     let raf = 0;
@@ -96,16 +67,9 @@ function Needle({ mode, target, frozen, instant, onFreeze }: {
       const dt = Math.min(0.05, (now - last) / 1000);
       last = now;
       const s = sim.current;
-      if (live.current.target === "creep") {
-        // Slow and steady toward Evidence, with a little nervous wobble.
-        s.goal = Math.min(97, s.creepFrom + ((now - s.creepAt) / 1000) * 6.5);
-        s.v = s.goal + Math.sin(now / 140) * 0.6;
-        s.vel = 0;
-      } else {
-        const acc = 70 * (s.goal - s.v) - 9 * s.vel;
-        s.vel += acc * dt;
-        s.v += s.vel * dt;
-      }
+      const acc = 70 * (s.goal - s.v) - 9 * s.vel;
+      s.vel += acc * dt;
+      s.v += s.vel * dt;
       hand.current?.setAttribute("transform", `rotate(${angle(s.v).toFixed(2)} 100 100)`);
       raf = requestAnimationFrame(tick);
     };
