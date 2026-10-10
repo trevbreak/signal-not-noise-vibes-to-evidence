@@ -12,7 +12,7 @@ export function Talk() {
   const dark = !!BEATS[state.beat].dark || state.blackout;
   return (
     <div className={`frame-fill ${dark ? "dark" : ""}`}>
-      <Stage state={state} onFreeze={(v) => useTalk.getState().setNeedleFrozen(v)} />
+      <Stage state={state} />
       {state.editing && <EditCapture />}
     </div>
   );

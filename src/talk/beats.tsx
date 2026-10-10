@@ -189,9 +189,9 @@ function NeedleView({ step }: P) {
         Ship it?
       </div>
       <div className="ship-sub">
-        {step === 1 && <div className="t-s t-muted a-fade">Tell me when to stop.</div>}
-        {step === 2 && <div className="t-s t-muted">That much?</div>}
-        {step === 3 && (
+        {step === 0 && <div className="t-s t-muted a-fade" style={d(0.8)}>Tell me when to stop.</div>}
+        {step === 1 && <div className="t-s t-muted">That much?</div>}
+        {step === 2 && (
           <div className="t-m t-accent a-rise" style={d(0.6)}>
             That's not evidence. That's vibes.
           </div>

@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { BEATS, type Field, type VoteKey } from "./content";
+import { BEATS, HAND_START, type Field, type VoteKey } from "./content";
 
 // The talk's state: where we are, and what the room has said.
 // The projector window owns it. The presenter window sends actions and mirrors snapshots (sync.ts).
@@ -21,8 +21,8 @@ export type Room = {
   votes: Partial<Record<VoteKey, number>>;
   /** The room's thumbs on Version 1's answer and on Version 3's. */
   thumbs: Partial<Record<"fail" | "pass", "up" | "down">>;
-  /** Where the needle stopped when the room shouted stop (1.3). */
-  needleFrozen: number | null;
+  /** Where the presenter moved the needle in 1.3. */
+  needleHand: number | null;
 };
 
 export type TalkState = {
@@ -40,7 +40,7 @@ export type TalkState = {
 export const MAX_ROOM_NOTICES = 2;
 export const MAX_NOTICE_LENGTH = 90;
 
-export const freshRoom = (): Room => ({ notices: [], rules: ["", "", "", ""], notNow: "", votes: {}, thumbs: {}, needleFrozen: null });
+export const freshRoom = (): Room => ({ notices: [], rules: ["", "", "", ""], notNow: "", votes: {}, thumbs: {}, needleHand: null });
 
 const initial = (): TalkState => ({ beat: 0, step: 0, dir: 0, room: freshRoom(), blackout: false, editing: null, draft: "" });
 
@@ -53,7 +53,6 @@ type Actions = {
   setVote: (key: VoteKey, n: number) => void;
   setThumbs: (which: "fail" | "pass", t: "up" | "down") => void;
   nudge: (delta: number) => void;
-  setNeedleFrozen: (v: number | null) => void;
   startEdit: () => void;
   setDraft: (text: string) => void;
   commitEdit: () => void;
@@ -72,7 +71,7 @@ type Actions = {
 
 export type Talk = TalkState & Actions;
 export const ACTIONS = [
-  "next", "prev", "goTo", "setVote", "setThumbs", "nudge", "setNeedleFrozen", "startEdit", "setDraft", "commitEdit",
+  "next", "prev", "goTo", "setVote", "setThumbs", "nudge", "startEdit", "setDraft", "commitEdit",
   "cancelEdit", "removeLastNotice", "removeNotice", "retryNotice", "patchNotice", "toggleBlackout", "reset", "numberKey", "upDown",
 ] as const;
 export type ActionName = (typeof ACTIONS)[number];
@@ -103,10 +102,9 @@ export const useTalk = create<Talk>((set, get) => {
     setVote: (key, n) => room({ votes: { ...get().room.votes, [key]: Math.max(1, Math.min(5, n)) } }),
     setThumbs: (which, t) => room({ thumbs: { ...get().room.thumbs, [which]: t } }),
     nudge: (delta) => {
-      const v = get().room.needleFrozen ?? 80;
-      room({ needleFrozen: Math.max(0, Math.min(100, v + delta)) });
+      const v = get().room.needleHand ?? HAND_START;
+      room({ needleHand: Math.max(0, Math.min(100, v + delta)) });
     },
-    setNeedleFrozen: (v) => room({ needleFrozen: v }),
 
     startEdit: () => {
       const st = stepOf(get());
@@ -155,7 +153,7 @@ export const useTalk = create<Talk>((set, get) => {
         get().setThumbs(st.thumbs, up ? "up" : "down");
         if (st.advance) get().next();
       } else if (st.nudge) {
-        get().nudge(up ? 5 : -5);
+        get().nudge(up ? 4 : -4);
       }
     },
   };

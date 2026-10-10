@@ -220,7 +220,7 @@ function Controls({ state }: { state: TalkState }) {
       )}
       {step.nudge && (
         <div className="pv-ctl">
-          <div className="pv-label">The needle {state.room.needleFrozen !== null ? `· stopped at ${state.room.needleFrozen}` : ""}</div>
+          <div className="pv-label">The needle · at {state.room.needleHand ?? 50} of 100 · → locks it in</div>
           <div className="pv-row">
             <button className="pv-btn" onClick={() => dispatch("upDown", false)}>
               <kbd>↓</kbd> Toward vibes

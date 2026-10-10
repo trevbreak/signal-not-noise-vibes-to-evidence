@@ -215,7 +215,7 @@ export type Step = {
   /** What to say. The presenter window shows this one and the next. */
   say: string;
   /** Where the needle goes on this step: 0 is all vibes, 100 is all evidence. Carries forward. */
-  needle?: number | "creep" | "frozen";
+  needle?: number | "hand";
   /** Keys that do something on this step, for the presenter window. */
   keys?: string;
   /** What E (or the presenter window's box) types into on this step. */
@@ -225,7 +225,7 @@ export type Step = {
   advance?: boolean;
   /** ↑ ↓ set the room's thumbs on this answer: Version 1's (fail) or Version 3's (pass). */
   thumbs?: "fail" | "pass";
-  /** ↑ ↓ nudge the needle (1.3). */
+  /** ↑ ↓ move the needle (1.3). */
   nudge?: boolean;
   /** Overrides the beat's needle size for this step. */
   needleMode?: "hidden" | "corner" | "big";
@@ -287,9 +287,8 @@ export const BEATS: Beat[] = [
   {
     id: "ship-it", num: "1.3", title: "Ship it? The needle", movement: 1, kind: "needle", needle: "big",
     steps: [
-      { say: "“Ninety seconds. Twenty years ago that was a start-up. So: ship it?”", needle: 50 },
-      { say: "“How sure are we? Tell me when to stop.” The needle creeps toward Evidence while they cheer. Wait for someone to shout stop.", needle: "creep" },
-      { say: "Stop. “That much?” ↑ ↓ nudge it if they argue.", needle: "frozen", nudge: true, keys: "↑ ↓ nudge" },
+      { say: "“Ninety seconds. Twenty years ago that was a start-up. So: ship it? How sure are we? Tell me when to stop.” Tap or hold ↑ to push the needle toward Evidence while they cheer, ↓ to pull it back. → when they say stop.", needle: "hand", nudge: true, keys: "↑ ↓ move the needle · → lock it in" },
+      { say: "Locked. “That much?”", needle: "hand" },
       { say: "“Here's how much of that is evidence.” It snaps to Vibes. “None. That's vibes.”", needle: 2 },
     ],
   },
@@ -489,8 +488,10 @@ export const BEATS: Beat[] = [
 ];
 
 /** Where the needle sits at every (beat, step): the last value set at or before it, carried forward. */
-export const NEEDLE_AT: (number | "creep" | "frozen")[][] = (() => {
-  let last: number | "creep" | "frozen" = 50;
+/** Where the presenter's needle starts in 1.3, before the room moves it. */
+export const HAND_START = 50;
+export const NEEDLE_AT: (number | "hand")[][] = (() => {
+  let last: number | "hand" = 50;
   return BEATS.map((b) =>
     b.steps.map((s) => {
       if (s.needle !== undefined) last = s.needle;
