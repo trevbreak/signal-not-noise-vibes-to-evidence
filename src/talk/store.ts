@@ -17,10 +17,9 @@ export type Room = {
   notices: Notice[];
   /** The room's wording for each rule card; "" keeps the default. */
   rules: string[];
-  notNow: string;
   votes: Partial<Record<VoteKey, number>>;
-  /** The room's thumbs on Version 1's answer and on Version 3's. */
-  thumbs: Partial<Record<"fail" | "pass", "up" | "down">>;
+  /** The room's thumbs on the leave answer (3.2). */
+  thumbs: Partial<Record<"fail", "up" | "down">>;
   /** Where the presenter moved the needle in 1.3. */
   needleHand: number | null;
 };
@@ -40,7 +39,7 @@ export type TalkState = {
 export const MAX_ROOM_NOTICES = 2;
 export const MAX_NOTICE_LENGTH = 90;
 
-export const freshRoom = (): Room => ({ notices: [], rules: ["", "", "", ""], notNow: "", votes: {}, thumbs: {}, needleHand: null });
+export const freshRoom = (): Room => ({ notices: [], rules: ["", "", "", ""], votes: {}, thumbs: {}, needleHand: null });
 
 const initial = (): TalkState => ({ beat: 0, step: 0, dir: 0, room: freshRoom(), blackout: false, editing: null, draft: "" });
 
@@ -51,7 +50,7 @@ type Actions = {
   prev: () => void;
   goTo: (beat: number, step?: number) => void;
   setVote: (key: VoteKey, n: number) => void;
-  setThumbs: (which: "fail" | "pass", t: "up" | "down") => void;
+  setThumbs: (which: "fail", t: "up" | "down") => void;
   nudge: (delta: number) => void;
   startEdit: () => void;
   setDraft: (text: string) => void;
@@ -122,8 +121,6 @@ export const useTalk = create<Talk>((set, get) => {
         // Two at most: a third replaces the oldest, so the app never overflows.
         const kept = r.notices.length >= MAX_ROOM_NOTICES ? r.notices.slice(1) : r.notices;
         room({ notices: [...kept, mine] });
-      } else if (editing === "notNow") {
-        room({ notNow: text });
       } else {
         const i = Number(editing.split(":")[1]);
         const rules = [...r.rules];
@@ -161,7 +158,7 @@ export const useTalk = create<Talk>((set, get) => {
 
 // ── Saving: the projector keeps its place and the room's input across a refresh ──
 
-const KEY = "talk-state-v1";
+const KEY = "talk-state-v2";
 
 export function restore() {
   // A hash like #12.3 (beat 12, step 3) jumps there: handy for rehearsing one beat.

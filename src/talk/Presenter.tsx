@@ -18,7 +18,6 @@ const FIELD_LABEL: Record<Field, string> = {
   "rule:1": "Card 2, in the room's words",
   "rule:2": "Card 3, in the room's words",
   "rule:3": "Card 4, in the room's words",
-  notNow: "Their extras, for later",
 };
 
 const clock = (n: number) => `${Math.floor(Math.max(0, n) / 60)}:${String(Math.floor(Math.max(0, n)) % 60).padStart(2, "0")}`;
@@ -74,8 +73,8 @@ export function Presenter() {
     <div className="pv">
       <header className="pv-top">
         <button className="pv-clock" onClick={() => setStart(Date.now())} title="Restart the clock">
-          <span className={secs > 23 * 60 ? "late" : ""}>{clock(secs)}</span>
-          <small>/ 23:00</small>
+          <span className={secs > 25 * 60 ? "late" : ""}>{clock(secs)}</span>
+          <small>/ 25:00</small>
         </button>
         <div className={`pv-check ${late ? "late" : ""}`}>
           {beat.movement > 0 ? (
@@ -205,8 +204,8 @@ function Controls({ state }: { state: TalkState }) {
       {step.thumbs && (
         <div className="pv-ctl">
           <div className="pv-label">
-            The room's thumbs on {step.thumbs === "pass" ? "Version 3's" : "Version 1's"} answer
-            {state.room.thumbs[step.thumbs] ? "" : step.thumbs === "fail" ? " (→ uses thumbs down)" : " (not asked yet)"}
+            The room's thumbs on the leave answer
+            {state.room.thumbs[step.thumbs] ? "" : " (→ uses thumbs down)"}
           </div>
           <div className="pv-row">
             <button className={`pv-btn ${state.room.thumbs[step.thumbs] === "up" ? "on" : ""}`} onClick={() => dispatch("upDown", true)}>
@@ -271,7 +270,7 @@ function FieldBox({ field, state }: { field: Field; state: TalkState }) {
   const ref = useRef<HTMLInputElement>(null);
   // A fresh box for every field.
   useEffect(() => setText(""), [field]);
-  const current = field.startsWith("rule:") ? state.room.rules[Number(field.split(":")[1])] || DEFAULT_RULES[Number(field.split(":")[1])] : field === "notNow" ? state.room.notNow : "";
+  const current = field.startsWith("rule:") ? state.room.rules[Number(field.split(":")[1])] || DEFAULT_RULES[Number(field.split(":")[1])] : "";
   return (
     <div className="pv-ctl">
       <div className="pv-label">
