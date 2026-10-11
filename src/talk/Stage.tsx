@@ -167,7 +167,7 @@ export function Draft({ text }: { text: string }) {
 }
 
 /** Expose: text with phrases outlined when `on`. */
-export function Marked({ text, marks }: { text: string; marks: { phrase: string; kind: "ok" | "bad"; on: boolean }[] }) {
+export function Marked({ text, marks }: { text: string; marks: { phrase: string; kind: "ok" | "bad" | "mid"; on: boolean }[] }) {
   const parts: ReactNode[] = [];
   let rest = text;
   let k = 0;
