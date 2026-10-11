@@ -4,17 +4,19 @@ The run of show for Signal not Noise, Brisbane. The words to say are in [talk-tr
 
 ## The story in one breath
 
-The room is the hero and the translator is the obstacle. They cheer a demo in minute two, and in minute three they find out they cheered a notice period being halved. Then they write the rules, mark the answers, and watch their rules become judges. They overrule a judge that's confidently wrong, and the loop closes with proof. One notice runs through the whole talk, *“Annual leave needs 4 weeks' notice”*: fooled, stamped FAIL, fixed, and shipped behind the strictest gate. One needle, from VIBES to EVIDENCE, is the only thing that stays on screen.
+One product runs through the whole talk: the **PM Translator**, which rewrites notices from around the company in the voice of a pushy, know-it-all product manager. Its prompt grows in public: **v1** is two lines, **v2** adds rules by gut feel, **v3** is honed by hand from what the judges caught, and **v4** is rewritten by an AI from the room's reasons. One notice is followed from applause to evidence, *“Annual leave needs 4 weeks' notice”*: it slips through the demo, gets caught by the judges, and ships behind the strictest gate.
+
+Two things are always labelled the same way, in the same colour: the **Prompt** (teal) and the **Judge** (blue). One needle, from VIBES to EVIDENCE, stays on screen throughout.
 
 | Movement | What happens | Finish by |
 | --- | --- | --- |
-| 1 · Fooled | Build the PM translator in a minute, the room cheers, the reveal, five tries, more rules | 6 min |
-| 2 · Say what good is | The loop with a gap, the room writes the rules, marks three answers, the split, the golden wall | 12 min |
-| 3 · Make it tireless | Rules become judges, the montage, the fooled notice stamped FAIL, Version 3 passes | 15.5 min |
-| 4 · Check the checker | A judge is wrong, the room overrules it, two kinds of feedback, proof, the loop closes | 20 min |
-| 5 · Ship it? | Three gates, the needle comes home, the close and the homework | 23 min |
+| 1 · The demo | Build the PM Translator v1, try it on company notices, ship it on vibes, the two-weeks reveal, five tries, v2 adds rules | 6.5 min |
+| 2 · Say what good is | The loop with a gap, the room writes the rules (plus our planted “not now” list), marks three answers, the soft-rule split, the golden wall | 12 min |
+| 3 · Check every answer | Recap the loop, rules become judges, the montage (ending on the “tech debt” habit), zoom in on the leave notice, read the failures and hone v3 by hand (and add a blunt “tech debt” rule to a judge), five tries each | 17 min |
+| 4 · Learn from the reasons | The hand-added judge rule fails an honest answer and the room overrules it, write the reasoning, group it into drop-downs, an AI rewrites the prompt and judge, did it work, the loop closes | 22.5 min |
+| 5 · Ship it? | Three gates with different rules, the needle comes home, the close and the homework | 25 min |
 
-The clock in the presenter window starts when you leave the title card and turns red when you're behind a checkpoint. The estimate is about 16 minutes of speaking, stretched for laughs and the room, in a 25-minute slot.
+The clock in the presenter window starts when you leave the title card and turns red when you're behind a checkpoint. The speaking lines come to about 22½ minutes at a comfortable pace before any of the room's moments, so there's no slack: rehearse with the clock and use the cut list below.
 
 ## Setting up
 
@@ -56,13 +58,13 @@ Every moment the room feeds the talk has something planted first, so the beat la
 
 | Beat | You ask | Planted | If the room is quiet, or the AI misbehaves |
 | --- | --- | --- | --- |
-| 1.2 | “Give me one from your wall.” | Three of ours run first; the third is the leave notice | Skip it. A failed or slow call shows “The PM is in another meeting. Next!” |
+| 1.2 | “Give me one from your office.” | Three of ours run first (Slack, kitchen, HR wall); the third is the leave notice | Skip it. A failed or slow call shows “The PM is in another meeting. Next!” |
 | 1.3 | “Ship it? Tell me when to stop.” | You drive the needle: tap or hold ↑ toward Evidence while they cheer, ↓ to pull it back | → locks it wherever it is; the next → snaps it to Vibes either way |
-| 2.2 | “What must never change?” | All four cards and their judges exist; E retypes a card in the room's words | Press → and our wording types in |
+| 2.2 | “What must never change?” | All four cards and their judges exist; E retypes a card in the room's words. The “not now” list is planted, not asked for | Press → and our wording types in |
 | 2.3 | “Hands up: good or bad?” | Three recorded answers, chosen so B splits a room | → uses the usual splits (A good, B split, C bad) |
 | 3.1 | nothing | 25 recorded rows; the room's notices are judged live and spliced near the end | If their notices failed, the montage runs without them |
-| 3.2 | “Thumbs?”, on Version 1’s answer and again on Version 3’s | The fail and the pass are recordings | On Version 1’s, → counts as thumbs down. On Version 3’s, no answer leaves the room’s stamp at “?”, and thumbs down turns the verdict to Fail |
-| 4.1 | “Agree or disagree?” | A judge whose guide bans the words “tech debt” | → counts as disagree |
+| 3.2 | “Thumbs?” on the leave answer | The fail is a recording (v2's real answer) | → counts as thumbs down |
+| 4.1 | “Agree or disagree?” | The “tech debt” judge rule the room watched us add by hand in 3.3 | → counts as disagree |
 
 The only live AI calls in the whole talk are the room's own notices in 1.2: one translation each with Version 1, then one judging call so they can appear in the montage. Everything else on screen is planted, so the story doesn't depend on the network.
 
@@ -70,10 +72,10 @@ The only live AI calls in the whole talk are the room's own notices in 1.2: one 
 
 All of it lives in [`src/talk/content.ts`](../src/talk/content.ts).
 
-* **Recorded answers.** Most answers on screen are the PM telling's recorded answers from rehearsal (`src/variants/pm.ts`: the golden examples, the case hints and the review set), including the leave notice's “two weeks is fine”, the five Friday tries and the tech-debt answer.
-* **Written to match.** A few lines were written to match what Version 1 does, and are marked “illustrative” in the file: the lunch answer, Version 2's standup answer, and most of the montage rows. Re-record them in rehearsal if you want every answer on screen to be a real model answer.
-* **Numbers to re-check in rehearsal.** The “five tries each” bars (1/5, 1/5, 4/5) and the before/after bars (1/6 → 4/6, the judge agreeing 6/6). The full-test percentages (4%, 4%, 71%) are from the PM telling's rehearsal run in [legacy/run-of-show.md](legacy/run-of-show.md).
-* **What Version 1 says.** The instructions on screen in 1.2 are Version 1, word for word, and they're what the room's notices run through.
+* **The prompts.** v1 is two lines plus a length limit, and it's what the room's notices run through live. v2 adds three lines, v3 adds two more by hand, and v4 is pm.ts's “what good looks like” prompt.
+* **Real numbers, from a rehearsal run on 11 Oct 2026** (Haiku 4.5 translating, Opus 5.5 judging with the live judges): the leave notice five tries each (v1 0/5, v2 0/5, v3 2/5; a second v3 run got 1/5, so expect one or two), v3 against v4 on six notices × five tries (7/30 and 21/30), and every version on those six notices (0%, 3%, 23%, 70%). The montage's leave row is v2's real answer.
+* **Illustrative, re-check if you want them real:** the judge-agreement bars in 4.5 (4/6 → 6/6), the drop-down counts in 4.3, the theme counts in 3.3, the lunch answer, Version 2's standup answer, and most montage rows (including the three “tech debt” rows planted for 3.3).
+* **Recorded answers** elsewhere (the two-weeks reveal, the five Friday tries, the golden wall, the tech-debt release note) come from `src/variants/pm.ts`.
 
 ## Rehearsal
 
@@ -95,8 +97,9 @@ All of it lives in [`src/talk/content.ts`](../src/talk/content.ts).
 
 Cut in this order. Each is one beat, and the story holds without it.
 
-1. **1.5 More rules** (the Version 1 vs Version 2 pairs). Say “more rules made some better and some worse” over the five tries and move on.
-2. **4.4 Months, not minutes.** Say the line about 80% over the loop chapter card.
-3. **3.2 Better, and proven** (the five-tries bars). The PASS stamp already makes the point.
+1. **1.5 Version 2: more rules** (the side-by-side pairs). Say “so we added more rules, and some got better and some got worse” over the five tries and move on. The v2 prompt still appears in 3.3.
+2. **4.6 Months, not minutes.** Say the 80% line over the loop chapter card.
+3. **3.4 Better, and proven. Partly.** Say “honed by hand, it got a bit better, but not shippable, and we'd made those fixes by gut feel” at the end of 3.3.
+4. **2.5 Hold: bad examples teach.** Say it over the golden wall.
 
 Use the beat strip at the bottom of the presenter window to jump past a beat.
