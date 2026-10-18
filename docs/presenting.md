@@ -59,7 +59,7 @@ Every moment the room feeds the talk has something planted first, so the beat la
 | Beat | You ask | Planted | If the room is quiet, or the AI misbehaves |
 | --- | --- | --- | --- |
 | 1.2 | “Give me one from your office.” | Three of ours run first (Slack, kitchen, HR wall); the third is the leave notice | Skip it. A failed or slow call shows “The PM is in another meeting. Next!” |
-| 1.3 | “Ship it? Tell me when to stop.” | You drive the needle: tap or hold ↑ toward Evidence while they cheer, ↓ to pull it back | → locks it wherever it is; the next → snaps it to Vibes either way |
+| 1.3 | “Built on vibes, or built on evidence?” | You drive the needle with the room: ↑ toward Evidence, ↓ toward Vibes | → locks it wherever it is; the next → snaps it to Vibes either way (expect the room to say vibes) |
 | 2.2 | “What must never change?” | All four cards and their judges exist; E retypes a card in the room's words. The “not now” list is planted, not asked for | Press → and our wording types in |
 | 2.3 | “Hands up: good or bad?” | Three recorded answers, chosen so B splits a room | → uses the usual splits (A good, B split, C bad) |
 | 3.1 | nothing | 25 recorded rows; the room's notices are judged live and spliced near the end | If their notices failed, the montage runs without them |

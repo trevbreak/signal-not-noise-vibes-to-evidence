@@ -340,25 +340,25 @@ export const BEATS: Beat[] = [
   {
     id: "ship-it", num: "1.3", title: "Ship it? The needle", movement: 1, kind: "needle", needle: "big",
     steps: [
-      { say: "“Ninety seconds, a handful of notices, and a working PM Translator. Twenty years ago that was a start-up. So: do we ship it? How sure are we? Tell me when to stop.” Tap or hold ↑ to push the needle toward Evidence while they cheer, ↓ to pull it back. → when they say stop.", needle: "hand", nudge: true, keys: "↑ ↓ move the needle · → lock it in" },
+      { say: "“A quick prompt with a few simple instructions, and we have a working translator. Years ago that would have been a whole start-up. Now it's so trivial that anyone can do it. But how good is it, and should we ship it? Would the room say it's built on vibes, or built on evidence?” Move the needle with the room: ↑ toward Evidence, ↓ toward Vibes. → when they've settled.", needle: "hand", nudge: true, keys: "↑ ↓ move the needle · → lock it in" },
       { say: "Locked. “That much?”", needle: "hand" },
-      { say: "“Here's how much of that is evidence.” It snaps to Vibes. “None. We typed in a few notices, liked what came out, and called it done. That's vibes.”", needle: 2 },
+      { say: "It snaps to Vibes. “Of course, this is all vibes. It sounds like a PM we might have worked with, but we'd be reluctant to ship this to customers without knowing just how reliable it is.”", needle: 2 },
     ],
   },
   {
     id: "reveal", num: "1.4", title: "The reveal", movement: 1, kind: "reveal", needle: "corner",
     steps: [
-      { say: "“Let's look again at what we were about to ship.” The three answers come back." },
-      { say: "“This one, from the HR wall.” The leave answer comes forward. Let them read it." },
+      { say: "“Let's test further, to see if this is something we should ship.” The three answers come back." },
+      { say: "“Let's try translating this HR policy on leave.” The leave answer comes forward. Let them read it." },
       { say: "“The notice said four weeks.”" },
-      { say: "“Our PM Translator says two. And that it's already told the team.”" },
-      { say: "“It's one small detail. It sounds confident, it sounds exactly like a PM, and it was buried in a demo that felt great. That's the danger of moving fast: we skim, it sounds right, and a small detail slips through. This small detail halves everyone's notice period. We moved fast, and we accidentally shipped it.”", needle: 10 },
+      { say: "“Yet our translator changes the meaning, and turns four weeks into two. Like all product managers seem to do!”" },
+      { say: "“One small change, and it significantly changes the meaning: it's hallucinated a totally different HR policy, one with a real impact on people. It's incredibly easy to build and deploy solutions to problems like this. But miss the small details, and you can create big consequences.”", needle: 10 },
     ],
   },
   {
-    id: "thesis-1", num: "1.4", title: "Hold: the demo is not the evidence", movement: 1, kind: "hold", needle: "hidden", dark: true,
-    props: { lines: ["The demo is not the evidence."] },
-    steps: [{ say: "“The demo is not the evidence.” Say it once, slowly. Then let the title card do the rest." }],
+    id: "thesis-1", num: "1.4", title: "Hold: a great demo isn't a shippable product", movement: 1, kind: "hold", needle: "hidden", dark: true,
+    props: { lines: ["A great demo doesn't mean a shippable product."] },
+    steps: [{ say: "“A great demo doesn't mean a shippable product.” Say it once, slowly. Then let the title card do the rest." }],
   },
   {
     id: "title-drop", num: "1.4", title: "Title drop", movement: 1, kind: "title", needle: "hidden", dark: true,
@@ -563,7 +563,7 @@ export const BEATS: Beat[] = [
   {
     id: "close", num: "5.2", title: "Close", movement: 5, kind: "close", needle: "hidden", dark: true,
     steps: [
-      { say: "“The demo is not the evidence. Say what good looks like. Then prove it.”" },
+      { say: "“A great demo doesn't mean a shippable product. Say what good looks like. Then prove it.”" },
       { say: "“Homework. This week, pick one AI feature and write five golden examples, with a reason for each. Three of them bad. That's how it starts.”" },
       { say: "“Thank you.”" },
     ],

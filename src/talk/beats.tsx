@@ -236,11 +236,11 @@ function NeedleView({ step }: P) {
         Ship the PM Translator?
       </div>
       <div className="ship-sub">
-        {step === 0 && <div className="t-s t-muted a-fade" style={d(0.8)}>Tell me when to stop.</div>}
+        {step === 0 && <div className="t-s t-muted a-fade" style={d(0.8)}>Built on vibes, or built on evidence?</div>}
         {step === 1 && <div className="t-s t-muted">That much?</div>}
         {step === 2 && (
           <div className="t-m t-accent a-rise" style={d(0.6)}>
-            That's not evidence. That's vibes.
+            Of course, this is all vibes.
           </div>
         )}
       </div>
@@ -265,7 +265,7 @@ function RevealView({ step }: P) {
       {focus && (
         <div className="spot" data-box="spot">
           <div className="card a-grow" style={d(0.1)}>
-            <div className="wm">{vName(1)} · from the HR wall</div>
+            <div className="wm">{vName(1)} · our HR leave policy</div>
             <div className="en">
               <Marked text={LEAVE} marks={[{ phrase: "4 weeks'", kind: "ok", on: step >= 2 }]} />
             </div>
@@ -283,8 +283,8 @@ function RevealView({ step }: P) {
       )}
       {step >= 4 && (
         <div className="reveal-foot a-rise" data-box="caption">
-          <div className="t-m">One small detail. A big impact.</div>
-          <div className="t-s t-accent">We moved fast, and we accidentally shipped it.</div>
+          <div className="t-m">One small change. A totally different policy.</div>
+          <div className="t-s t-accent">Easy to build. Miss the small details, and the consequences are big.</div>
         </div>
       )}
     </>
@@ -1234,7 +1234,7 @@ function CloseView({ step }: P) {
   return (
     <div className="title-card close" data-box="title">
       <div className="rule-line" />
-      <div className="t-xl">The demo is not the evidence.</div>
+      <div className="t-xl">A great demo doesn't mean a shippable product.</div>
       <div className="t-m" style={{ color: "var(--hold-ink)" }}>
         Say what good looks like. Then prove it.
       </div>

@@ -35,21 +35,21 @@ Each numbered line is one press of → (or the clicker). Quoted words are what t
 
 ### 1.3 · Ship it? The needle
 
-1. “Ninety seconds, a handful of notices, and a working PM Translator. Twenty years ago that was a start-up. So: do we ship it? How sure are we? Tell me when to stop.” Tap or hold ↑ to push the needle toward Evidence while they cheer, ↓ to pull it back. → when they say stop. *(keys: ↑ ↓ move the needle · → lock it in)*
+1. “A quick prompt with a few simple instructions, and we have a working translator. Years ago that would have been a whole start-up. Now it's so trivial that anyone can do it. But how good is it, and should we ship it? Would the room say it's built on vibes, or built on evidence?” Move the needle with the room: ↑ toward Evidence, ↓ toward Vibes. → when they've settled. *(keys: ↑ ↓ move the needle · → lock it in)*
 2. Locked. “That much?”
-3. “Here's how much of that is evidence.” It snaps to Vibes. “None. We typed in a few notices, liked what came out, and called it done. That's vibes.”
+3. It snaps to Vibes. “Of course, this is all vibes. It sounds like a PM we might have worked with, but we'd be reluctant to ship this to customers without knowing just how reliable it is.”
 
 ### 1.4 · The reveal
 
-1. “Let's look again at what we were about to ship.” The three answers come back.
-2. “This one, from the HR wall.” The leave answer comes forward. Let them read it.
+1. “Let's test further, to see if this is something we should ship.” The three answers come back.
+2. “Let's try translating this HR policy on leave.” The leave answer comes forward. Let them read it.
 3. “The notice said four weeks.”
-4. “Our PM Translator says two. And that it's already told the team.”
-5. “It's one small detail. It sounds confident, it sounds exactly like a PM, and it was buried in a demo that felt great. That's the danger of moving fast: we skim, it sounds right, and a small detail slips through. This small detail halves everyone's notice period. We moved fast, and we accidentally shipped it.”
+4. “Yet our translator changes the meaning, and turns four weeks into two. Like all product managers seem to do!”
+5. “One small change, and it significantly changes the meaning: it's hallucinated a totally different HR policy, one with a real impact on people. It's incredibly easy to build and deploy solutions to problems like this. But miss the small details, and you can create big consequences.”
 
-### 1.4 · Hold: the demo is not the evidence
+### 1.4 · Hold: a great demo isn't a shippable product
 
-1. “The demo is not the evidence.” Say it once, slowly. Then let the title card do the rest.
+1. “A great demo doesn't mean a shippable product.” Say it once, slowly. Then let the title card do the rest.
 
 ### 1.4 · Title drop
 
@@ -214,7 +214,7 @@ Each numbered line is one press of → (or the clicker). Quoted words are what t
 
 ### 5.2 · Close
 
-1. “The demo is not the evidence. Say what good looks like. Then prove it.”
+1. “A great demo doesn't mean a shippable product. Say what good looks like. Then prove it.”
 2. “Homework. This week, pick one AI feature and write five golden examples, with a reason for each. Three of them bad. That's how it starts.”
 3. “Thank you.”
 
