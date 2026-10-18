@@ -1,6 +1,6 @@
 # Implementation plan: the linked talk
 
-> **Status: planned, not built.** This builds the design in [full-mock.html](full-mock.html) (the whole talk) and [proposal-second-half.html](proposal-second-half.html) (the second half in detail). The previous plan, [implementation-plan.md](implementation-plan.md), describes the stage as it was first built and is kept for history.
+> **Status: built (18 Oct 2026).** The talk in `src/talk/` follows this plan; how to run it is in [presenting.md](presenting.md). Where the build differs: the code judge is "Still has a number" (open decision 1); one tech-debt row stays mid-montage (decision 2); and the mock files were deleted once the build was verified (decision 3; they're in git history at commit 875b9b1). The speaking time came to about 22¾ minutes.
 
 ## Goal
 
