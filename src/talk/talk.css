@@ -331,7 +331,7 @@ button, input, textarea { font: inherit; color: inherit; }
 .rules .span2 { grid-column: span 2; }
 .rules .rule { overflow-wrap: anywhere; }
 
-.wall-caption { position: absolute; left: 20cqw; right: 18cqw; top: 4cqw; font-weight: 700; }
+.wall-caption { position: absolute; left: 33cqw; right: 18cqw; top: 3.6cqw; font-weight: 700; }
 .wall { top: 11.5cqw; }
 
 .judge-head { position: absolute; left: 6cqw; top: 6cqw; }
