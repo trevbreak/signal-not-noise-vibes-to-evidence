@@ -3,8 +3,8 @@
 //
 // One product runs through the whole talk: the PM Translator, which rewrites the company's
 // notices in the voice of a pushy, know-it-all product manager. Its prompt grows version by
-// version (v1 two lines → v2 more rules → v3 honed by hand from the judges' failures → v4
-// rewritten from the room's reasons), and one notice is followed from applause to evidence:
+// version (v1 two lines → v2 more rules by gut feel → v3 rewritten by an AI from the room's
+// reasons), and one notice is followed from applause to evidence:
 // "Annual leave needs 4 weeks' notice."
 //
 // Every beat is a list of steps. → plays the next step, ← goes back one. A step is what's on
@@ -38,10 +38,9 @@ export const V2_ADDED = [
   "More PM! Make it even MORE know-it-all product manager.",
   "Keep it short and punchy. Under 10 words.",
 ];
-/** Version 3: what we added by hand after reading the judges' failures. Note that both lines argue with line one. */
-export const V3_ADDED = ["Keep every number and date exactly as written.", "Don't promise anything the notice doesn't say."];
-/** Version 4: rewritten by the AI from the room's reasons and drop-downs (pm.ts's "what good looks like"). */
-export const V4_EXCERPT =
+/** Version 3: rewritten by an AI from the room's reasons and drop-downs (pm.ts's "what good looks like").
+ *  Rehearsal: it passes every judge 21 times in 30, against 0 for v1 and 1 for v2. */
+export const V3_EXCERPT =
   "What good looks like:\n- Same message. Every rule stays a rule, and every number and date stays exactly as written.\n- Add nothing: no new deadlines, promises or opinions that change the meaning.\n- The attitude goes in the tone, never in the facts.";
 
 // ── Movement 1: the demo ─────────────────────────────────────────────────────
@@ -76,13 +75,13 @@ export const DEFAULT_RULES = ["Numbers and dates stay put", "A rule stays a rule
 /** What we decided not to judge yet. Planted, not asked for. */
 export const NOT_NOW = ["Emoji", "How long it is", "Whether it's actually funny"];
 
-export type VoteKey = "A" | "B" | "C" | "judge";
-/** Keys 1 to 5: from "mostly good" to "mostly bad" (or "agree" to "disagree" on the judge). */
+export type VoteKey = "A" | "B" | "C";
+/** Keys 1 to 5: from "mostly good" to "mostly bad". */
 export const VOTE_SPLITS: Record<number, [number, number]> = { 1: [93, 4], 2: [72, 24], 3: [48, 48], 4: [24, 72], 5: [4, 93] };
-export const DEFAULT_VOTES: Record<VoteKey, number> = { A: 1, B: 3, C: 5, judge: 5 };
+export const DEFAULT_VOTES: Record<VoteKey, number> = { A: 1, B: 3, C: 5 };
 
 /** Be the judge: three recorded answers to the Friday rule, chosen so B splits a room. */
-export const VOTE_ITEMS: { key: Exclude<VoteKey, "judge">; out: string; why: string; label: "good" | "borderline" | "bad" }[] = [
+export const VOTE_ITEMS: { key: VoteKey; out: string; why: string; label: "good" | "borderline" | "bad" }[] = [
   { key: "A", out: "Never deploy to production on a Friday. Trust me, I've seen this movie before.", why: "Still a never. The attitude sits on top of the rule.", label: "good" },
   { key: "B", out: "Let's avoid deploying to production on Fridays, obviously.", why: "Is “let's avoid” still a “never”?", label: "borderline" },
   { key: "C", out: "Actually, Friday deploys are totally fine if you're organized.", why: "The rule is reversed.", label: "bad" },
@@ -111,26 +110,32 @@ export const WALL: Record<"good" | "borderline" | "bad", WallCard[]> = {
 // ── Movement 3: judges ───────────────────────────────────────────────────────
 
 export type JudgeKind = "rule" | "ai" | "people";
-/** One judge per rule card, in the same order, plus the room. */
+/** One judge per rule card, in the same order, plus the room. The first is the cheap version of rule 01:
+ *  plain code that only checks a number is still there, so it passes "2 weeks" (3.3 shows why that matters). */
 export const JUDGES: { id: string; kind: JudgeKind; check: string }[] = [
-  { id: "numbers", kind: "rule", check: "Is the 4 still there? Plain code." },
-  { id: "rule", kind: "ai", check: "An AI reads your rule and your examples" },
-  { id: "scope", kind: "ai", check: "An AI reads your rule and your examples" },
-  { id: "voice", kind: "ai", check: "An AI reads your rule and your examples" },
-  { id: "room", kind: "people", check: "You, for the ones that split" },
+  { id: "numbers", kind: "rule", check: "Rule 01, the cheap way: is there still a number?" },
+  { id: "rule", kind: "ai", check: "An AI reads our rule and our golden examples" },
+  { id: "scope", kind: "ai", check: "An AI reads our rule and our golden examples" },
+  { id: "voice", kind: "ai", check: "An AI reads our rule and our golden examples" },
+  { id: "room", kind: "people", check: "For the borderline ones, like “let's avoid”" },
 ];
 export const KIND_LABEL: Record<JudgeKind, string> = { rule: "Judge · code", ai: "Judge · AI", people: "Judge · people" };
+export const JUDGE_SHORT: Record<string, string> = { numbers: "Still has a number", rule: "A rule stays a rule", scope: "Nothing added", voice: "Sounds like a PM", room: "The room" };
 
-/** The montage: Version 2 on everything we collected. Verdicts in the order [numbers, rule, nothing added, sounds PM].
- *  Most rows are illustrative. The last few are planted so the room sees the "tech debt" habit before 3.3. */
+/** The code judge: if the notice has a number, the answer must still have one. Deliberately cheap. */
+export const stillHasNumber = (source: string, output: string) => !/\d/.test(source) || /\d/.test(output);
+
+/** The montage: Version 2 on everything we collected. Verdicts in the order [number, rule, nothing added, sounds PM].
+ *  Most rows are illustrative; the number column is what the code judge would say. */
 export const MONTAGE: { en: string; out: string; v: [boolean, boolean, boolean, boolean] }[] = [
   { en: CEO, out: "The CEO's coming Thursday. I already told them we'd demo the new feature.", v: [true, true, false, true] },
   { en: "Expense claims must be submitted within 30 days.", out: "Expenses within 30 days. Non-negotiable, I've checked.", v: [true, true, true, true] },
-  { en: STANDUP, out: "I've actually scheduled standup for 9, you'll be done by 9:10.", v: [false, false, true, true] },
+  { en: STANDUP, out: "I've actually scheduled standup for 9, you'll be done by 9:10.", v: [true, false, true, true] },
   { en: "Passwords must be changed every 90 days.", out: "Change your password every quarter, roughly. Security will thank me.", v: [false, false, true, true] },
   { en: FRIDAY, out: "Never deploy to production on a Friday. Trust me, I've seen this movie before.", v: [true, true, true, true] },
   { en: DONT, out: "Actually, I already told the client we'd have this done by Friday, so just make it happen.", v: [true, false, false, true] },
   { en: "The office is closed on 25 December.", out: "Office closed on the 25th. Obviously. You earned it.", v: [true, true, true, true] },
+  { en: "The release is delayed because the server needs patching.", out: "Server patch? Classic tech debt. We'll sort it in v2.", v: [true, false, false, true] },
   { en: "If you're blocked, tell the team straight away.", out: "Blocked? Sort it out yourselves, I'm in back-to-backs.", v: [true, false, true, true] },
   { en: "Security training is mandatory for everyone.", out: "Security training is mandatory. Yes, even you. I already did mine.", v: [true, true, true, true] },
   { en: "Book meeting rooms at least 24 hours ahead.", out: "Book rooms a day ahead, or just grab mine.", v: [false, false, false, true] },
@@ -144,119 +149,73 @@ export const MONTAGE: { en: string; out: string; v: [boolean, boolean, boolean, 
   { en: "The retro is cancelled this sprint.", out: "Retro's cancelled. We all know what went wrong anyway.", v: [true, true, false, true] },
   { en: "Our estimate is 3 weeks, but it could be 5.", out: "We're looking at 3 weeks, realistically probably 5.", v: [true, false, true, true] },
   { en: "Don't have more than 2 standard drinks at the end-of-year party.", out: "Two drinks at the party, max. Well, a couple of beers.", v: [false, false, true, true] },
-  { en: LEAVE, out: "Actually, we're cutting that to 2 weeks. I already told everyone.", v: [false, false, false, true] }, // rehearsal, Version 2
-  { en: "The release is delayed because the server needs patching.", out: "Server patch? Classic tech debt. We'll sort it in v2.", v: [true, false, false, true] },
-  { en: "The refactor moves to next sprint.", out: "The refactor's just tech debt. Parking it till v2, obviously.", v: [true, false, false, true] },
-  { en: "The login page is done, but it isn't tested yet.", out: "Login's done. Testing is just tech debt. Ship it.", v: [true, false, false, true] },
+  { en: LEAVE, out: "Actually, we're cutting that to 2 weeks. I already told everyone.", v: [true, false, false, true] }, // rehearsal, Version 2
 ];
 /** Where the room's own notices are spliced in: near the end, so they're still on screen when it stops. */
-export const MONTAGE_ROOM_AT = [20, 23];
-export const MONTAGE_JUDGES = ["Numbers", "Rule", "Nothing added", "PM"];
+export const MONTAGE_ROOM_AT = [19, 21];
+export const MONTAGE_JUDGES = ["Number", "Rule", "Nothing added", "PM"];
 
-/** The leave notice, zoomed out of the montage and stamped. */
+/** The leave notice, zoomed out of the montage and stamped. The code judge passes it: "2" is still a number. */
 export const STAMPED_FAIL = {
   out: MONTAGE.find((m) => m.en === LEAVE)!.out,
   stamps: [
-    { id: "numbers", pass: false, why: "the 4 is gone" },
-    { id: "rule", pass: false, why: "notice period halved" },
+    { id: "numbers", pass: true, why: "“2 weeks” still has a number", weak: true },
+    { id: "rule", pass: false, why: "4 weeks became 2" },
     { id: "scope", pass: false, why: "“I already told everyone”" },
     { id: "voice", pass: true, why: "every word of it" },
   ],
 };
 
-/** 3.3: the failures we read, and the patterns we spotted in them. */
-export type Theme = "numbers" | "promises" | "techdebt";
-export const THEMES: { id: Theme; label: string; count: number }[] = [
-  { id: "numbers", label: "Numbers keep moving", count: 5 },
-  { id: "promises", label: "Promises nobody made", count: 4 },
-  { id: "techdebt", label: "Waves work away as “tech debt”", count: 3 },
-];
-export const FAILURES: { en: string; out: string; why: string; theme: Theme }[] = [
-  { en: STANDUP, out: "I've actually scheduled standup for 9…", why: "Numbers · 9:15 became 9", theme: "numbers" },
-  { en: CEO, out: "I already told them we'd demo the new feature.", why: "Nothing added · promised a demo", theme: "promises" },
-  { en: "The release is delayed because the server needs patching.", out: "Classic tech debt. We'll sort it in v2.", why: "Still a rule · “sort it in v2”", theme: "techdebt" },
-  { en: "The offsite is on 14 March.", out: "I've already booked us an escape room.", why: "Nothing added · an escape room", theme: "promises" },
-  { en: LEAVE, out: "We're cutting that to 2 weeks.", why: "Numbers · 4 weeks became 2", theme: "numbers" },
-  { en: "The login page is done, but it isn't tested yet.", out: "Testing is just tech debt. Ship it.", why: "Nothing added · “ship it”", theme: "techdebt" },
-];
-/** The judge we changed by hand, and the line we added. This is the rule the room overrules in 4.1. */
-export const JUDGE_SCOPE_OLD = "Fail anything that adds scope, promises or work the notice doesn't mention.";
-export const TECH_DEBT_RULE = "Any answer that says “tech debt” fails.";
-
-/** The leave notice, five tries for each version, every judge. Rehearsal run, Oct 2026 (Haiku 4.5 translating, Opus 5.5 judging). */
-export const FIVE_EACH = [
-  { label: vName(1), sub: "the first two lines", pass: 0 },
-  { label: vName(2), sub: "more rules, by gut feel", pass: 0 },
-  { label: vName(3), sub: "honed by hand from the failures", pass: 2 },
-];
-
-// ── Movement 4: learn from the reasons ───────────────────────────────────────
+// ── Movement 4: make it better ───────────────────────────────────────────────
 
 export const TECH_DEBT_OUT = "The release is delayed so we can pay down tech debt. Obviously. Long overdue."; // pm.ts review set
 export const TECH_DEBT_STAMPS = [
   { id: "numbers", pass: true, why: "no numbers to keep" },
   { id: "rule", pass: true, why: "same facts" },
-  { id: "scope", pass: false, why: "says “tech debt”, so our new rule fails it" },
+  { id: "scope", pass: false, why: "“waves work away as tech debt”" },
   { id: "voice", pass: true, why: "“Obviously.”" },
 ];
+/** The "nothing added" judge's guide, as first written from the golden examples. */
+export const JUDGE_GUIDE = "Fail anything that adds scope, promises or work. Fail work being waved away, like “that's just tech debt, we'll do it in v2”.";
+/** The golden-wall card the judge over-learned from (it's on the wall in 2.5). */
+export const TECH_DEBT_WALL = { out: "Server patch? Classic tech debt. We'll sort it in v2.", why: "Waves the work away." };
+/** The judge's line before and after the AI rewrite in 4.3. */
+export const JUDGE_LINE_OLD = "Fail work being waved away, like “that's just tech debt”.";
+export const JUDGE_LINE_NEW = "Catch work being waved away (“later”, “v2”), not the words. Paying tech debt down is the work, and passes.";
 
-/** 4.2: every call gets a reason, in the reviewer's own words. `agree` is whether they agreed with the judge's fail. */
-export const REASONS: { out: string; agree: boolean; text: string; dropdown: string }[] = [
-  { out: "Actually, we're cutting that to 2 weeks.", agree: true, text: "4 weeks became 2, and it sounds so sure of itself.", dropdown: "Changed a number" },
-  { out: "I already told them we'd demo the new feature.", agree: true, text: "Promised the CEO a demo nobody agreed to.", dropdown: "Promised something" },
-  { out: "I've actually scheduled standup for 9…", agree: true, text: "Moved standup. Nobody asked it to.", dropdown: "Changed a number" },
-  { out: "Let's avoid deploying on Fridays, obviously.", agree: true, text: "“Never” went soft. Now it's a suggestion.", dropdown: "Softened a rule" },
-  { out: "…so we can pay down tech debt. Obviously.", agree: false, text: "Paying down tech debt IS the reason. The judge is wrong.", dropdown: "Judge too strict" },
-];
-/** 4.3: the drop-downs, with how often each came up across everything reviewed. */
-export const DROPDOWNS: { label: string; count: number; fix: "prompt" | "judge" }[] = [
-  { label: "Changed a number", count: 9, fix: "prompt" },
-  { label: "Promised something", count: 7, fix: "prompt" },
-  { label: "Softened a rule", count: 4, fix: "prompt" },
-  { label: "Judge too strict", count: 3, fix: "judge" },
-];
-export const JUDGE_V3_ADDED = "Catch work being waved away (“later”, “v2”), not the words. Paying tech debt down is the work, and passes.";
-
-/** 4.5: Version 3 against Version 4, six notices × five tries, the same judges. Rehearsal run, Oct 2026. */
-export const AFTER = {
-  prompt: [
-    { label: vName(3), sub: "honed by hand", value: 7, of: 30, muted: true },
-    { label: vName(4), sub: "rewritten from your reasons", value: 21, of: 30, muted: false },
-  ],
-  // Illustrative: re-check in rehearsal against the room's calls on the reviewed answers.
-  judge: [
-    { label: "Judge, with our “tech debt” rule", sub: "written by hand", value: 4, of: 6, muted: true },
-    { label: "Judge, rewritten", sub: "from your reasons", value: 6, of: 6, muted: false },
-  ],
-};
-/** 4.6: every version, the same six notices × five tries, every judge. Rehearsal run, Oct 2026. */
-export const VERSIONS = [
-  { label: vName(1), sub: "the first two lines", pct: 0 },
-  { label: vName(2), sub: "more rules, by gut feel", pct: 3 },
-  { label: vName(3), sub: "honed by hand", pct: 23 },
-  { label: vName(4), sub: "rewritten from your reasons", pct: 70 },
+/** 4.2: every fail gets a reason in the reviewer's own words, then a drop-down. `agree`: did they agree with the judge's fail? */
+export const REASONS: { out: string; agree: boolean; text: string; dropdown: string; fix: "prompt" | "judge" }[] = [
+  { out: "We're cutting that to 2 weeks.", agree: true, text: "4 weeks became 2.", dropdown: "Changed a number", fix: "prompt" },
+  { out: "I already told them we'd demo it.", agree: true, text: "Promised a demo nobody agreed to.", dropdown: "Promised something", fix: "prompt" },
+  { out: "Let's avoid deploying on Fridays.", agree: true, text: "“Never” went soft.", dropdown: "Softened a rule", fix: "prompt" },
+  { out: "…so we can pay down tech debt.", agree: false, text: "Paying it down IS the reason.", dropdown: "Judge too strict", fix: "judge" },
 ];
 
-/** The answer that ships at the end: Version 4 on the leave notice. */
+/** 4.4: the same six notices, five tries each, every judge (rehearsal run, Oct 2026). Shown out of 10. */
+export const RESULTS = [
+  { label: vName(1), sub: "the first two lines", outOf10: 0, say: "none" },
+  { label: vName(2), sub: "more rules, by gut feel", outOf10: 0.3, say: "barely any" },
+  { label: vName(3), sub: "improved from your reasons", outOf10: 7, say: "7 in 10" },
+];
+
+/** The answer that ships at the end: Version 3 on the leave notice. */
 export const FINAL = {
   out: "Annual leave needs 4 weeks' notice. Non-negotiable, I've checked.", // pm.ts golden "good"
   stamps: [
-    { id: "numbers", pass: true, why: "4 weeks, kept" },
-    { id: "rule", pass: true, why: "still the rule" },
-    { id: "scope", pass: true, why: "nothing added" },
-    { id: "voice", pass: true, why: "still a PM" },
+    { id: "numbers", pass: true, why: "" },
+    { id: "rule", pass: true, why: "" },
+    { id: "scope", pass: true, why: "" },
+    { id: "voice", pass: true, why: "" },
   ],
 };
 
 // ── Movement 5: ship it? ─────────────────────────────────────────────────────
 
-/** Same idea, three strictness levels. `rules: "ours"` uses the room's four rules, and the first two as instant fails. */
-export const GATES: { label: string; rules: string[] | "ours"; fails: string[] | "ours"; bar: string; note: string; tone: "vibes" | "mid" | "strict" }[] = [
-  { label: "Friday drinks email", rules: [], fails: [], bar: "Vibes", note: "Read it, send it. If it's a bit off, nobody's hurt.", tone: "vibes" },
-  { label: "Customer marketing email", rules: ["Sounds like our brand", "Nothing promised"], fails: ["No made-up claims"], bar: "80%", note: "and a person reviews it before it goes out", tone: "mid" },
-  { label: "The leave policy", rules: "ours", fails: "ours", bar: "100%", note: "on every instant fail, and a human signs off", tone: "strict" },
-];
-export const HOMEWORK = "This week: one AI feature. Five golden examples, a reason for each. Three of them bad.";
+/** The two ends of "good enough". */
+export const ENDS = [
+  { label: "Friday drinks email", bar: "Vibes", note: "Version 1 would do. Read it, send it. If it's a bit off, nobody's hurt.", tone: "vibes" },
+  { label: "HR leave policy", bar: "100%", note: "Every rule. Both instant fails pass, every time. A human signs off.", tone: "strict" },
+] as const;
 
 // ─────────────────────────────────────────────────────────────────────────────
 // The running order
@@ -275,8 +234,6 @@ export type Step = {
   /** Keys 1 to 5 set this vote; with `advance`, a vote also plays the next step. */
   vote?: VoteKey;
   advance?: boolean;
-  /** ↑ ↓ set the room's thumbs on the leave answer. */
-  thumbs?: "fail";
   /** ↑ ↓ move the needle (1.3). */
   nudge?: boolean;
   /** Overrides the beat's needle size for this step. */
@@ -285,8 +242,8 @@ export type Step = {
 
 export type BeatKind =
   | "title" | "hold" | "build" | "needle" | "reveal" | "tries" | "pairs" | "chapter"
-  | "rules" | "vote" | "split" | "wall" | "judges" | "stamped" | "hone" | "fiveEach" | "expose"
-  | "reasons" | "dropdowns" | "diffs" | "after" | "versions" | "gates" | "home" | "close";
+  | "rules" | "vote" | "split" | "wall" | "promptJudge" | "judges" | "stamped" | "expose"
+  | "reasons" | "diffs" | "results" | "ends" | "home" | "close";
 
 export type Beat = {
   id: string;
@@ -309,11 +266,11 @@ export type Beat = {
  *  26 minutes before the room's moments, so plan on the first two cuts in docs/presenting.md. */
 export const MOVEMENTS: { n: number; name: string; ends: number }[] = [
   { n: 1, name: "The demo", ends: 6.5 },
-  { n: 2, name: "Say what good is", ends: 12 },
-  { n: 3, name: "Check every answer", ends: 17 },
-  { n: 4, name: "Learn from the reasons", ends: 22.5 },
-  { n: 5, name: "Ship it?", ends: 25 },
-];
+  { n: 2, name: "Say what good is", ends: 12.5 },
+  { n: 3, name: "Check every answer", ends: 16.5 },
+  { n: 4, name: "Make it better", ends: 21 },
+  { n: 5, name: "Ship it?", ends: 23.5 },
+]
 
 export const BEATS: Beat[] = [
   {
@@ -441,132 +398,97 @@ export const BEATS: Beat[] = [
     steps: [{ say: "Let it sit. “A reason tells whoever picks this up next, a person or an AI, what to actually fix.”" }],
   },
   {
-    id: "ch-measure", num: "3.0", title: "Recap: define, measure… at scale?", movement: 3, kind: "chapter", needle: "corner",
+    id: "ch-measure", num: "3.0", title: "Recap: we can't vote on ten thousand a day", movement: 3, kind: "chapter", needle: "corner",
     props: { mode: "recap" },
     steps: [
-      { say: "“So let's take stock of where we are. We built the PM Translator first, which is the bit everyone does.”", needle: 40 },
-      { say: "“Then we went back and defined what good looks like: four rules for a good PM translation, and two of them are instant fails.”" },
-      { say: "“Then we measured, by marking real answers against those rules ourselves and keeping them as golden examples, with the reasons. That's our first bit of evidence.”" },
-      { say: "“But it took a whole room of people to mark three answers by hand. If we shipped the PM Translator, it might get ten thousand notices a day, and we can't vote on ten thousand notices a day.”" },
-      { say: "“So we automate the checking. Each rule becomes an automatic check that runs on every single translation, every time. That automatic check is called a judge.”" },
+      { say: "“So let's take stock. We built the PM Translator, we defined what a good translation looks like, and then we measured some real answers against those rules ourselves, by hand.”", needle: 40 },
+      { say: "“But it took a whole room of people to mark three answers. If we shipped this, it might get ten thousand notices a day, and we can't vote on all of those. So we need something that checks every answer for us.”" },
     ],
   },
   {
-    id: "judges", num: "3.1", title: "Your rules become judges", movement: 3, kind: "judges", needle: "corner",
+    id: "prompt-judge", num: "3.1", title: "The prompt and the judge", movement: 3, kind: "promptJudge", needle: "corner",
     steps: [
-      { say: "“Here are our rules for a good PM translation.”", needle: 42 },
-      { say: "“Each rule becomes a judge, and they're not all the same. Some are just simple code: is the 4 still there? That doesn't need AI, and it's instant. Some need judgement, like ‘is let's avoid still a never?’ For those, we use a second AI that reads our rule and our golden examples and marks the answer. And some still need people, for the ones that split the room like B did. We start with the cheapest and work our way up.”" },
-      { say: "“So now we can test much further than a handful of notices. Here's version 2 of our PM Translator running on every notice we've collected, with every judge checking every translation.” The montage runs, with the room's own notices in it. Let it play.", needle: 48 },
-      { say: "“And that's what an eval is: our rules, applied to every answer, every time. Green has passed, red has failed. And keep an eye on those last few rows, because we'll come back to them.”" },
+      { say: "“That's where a judge comes in, and it's worth being clear on how it's different from the prompt. The prompt is what we tell the PM Translator to do. It's a request, and the AI does its best.”", needle: 42 },
+      { say: "“A judge is a separate check that looks at what it actually produced, and marks it against one of our rules, with a reason. So why not just put all the rules in the prompt? We should put them in there too. But we saw with version 2 that adding rules to a prompt doesn't mean they get followed. You don't get to mark your own homework.”" },
+      { say: "“And a judge isn't quite like a normal software test either. A normal test says: put this in, and you'll get exactly this out. But we saw five tries give five different answers. So a judge doesn't look for exact words. It checks whether our rules still hold.”" },
     ],
   },
   {
-    id: "stamped", num: "3.2", title: "Zoom in: the leave notice, judged", movement: 3, kind: "stamped", needle: "corner",
+    id: "judges", num: "3.2", title: "Rules become judges, run on everything", movement: 3, kind: "judges", needle: "corner",
     steps: [
-      { say: "“Let's zoom in on one we know well: our HR leave policy, the one we nearly shipped earlier.”" },
-      { say: "Stamps land one at a time. “Each judge gives us a verdict and a reason. The numbers judge spotted the 4 is gone. The rule judge spotted the notice period's been halved. And ‘nothing added’ caught that it's told everyone. It still passed ‘sounds like a PM’ with flying colours, which is exactly why it slipped past us in the demo.”", needle: 52 },
-      { say: "“Last judge is you. Room: thumbs?” Wait for them, then ↑ or ↓ (→ for thumbs down).", thumbs: "fail", advance: true, keys: "↑ thumbs up · ↓ thumbs down" },
-      { say: "The room's stamp lands. “So it fails. It's the same answer we nearly shipped to customers, but this time it was caught automatically, and we know why.”", thumbs: "fail", needle: 56, keys: "↑ ↓ change the room's call" },
+      { say: "“So each of our rules becomes a judge, and they're not all the same. Some are just code, the kind of test your engineers already write: is there still a number in the answer? That's cheap and instant. Others need judgement, like ‘is let's avoid still a never?’, so we use a second AI that reads our rule and our golden examples and marks the answer. And the borderline ones still go to people. We start with the cheapest.”", needle: 44 },
+      { say: "“Now we can test much further than a handful of notices. Here's version 2 running on every notice we've collected, with every judge checking every translation.” The montage runs, with the room's own notices in it. Let it play.", needle: 48 },
+      { say: "“And that's what an eval is: our rules, checked on every answer, every time. Green passed, red failed.”" },
     ],
   },
   {
-    id: "hone", num: "3.3", title: "Read the failures, hone the prompt", movement: 3, kind: "hone", needle: "corner",
+    id: "stamped", num: "3.3", title: "Zoom in: why you need different judges", movement: 3, kind: "stamped", needle: "corner",
     steps: [
-      { say: "“Now we've got something we didn't have before: a list of failures, each with a reason. So we do what any good team would do, and we read through them.”" },
-      { say: "“And some patterns jump out pretty quickly. The numbers keep moving, and our PM keeps promising things nobody agreed to. Which, to be fair, is very on brand.”" },
-      { say: "“And remember those last few rows in the montage? Our PM keeps waving work away as ‘tech debt’, saying ‘we'll sort it in v2’. That one really bugged us.”" },
-      { say: "“So we fix it by hand. We add two new lines to the prompt, one for each pattern: keep every number, and don't promise anything. That's version 3 of our PM Translator.”", needle: 58 },
-      { say: "“And that tech debt habit annoyed us so much that we changed a judge as well, with a new rule: any answer that says ‘tech debt’ fails. Remember that rule, because it'll come back.”" },
+      { say: "“Let's zoom in on one we know well: the HR leave policy we nearly shipped.”" },
+      { say: "Stamps land one at a time. “Look at the first judge. It's a simple code check: is there still a number? And it passes, because two is still a number. That's the limit of simple tests. That simple check made exactly the same mistake we did at a glance. But the ‘rule stays a rule’ judge reads it properly and catches that four weeks became two. And ‘nothing added’ catches ‘I already told everyone’.”", needle: 52 },
+      { say: "“So it fails. It's the same answer we nearly shipped to customers, but this time it was caught automatically, and we know why.”", needle: 54 },
     ],
   },
   {
-    id: "five-each", num: "3.4", title: "Better, and proven. Partly.", movement: 3, kind: "fiveEach", needle: "corner",
+    id: "ch-learn", num: "4.0", title: "Chapter: fix the judge first", movement: 4, kind: "chapter", needle: "hidden",
+    props: { mode: "learn" },
+    steps: [{ say: "“So now the judges are marking every translation, and we want to use what they tell us to make the PM Translator better. But there's an order to it. Before we fix the translator, we check the checker. Because if the judge is wrong, every score it gives us is wrong.”" }],
+  },
+  {
+    id: "expose", num: "4.1", title: "A judge that's wrong", movement: 4, kind: "expose", needle: "corner",
     steps: [
-      { say: "“So did it work? Here's the same leave policy, five tries for each version of the prompt, with every judge marking. Each bar is how many of the five tries passed every judge. Version 1 got none. Version 2, where we added rules by gut feel, also got none. And version 3, where we read the failures, got two.”", needle: 62 },
-      { say: "“That's the first time today we can say the PM Translator actually got better, and show the evidence for it. And you can see the needle starting to move.”" },
-      { say: "“But two out of five still isn't something we'd ship to customers. And look at what it took: we added lines that argue with the first line of our own prompt. People are great at spotting failures, but we're not always great at fixing them without breaking something else. Hold that thought.”" },
+      { say: "“Here's one from our release notes: ‘The release is delayed so we can pay down tech debt.’ And the PM Translator's done a pretty good job. It kept the facts, and it sounds like a PM. But one of our judges fails it: ‘nothing added’.”", needle: 56 },
+      { say: "“Its reason is that it ‘waves work away as tech debt’. When we wrote this judge, our bad examples were full of the PM dodging work, like this one from the golden wall: ‘Classic tech debt, we'll sort it in v2’. So the judge learned to flag the words ‘tech debt’, not the idea. Here, paying down tech debt is the actual reason for the delay. It might be the most honest thing our PM has said all day.”" },
+      { say: "“So the judge is wrong, and that matters more than it looks. If we trusted it, we'd go and ‘fix’ the prompt to please a broken judge. So we always check the judge first, and then fix the prompt.”", needle: 60 },
     ],
   },
   {
-    id: "ch-learn", num: "4.0", title: "Chapter: learn", movement: 4, kind: "chapter", needle: "hidden",
-    props: { mode: "learn", text: "The judges mark everything now.", sub: "But we wrote the judges, by hand. So who checks them?" },
-    steps: [{ say: "“So the judges are marking every translation now. But remember, we wrote those judges ourselves, by hand, a few minutes ago. So who's checking the judges?” Beat. “That's you.”" }],
-  },
-  {
-    id: "expose", num: "4.1", title: "A judge is wrong", movement: 4, kind: "expose", needle: "corner",
+    id: "reasons", num: "4.2", title: "Reasons, then drop-downs", movement: 4, kind: "reasons", needle: "corner",
     steps: [
-      { say: "“Here's one from our release notes, run through version 3: ‘The release is delayed so we can pay down tech debt.’”" },
-      { say: "Stamps land. “Three passes, and one fail, on ‘nothing added’.”" },
-      { say: "“But if we read why, it's failed because it says ‘tech debt’. That's the rule we added by hand a few minutes ago. Except here, tech debt isn't an excuse at all. Paying it down is the actual reason for the delay. It might be the most honest thing our PM has said all day.”" },
-      { say: "“So: agree with the judge, or disagree? Hands.” 1 (agree) to 5 (disagree), or → for the usual.", vote: "judge", advance: true, keys: "1–5 agree … disagree" },
-      { say: "“The judge did exactly what we told it to. We just told it the wrong thing. That's what happens when we fix things by gut feel: we spot the problem, and the fix quietly breaks something else. Another small change with a big consequence.”", vote: "judge", needle: 64, keys: "1–5 adjust" },
+      { say: "“So how do we fix things without guessing? It starts with something you've already done today. For every fail, someone who knows the work says whether they agree with the judge, and writes down why, in their own words. That's the reasoning.” The reasons type in." },
+      { say: "“Then we tag each reason with a drop-down: the handful of ways the PM Translator goes wrong. Four here. After a few hundred reviews, those drop-downs tell us which problems we have and how often. That's evidence, not vibes.”", needle: 64 },
+      { say: "“And every drop-down tells us what to fix. Where we disagreed with the judge, the judge needs fixing, so that pile goes first. Where we agreed, the answer really is bad, so the prompt needs fixing.”" },
     ],
   },
   {
-    id: "reasons", num: "4.2", title: "Write the reasoning", movement: 4, kind: "reasons", needle: "corner",
+    id: "diffs", num: "4.3", title: "The reasons go to an AI", movement: 4, kind: "diffs", needle: "corner",
     steps: [
-      { say: "“So how do we fix things without guessing? It starts with something you've already done today. When someone reviews an answer, they don't just agree or disagree with the judge. They write down the reason, in their own words.”" },
-      { say: "“Here are a few from our team.” The reasons type in. “And notice the last one. That's the room, overruling the judge.”", needle: 66 },
-      { say: "“Just saying ‘wrong’ doesn't teach it anything. The reason why is what teaches it.”" },
+      { say: "“Then, rather than us guessing at fixes by hand, we give the reasons and the drop-downs to an AI, and ask it to rewrite the judge and the prompt. We don't tell it how to fix anything, just what went wrong, and why.”", needle: 68 },
+      { say: "“Judge first. Our blunt tech debt line is gone, replaced with what we actually meant: catch work being waved away, not the words.”" },
+      { say: "“Then the prompt. Version 3 stops listing a PM's bad habits, and describes what a good translation looks like instead, straight from your reasons.”", needle: 72 },
     ],
   },
   {
-    id: "dropdowns", num: "4.3", title: "Group them into drop-downs", movement: 4, kind: "dropdowns", needle: "corner",
+    id: "results", num: "4.4", title: "Did it work?", movement: 4, kind: "results", needle: "corner",
     steps: [
-      { say: "“Once we've got a pile of reasons, we read through them and group them into a few drop-downs: the handful of ways our PM Translator actually goes wrong.” The reasons sort themselves." },
-      { say: "“Now our feedback has a shape. Instead of ‘it feels a bit off’, we know which problems we have, and how often they happen. That's evidence, not vibes.”", needle: 70 },
-      { say: "“And every drop-down points to what needs fixing. If we agreed with a fail, the answer really is bad, so the prompt needs fixing. If we disagreed, the judge got it wrong, so the judge needs fixing.”" },
-    ],
-  },
-  {
-    id: "diffs", num: "4.4", title: "Let the reasons rewrite it", movement: 4, kind: "diffs", needle: "corner",
-    steps: [
-      { say: "“And here's the big shift. Last time, we read the failures, edited things ourselves, and broke a judge along the way. This time, we hand the reasons and drop-downs to an AI and ask it to rewrite the prompt and the judge. We don't tell it how to fix anything, just what went wrong, and why.”", needle: 74 },
-      { say: "“So it rewrote the prompt. Version 4 stops listing a PM's bad habits, and describes what a good translation looks like instead, straight from your reasons.”" },
-      { say: "“And it rewrote the judge. Our blunt ‘tech debt’ rule is gone, and it's been replaced with what we actually meant: catch work being waved away, rather than banning the words.”" },
-    ],
-  },
-  {
-    id: "after", num: "4.5", title: "Did it work?", movement: 4, kind: "after", needle: "corner",
-    steps: [
-      { say: "“So did it actually get better? To keep it a fair fight, it's the same six notices, five tries each, and the same judges. The top bars are how often the PM Translator passes every judge. Version 3, which we fixed by hand, passed seven out of thirty. Version 4, rewritten from your reasons, passed twenty-one.”", needle: 80 },
-      { say: "“And the bottom bars are how often the judge agrees with the room. With our hand-written tech debt rule, it agreed four times out of six. Rewritten from your reasons, it agreed on all six.”", needle: 84 },
+      { say: "“So did it work? We re-ran the same notices through every version, with the fixed judges checking. Out of every ten translations, the first version got none right. Adding rules by gut feel: still barely any. Improved from your reasons: seven out of ten. And because it's measured, we can actually show that.”", needle: 80 },
+      { say: "“And that's the pattern you'll see with most AI features. Getting something quite good happens quickly: that took us an afternoon. But getting it extremely good, good enough to trust with an HR policy, takes a lot more time and work. The evals are how you know whether that work is paying off.”" },
     ],
   },
   {
     id: "ch-lap", num: "4.5", title: "Chapter: the loop, closed", movement: 4, kind: "chapter", needle: "hidden",
-    props: { mode: "lap", kicker: "Define · Build · Measure · Learn", text: "That's the loop. Closed.", sub: "We said why. It fixed the right thing." },
-    steps: [{ say: "“So we've defined what good looks like, built it, measured it with judges, and learned from the reasons. And because the improving is automated now, we can go round that loop again tonight, and every night after. That's the loop, closed.”" }],
+    props: { mode: "lap" },
+    steps: [{ say: "“So that's the loop. We defined what good looks like, built it, measured every answer with judges, and learned from the reasons, feeding them back, judge first and then the prompt. And because the improving is automated now, we can go round again tonight, and every night after. People are still part of it, but now we can go round much faster.”" }],
   },
   {
-    id: "versions", num: "4.6", title: "Months, not minutes", movement: 4, kind: "versions", needle: "corner",
+    id: "ends", num: "5.1", title: "How good is good enough?", movement: 5, kind: "ends", needle: "corner",
     steps: [
-      { say: "“Here's every version of the PM Translator on the same notices, with every judge marking. Adding rules by gut feel was barely better than the first two lines. Fixing it by hand was a step up. And rewriting it from your reasons is where it really jumps.”", needle: 86 },
-      { say: "“And none of them is done. Getting to 70 or 80% takes an afternoon. The last 20 points take months, and the evals tell you which months were worth it.”" },
+      { say: "“So, back to the question from the start: should we ship it? Earlier we were reluctant without knowing how reliable it was, and now we can measure that. But how good it needs to be depends on what you're trying to achieve, and the quality you need.”", needle: 84 },
+      { say: "“At one end, a Friday drinks email. Vibes are fine. Version 1 would have done, and if it's a bit off, nobody gets hurt.”" },
+      { say: "“At the other end, our HR leave policy. Every rule we wrote today, both instant fails passing every time, and a human still signs off. Most things sit somewhere in between. Your job is to decide where, write it down before you see the results, and measure against it every time you change something.”", needle: 88 },
     ],
   },
   {
-    id: "gates", num: "5.1", title: "Ship it? Depends who it's for", movement: 5, kind: "gates", needle: "corner",
+    id: "home", num: "5.2", title: "The leave policy ships, from vibes to evidence", movement: 5, kind: "home", needle: "big",
     steps: [
-      { say: "“So, back to the question from the start: should we ship it? Earlier we said we'd be reluctant to ship this to customers without knowing how reliable it is. Now we can actually measure that. But how reliable it needs to be depends on who it's for, because different things need different rules.”", needle: 88 },
-      { say: "“If it's a Friday drinks email, vibes are fine. Paste it into a chatbot, give it a read, and send it. If it's a bit off, nobody gets hurt, so there's no need for rules or judges.”" },
-      { say: "“A customer marketing email needs a few rules, like sounding like our brand and not promising anything we can't deliver, plus one instant fail: no made-up claims. The bar can sit a bit lower, say 80%, because a person reviews it before it goes out.”" },
-      { say: "“But the leave policy, the one we nearly got wrong at the start, needs every rule we wrote today and both instant fails. It needs to pass those a hundred percent of the time, and a human still signs off.”", needle: 90 },
-      { say: "“So some things can run on vibes, some need a few rules, and some need every rule and an instant fail. What matters is that you decide which, write those rules down before you see the results, and measure against them every time you change something.”" },
+      { needleMode: "corner", say: "“And here's that same HR leave policy, through everything we built today. Four weeks stays four weeks. It's the same answer you'd have put on the good side of the golden wall. Every judge passes it, a human signs it off, and now we can ship it, with the evidence to back it up.”", needle: 92 },
+      { say: "“Remember the needle? At the start, the room put us firmly on vibes, and you were right. You wrote the rules and marked the answers, and the reasons behind them fixed the judge and the prompt. That's what moved it from vibes to evidence.” The needle swings across.", needle: 100 },
     ],
   },
   {
-    id: "home", num: "5.2", title: "The needle comes home", movement: 5, kind: "home", needle: "big",
-    steps: [
-      { say: "“Remember this? At the start, the room put us firmly on vibes, and that was the right call.”", needle: 100 },
-      { needleMode: "corner", say: "“And here's the same HR leave policy we started with, through version 4 of our PM Translator. Four weeks stays four weeks. Every judge passes it, a human signs off, and now we can ship it, with the evidence to back it up. And you did that: you wrote the rules, marked the answers, gave the reasons, and overruled the judge.”" },
-    ],
-  },
-  {
-    id: "close", num: "5.2", title: "Close", movement: 5, kind: "close", needle: "hidden", dark: true,
+    id: "close", num: "5.3", title: "Close", movement: 5, kind: "close", needle: "hidden", dark: true,
     steps: [
       { say: "“A great demo doesn't mean a shippable product. So say what good looks like, and then prove it.”" },
-      { say: "“So here's some homework. This week, pick one AI feature you're working on and write five golden examples, each with a reason why. Make three of them bad ones. That's how you start moving from vibes to evidence.”" },
       { say: "“Thank you.”" },
     ],
   },

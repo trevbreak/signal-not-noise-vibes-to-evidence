@@ -5,7 +5,7 @@ import { dispatch, isPresenter } from "./sync";
 // One key map for both windows. A clicker sends → ← (or PageDown PageUp), so those always work.
 //
 //   → PageDown Space   next step          ← PageUp   back one step
-//   1–5                the room's vote     ↑ ↓        thumbs, or move the needle (1.3)
+//   1–5                the room's vote     ↑ ↓        move the needle (1.3)
 //   E  Enter           type the room's words where the step takes them (Enter again to keep, Esc to drop)
 //   X                  remove the room's last notice (1.2)
 //   B  .               black screen        F          full screen (projector)   O   open the presenter window
