@@ -434,7 +434,7 @@ function ChapterView({ beat, step }: P) {
     const rows: [string, ReactNode][] = [
       ["Define", "what good looks like: rules and golden examples"],
       ["Build", <>the <Tag kind="prompt" /></>],
-      ["Measure", <>every answer, with <Tag kind="judge" />s</>],
+      ["Measure", <>every answer, checked by the <Tag kind="judge" /></>],
       ["Learn", "from the reasons: judge first, then the prompt"],
     ];
     return (
@@ -1046,7 +1046,7 @@ function ResultsView({ step }: P) {
                 {r.label}
                 <small>{r.sub}</small>
               </div>
-              <div className="dots a-rise" style={d(i * 0.3)}>
+              <div className="odots a-rise" style={d(i * 0.3)}>
                 {Array.from({ length: 10 }, (_, k) => (
                   <i key={k} className={k < Math.ceil(r.outOf10) ? (r.outOf10 >= 1 ? "on a-stamp" : "faint a-stamp") : ""} style={d(0.5 + i * 0.3 + k * 0.08)} />
                 ))}
