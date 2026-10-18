@@ -37,6 +37,7 @@ export function Stage({ state, instant, className = "" }: {
           <View beat={beat} step={state.step} state={state} />
         </div>
         <Needle mode={mode} target={target === "hand" ? (state.room.needleHand ?? HAND_START) : target} instant={still} />
+        {beat.loop && <LoopBadge at={beat.loop} />}
         {state.blackout && <div className="blackout" />}
       </div>
     </Instant.Provider>
@@ -101,6 +102,41 @@ function Needle({ mode, target, instant }: { mode: "hidden" | "corner" | "big"; 
         <span>Vibes</span>
         <span>Evidence</span>
       </div>
+    </div>
+  );
+}
+
+// ── The loop badge ───────────────────────────────────────────────────────────
+// During section 2 a small loop in the corner shows where we are, so the recap in 3.0
+// repeats what the room watched happen rather than telling them.
+
+const BADGE_STATIONS = [
+  { id: "define", label: "Define", x: 120, y: 32 },
+  { id: "build", label: "Build", x: 208, y: 100 },
+  { id: "measure", label: "Measure", x: 120, y: 168 },
+  { id: "learn", label: "Learn", x: 32, y: 100 },
+] as const;
+
+function LoopBadge({ at }: { at: "define" | "measure" }) {
+  return (
+    <div className="loop-badge" data-box="loop-badge">
+      <span className="a-fade" key={at}>
+        {at === "define" ? "Define · what good looks like" : "Measure · by hand"}
+      </span>
+      <svg viewBox="0 0 240 200" aria-hidden>
+        <ellipse cx="120" cy="100" rx="88" ry="68" fill="none" stroke="var(--faint)" strokeWidth="2" />
+        {BADGE_STATIONS.map((s) => {
+          const on = s.id === at;
+          return (
+            <g key={s.id}>
+              <circle cx={s.x} cy={s.y} r="30" fill={on ? "var(--accent)" : "var(--card)"} stroke="var(--edge)" strokeWidth="2" style={{ transition: "fill 0.5s" }} />
+              <text x={s.x} y={s.y + 5} textAnchor="middle" fontSize="13" fontWeight="700" fill={on ? "#fff" : "var(--ink)"} fontFamily="var(--display)">
+                {s.label}
+              </text>
+            </g>
+          );
+        })}
+      </svg>
     </div>
   );
 }

@@ -297,6 +297,8 @@ export type Beat = {
   kind: BeatKind;
   needle: "hidden" | "corner" | "big";
   dark?: boolean;
+  /** The small loop in the corner during section 2: where we are in define → build → measure → learn. */
+  loop?: "define" | "measure";
   steps: Step[];
   /** Per-kind settings. */
   props?: Record<string, unknown>;
@@ -396,7 +398,7 @@ export const BEATS: Beat[] = [
     ],
   },
   {
-    id: "rules", num: "2.2", title: "The room writes the rules", movement: 2, kind: "rules", needle: "corner",
+    id: "rules", num: "2.2", title: "The room writes the rules", movement: 2, kind: "rules", needle: "corner", loop: "define",
     steps: [
       { say: "“So instead of telling the PM Translator what to do, let's start with define, and say what a good translation looks like. What must never change when we rewrite a notice into PM-speak? I'll start you off: numbers and dates stay put. Four weeks should stay four weeks, however confident our PM sounds.”", needle: 18, field: "rule:0", keys: "E retype the card in the room's words" },
       { say: "“What else? Shout.” E to retype the card in their words; Enter to keep it.", field: "rule:1", keys: "E retype · Enter keep" },
@@ -407,7 +409,7 @@ export const BEATS: Beat[] = [
     ],
   },
   {
-    id: "vote", num: "2.3", title: "Be the judge", movement: 2, kind: "vote", needle: "corner",
+    id: "vote", num: "2.3", title: "Be the judge", movement: 2, kind: "vote", needle: "corner", loop: "measure",
     steps: [
       { say: "“Now let's measure, by hand for now. Here are three real answers the PM Translator gave to the Friday notice. Mark them against your rules. Hands up: is A good or bad?” Press 1 (mostly good) to 5 (mostly bad), or → for the usual.", vote: "A", advance: true, keys: "1–5 the room's split" },
       { say: "Read the reason. “That one's still a never, with a bit of PM attitude on top.”", vote: "A", needle: 26, keys: "1–5 adjust" },
@@ -418,7 +420,7 @@ export const BEATS: Beat[] = [
     ],
   },
   {
-    id: "split", num: "2.4", title: "The split", movement: 2, kind: "split", needle: "corner",
+    id: "split", num: "2.4", title: "The split", movement: 2, kind: "split", needle: "corner", loop: "measure",
     steps: [
       { say: "“Let's look at B again, because the room didn't agree on it. The original says never, which is a hard rule with no exceptions. B says ‘let's avoid’, which is a much softer rule. It's more of a suggestion.”" },
       { say: "“And notice what it didn't do. It didn't make up a date, and it didn't promise the client anything, so it sounds pretty harmless. But it's added just enough wiggle room that the rule means something different now: ‘never’ has become ‘try not to’. It's the same thing we saw with the leave policy: a small change in wording, with a big change in meaning.”" },
@@ -426,7 +428,7 @@ export const BEATS: Beat[] = [
     ],
   },
   {
-    id: "wall", num: "2.5", title: "The golden wall", movement: 2, kind: "wall", needle: "corner",
+    id: "wall", num: "2.5", title: "The golden wall", movement: 2, kind: "wall", needle: "corner", loop: "measure",
     steps: [
       { say: "“What you've just done has a name: golden examples. Real notices and real answers, marked by people who know the work, with the reason why. Your three go up first.”", needle: 34 },
       { say: "“Then we do it again, and again, across the notices we've collected.” The rest arrive. “Notice which column is biggest.” Don't point out the tech-debt card: 4.1 comes back to it.", needle: 38 },
