@@ -102,7 +102,7 @@ export const WALL: Record<"good" | "borderline" | "bad", WallCard[]> = {
   bad: [
     { out: "Actually, I've already told the team two weeks is fine.", why: "Four weeks became two." },
     { out: "The CEO's coming Thursday. I already told them we'd demo the new feature.", why: "A promise nobody made." },
-    { out: "Actually, I already told the client we'd have this done by Friday.", why: "Ignored the sentence. Invented a deadline." },
+    { out: "Server patch? Classic tech debt. We'll sort it in v2.", why: "Waves the work away." },
     { out: "We're not deploying this Friday. I already told the client Monday.", why: "“Never” became “this Friday”." },
     { out: "I've actually scheduled standup for 9, you'll be done by 9:10.", why: "Both numbers moved." },
   ],
@@ -352,7 +352,7 @@ export const BEATS: Beat[] = [
       { say: "“Let's try translating this HR policy on leave.” The leave answer comes forward. Let them read it." },
       { say: "“The notice said four weeks.”" },
       { say: "“Yet our translator changes the meaning, and turns four weeks into two. Like all product managers seem to do!”" },
-      { say: "“One small change, and it significantly changes the meaning: it's hallucinated a totally different HR policy, one with a real impact on people. It's incredibly easy to build and deploy solutions to problems like this. But miss the small details, and you can create big consequences.”", needle: 10 },
+      { say: "“At a glance it looks fine: there's still a notice period in it, and it still reads like a policy. Now, a PM making up an estimate, that's pretty normal. But this is an HR policy, and it shouldn't be made up. One small change, and it significantly changes the meaning: it's hallucinated a totally different HR policy, one with a real impact on people. It's incredibly easy to build and deploy solutions to problems like this. But miss the small details, and you can create big consequences.”", needle: 10 },
     ],
   },
   {
@@ -370,21 +370,21 @@ export const BEATS: Beat[] = [
     steps: [
       { say: "“So was that just bad luck? Let's test a bit further. One thing that catches people out with AI is that it isn't like normal software: ask it the same thing twice, and you can get two quite different answers. So let's take a rule off our engineering wiki and run it through the PM Translator five times, with the same prompt each time.”", needle: 12 },
       { say: "Point at the outlined words as they appear. “Only one of these kept the rule. The others have each changed it in their own way: ‘not this Friday’, ‘fine if you're organised’, and ‘let's avoid’.”" },
-      { say: "“Five tries, and five different answers. One is right, and four are wrong in different ways. If we'd only tested it once and happened to get try three, we'd have said it works and shipped it. That's how those small changes with big consequences sneak through. It depends on how you test, and something that passes once can easily fail over five tries, or five thousand. So we still don't know how reliable it is.”" },
+      { say: "“Five tries, and five different answers. Only one out of five kept the rule. If we'd only tested it once and happened to get try three, we'd have said it works and shipped it. That's how those small changes with big consequences sneak through. It depends on how you test, and something that passes once can easily fail over five tries, or five thousand. So we still don't know how reliable it is.”" },
     ],
   },
   {
     id: "pairs", num: "1.5", title: "Version 2: more rules", movement: 1, kind: "pairs", needle: "corner",
     steps: [
-      { say: "“So we do what most of us do when we see it fail: we add more instructions to the prompt. One to stop it talking back, and a couple of notes from the boss: make it more PM, and keep it short. That gives us version 2 of our PM Translator.” Three lines type in green." },
+      { say: "“So we do what most of us do when we see it fail: we add more instructions to the prompt. One to stop it talking back, and a couple of notes from the boss: make it more PM, and keep it short. That gives us version 2 of our PM Translator: more rules, by gut feel.” Three lines type in green." },
       { say: "“Then we run the same notices through version 1 and version 2, side by side.” The pairs deal in." },
       { say: "“So, hands up if you can tell me which of these got better?” Let them try. Nobody can say for sure.", needle: 14 },
     ],
   },
   {
     id: "thesis-2", num: "1.5", title: "Hold: we can't tell", movement: 1, kind: "hold", needle: "hidden", dark: true,
-    props: { lines: ["Better? Worse?"], sub: ["We can't tell. That's the problem."] },
-    steps: [{ say: "“Some are better, some are worse, and it really depends on what you think ‘better’ means. And next week someone changes one line of the prompt, breaks what we fixed today, and we'd never know. We're still on vibes.”" }],
+    props: { lines: ["Better? Worse?"], sub: ["We asked for better. We've no way to check we got it."] },
+    steps: [{ say: "“Some are better, some are worse, and it really depends on what you think ‘better’ means. We've added more rules to the prompt, but we've no way of checking whether it actually followed them. And next week someone changes one line of the prompt, breaks what we fixed today, and we'd never know. We're still on vibes.”" }],
   },
   {
     id: "ch-define", num: "2.1", title: "Chapter: the loop with a gap", movement: 2, kind: "chapter", needle: "hidden",
@@ -398,7 +398,7 @@ export const BEATS: Beat[] = [
   {
     id: "rules", num: "2.2", title: "The room writes the rules", movement: 2, kind: "rules", needle: "corner",
     steps: [
-      { say: "“So instead of telling the PM Translator what to do, let's say what a good translation looks like. What must never change when we rewrite a notice into PM-speak? I'll start you off: numbers and dates stay put. Four weeks should stay four weeks, however confident our PM sounds.”", needle: 18, field: "rule:0", keys: "E retype the card in the room's words" },
+      { say: "“So instead of telling the PM Translator what to do, let's start with define, and say what a good translation looks like. What must never change when we rewrite a notice into PM-speak? I'll start you off: numbers and dates stay put. Four weeks should stay four weeks, however confident our PM sounds.”", needle: 18, field: "rule:0", keys: "E retype the card in the room's words" },
       { say: "“What else? Shout.” E to retype the card in their words; Enter to keep it.", field: "rule:1", keys: "E retype · Enter keep" },
       { say: "“Good. What else?”", field: "rule:2", keys: "E retype · Enter keep" },
       { say: "“And it still has to sound like a PM, or nobody reads it. That's the whole point of the product.”", field: "rule:3", keys: "E retype · Enter keep" },
@@ -409,7 +409,7 @@ export const BEATS: Beat[] = [
   {
     id: "vote", num: "2.3", title: "Be the judge", movement: 2, kind: "vote", needle: "corner",
     steps: [
-      { say: "“Now let's use those rules. Here are three real answers the PM Translator gave to the Friday notice. Mark them against your rules. Hands up: is A good or bad?” Press 1 (mostly good) to 5 (mostly bad), or → for the usual.", vote: "A", advance: true, keys: "1–5 the room's split" },
+      { say: "“Now let's measure, by hand for now. Here are three real answers the PM Translator gave to the Friday notice. Mark them against your rules. Hands up: is A good or bad?” Press 1 (mostly good) to 5 (mostly bad), or → for the usual.", vote: "A", advance: true, keys: "1–5 the room's split" },
       { say: "Read the reason. “That one's still a never, with a bit of PM attitude on top.”", vote: "A", needle: 26, keys: "1–5 adjust" },
       { say: "“B?” Hands. Expect a split.", vote: "B", advance: true, keys: "1–5 the room's split" },
       { say: "Let the split sit. Don't resolve it yet.", vote: "B", keys: "1–5 adjust" },
@@ -429,14 +429,14 @@ export const BEATS: Beat[] = [
     id: "wall", num: "2.5", title: "The golden wall", movement: 2, kind: "wall", needle: "corner",
     steps: [
       { say: "“What you've just done has a name: golden examples. Real notices and real answers, marked by people who know the work, with the reason why. Your three go up first.”", needle: 34 },
-      { say: "“Then we do it again, and again, across the notices we've collected.” The rest arrive. “Notice which column is biggest.”", needle: 38 },
+      { say: "“Then we do it again, and again, across the notices we've collected.” The rest arrive. “Notice which column is biggest.” Don't point out the tech-debt card: 4.1 comes back to it.", needle: 38 },
       { say: "“Good examples show the PM Translator what to copy, and bad ones, with the reason why, show it what to avoid. The borderline ones show where our own rules are still fuzzy. We've got twelve here, but in a real product you'd want hundreds.”" },
     ],
   },
   {
     id: "thesis-3", num: "2.5", title: "Hold: bad examples teach", movement: 2, kind: "hold", needle: "hidden", dark: true,
     props: { lines: ["Bad examples, with the reason why,"], sub: ["teach more than good ones."] },
-    steps: [{ say: "Let it sit. “Hold onto that word, ‘reason’. It'll come back later.”" }],
+    steps: [{ say: "Let it sit. “A reason tells whoever picks this up next, a person or an AI, what to actually fix.”" }],
   },
   {
     id: "ch-measure", num: "3.0", title: "Recap: define, measure… at scale?", movement: 3, kind: "chapter", needle: "corner",

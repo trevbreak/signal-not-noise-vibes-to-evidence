@@ -326,7 +326,7 @@ function TriesView({ step }: P) {
 function PairsView({ step }: P) {
   return (
     <>
-      <Note kind="prompt" title={vName(2)} className="a-rise">
+      <Note kind="prompt" title={vName(2)} aside="more rules, by gut feel" className="a-rise">
         <span className="old">{V1}</span>
         {V2_ADDED.map((l, i) => (
           <div key={i} className="add">
