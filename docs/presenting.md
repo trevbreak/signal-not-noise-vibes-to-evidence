@@ -16,7 +16,7 @@ Two things are always labelled the same way, in the same colour: the **Prompt** 
 | 4 · Learn from the reasons | The hand-added judge rule fails an honest answer and the room overrules it, write the reasoning, group it into drop-downs, an AI rewrites the prompt and judge, did it work, the loop closes | 22.5 min |
 | 5 · Ship it? | Three gates with different rules, the needle comes home, the close and the homework | 25 min |
 
-The clock in the presenter window starts when you leave the title card and turns red when you're behind a checkpoint. The speaking lines come to about 22½ minutes at a comfortable pace before any of the room's moments, so there's no slack: rehearse with the clock and use the cut list below.
+The clock in the presenter window starts when you leave the title card and turns red when you're behind a checkpoint. In full, the speaking lines come to about 26 minutes at a steady 150 words a minute, before any of the room's moments. That's over the slot. Plan on the first two cuts below (together about 1½ minutes), and keep the third (about another minute) ready. Rehearse with the clock: if you naturally speak faster, you may not need them.
 
 ## Setting up
 
@@ -95,7 +95,7 @@ All of it lives in [`src/talk/content.ts`](../src/talk/content.ts).
 
 ## If you're running long
 
-Cut in this order. Each is one beat, and the story holds without it.
+Cut in this order. Each is one beat, and the story holds without it. Rough savings: 1 about 45 seconds, 2 about 40 seconds, 3 about a minute, 4 a few seconds.
 
 1. **1.5 Version 2: more rules** (the side-by-side pairs). Say “so we added more rules, and some got better and some got worse” over the five tries and move on. The v2 prompt still appears in 3.3.
 2. **4.6 Months, not minutes.** Say the 80% line over the loop chapter card.

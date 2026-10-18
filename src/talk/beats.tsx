@@ -315,7 +315,7 @@ function TriesView({ step }: P) {
         <div className="tries-foot" data-box="foot">
           <div className="t-l a-rise">5 tries. 5 answers.</div>
           <div className="t-s t-muted a-rise" style={d(0.6)}>
-            It passed once. That proves almost nothing.
+            Passing once doesn't tell us how reliable it is.
           </div>
         </div>
       )}
@@ -1196,7 +1196,7 @@ function HomeView({ step }: P) {
     return (
       <div className="ship" data-box="ship">
         <div className="t-xl a-rise" style={d(1.2)}>
-          You moved it.
+          From vibes to evidence.
         </div>
         <div className="ship-sub">
           <div className="t-s t-muted a-rise" style={d(1.8)}>
