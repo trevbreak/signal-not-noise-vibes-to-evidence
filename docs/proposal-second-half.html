@@ -1,0 +1,584 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Second half proposal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ground: #f3eee3; --card: #fff; --card-2: #faf7f0; --edge: #e2d9c6; --ink: #1d1b17; --muted: #6b6354; --faint: #a69e8d;
+    --accent: #d9480f; --pass: #1f7a45; --pass-soft: rgba(31,122,69,.1); --fail: #c2362b; --fail-soft: rgba(194,54,43,.12);
+    --mid: #b7791f; --mid-soft: rgba(183,121,31,.12); --prompt: #0b7a6e; --prompt-soft: rgba(11,122,110,.1);
+    --judge: #2f5fd0; --judge-soft: rgba(47,95,208,.1); --vibes: #e2669a; --hold: #1d1b17;
+    --display: "Bricolage Grotesque", "Helvetica Neue", Arial, sans-serif; --mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+    --shadow: 0 .25cqw 1.1cqw rgba(70,50,10,.1), 0 0 0 .08cqw var(--edge);
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #ebe5d8; color: var(--ink); font-family: var(--display); line-height: 1.45; }
+  .page { max-width: 1320px; margin: 0 auto; padding: 40px 24px 80px; }
+  h1 { font-size: 40px; letter-spacing: -.02em; margin: 0 0 8px; line-height: 1.1; }
+  .lede { font-size: 18px; color: var(--muted); max-width: 820px; margin: 0 0 28px; }
+  h2.sec { font-size: 26px; margin: 56px 0 6px; letter-spacing: -.01em; }
+  .sec-sub { color: var(--muted); margin: 0 0 18px; max-width: 860px; }
+  .box { background: var(--card); border-radius: 14px; padding: 20px 24px; box-shadow: 0 1px 0 var(--edge), 0 6px 18px rgba(70,50,10,.06); }
+  table { border-collapse: collapse; width: 100%; font-size: 15px; }
+  th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--edge); vertical-align: top; }
+  th { font-family: var(--mono); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); font-weight: 500; }
+  td.cut { color: var(--faint); text-decoration: line-through; }
+  .pill { display: inline-block; font-family: var(--mono); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; padding: 2px 8px; border-radius: 99px; font-weight: 600; }
+  .pill.new { background: var(--accent); color: #fff; } .pill.chg { background: var(--mid-soft); color: var(--mid); } .pill.cut { background: var(--fail-soft); color: var(--fail); } .pill.keep { background: var(--pass-soft); color: var(--pass); }
+  ul.tight { margin: 8px 0 0; padding-left: 20px; } ul.tight li { margin: 4px 0; }
+
+  .prop { margin: 34px 0 0; }
+  .prop-head { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; margin-bottom: 12px; }
+  .prop-head .n { font-family: var(--mono); color: var(--accent); font-weight: 600; }
+  .prop-head h3 { margin: 0; font-size: 22px; letter-spacing: -.01em; }
+  .prop-head .rep { color: var(--muted); font-size: 14px; }
+  .grid { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 22px; align-items: start; }
+  @media (max-width: 900px) { .grid { grid-template-columns: 1fr; } }
+  .states { display: grid; gap: 10px; }
+  .state-lbl { font-family: var(--mono); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
+  .track ol { margin: 0; padding-left: 0; list-style: none; counter-reset: s; }
+  .track li { counter-increment: s; position: relative; padding: 0 0 12px 34px; font-size: 15.5px; }
+  .track li::before { content: "→" counter(s); position: absolute; left: 0; top: 1px; font-family: var(--mono); font-size: 12px; color: var(--accent); font-weight: 600; }
+  .track .stage { color: var(--muted); font-style: italic; font-size: 14px; }
+  .why { margin-top: 6px; padding: 12px 14px; border-left: 3px solid var(--accent); background: rgba(217,72,15,.05); border-radius: 0 8px 8px 0; font-size: 14.5px; }
+  .why b { color: var(--accent); }
+
+  /* ── The mock slide: same cqw system as the real stage ── */
+  .slide { container-type: inline-size; position: relative; aspect-ratio: 16/9; background: var(--ground); border-radius: 8px; overflow: hidden; box-shadow: 0 0 0 1px var(--edge), 0 8px 24px rgba(70,50,10,.12); font-family: var(--display); line-height: 1.2; }
+  .slide.dark { background: var(--hold); color: #f3eee3; }
+  .slide * { box-sizing: border-box; }
+  .lab { font-family: var(--mono); font-size: 1.15cqw; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); font-weight: 500; }
+  .tm { font-size: 2.9cqw; font-weight: 700; letter-spacing: -.015em; line-height: 1.15; }
+  .tl { font-size: 4cqw; font-weight: 800; letter-spacing: -.03em; line-height: 1.05; }
+  .ts { font-size: 2cqw; font-weight: 500; line-height: 1.25; }
+  .q { position: absolute; left: 6cqw; right: 18cqw; top: 4cqw; }
+  .ptag { display: inline-block; font-family: var(--mono); font-size: .82em; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; line-height: 1; padding: .3em .6em; border-radius: .35em; color: #fff; vertical-align: .12em; }
+  .ptag.prompt { background: var(--prompt); } .ptag.judge { background: var(--judge); }
+  .needle { position: absolute; top: 2cqw; right: 3cqw; width: 11cqw; }
+  .needle .sc { display: flex; justify-content: space-between; font-family: var(--mono); font-size: .8cqw; letter-spacing: .1em; text-transform: uppercase; }
+  .needle .sc span:first-child { color: var(--vibes); } .needle .sc span:last-child { color: var(--pass); }
+  .card { background: var(--card); border-radius: 1.1cqw; box-shadow: var(--shadow); padding: 1.8cqw 2.2cqw; }
+  .card .en { font-size: 1.6cqw; color: var(--muted); margin-bottom: .7cqw; }
+  .card .out { font-size: 2.5cqw; font-weight: 700; line-height: 1.18; }
+  .mark { border-radius: .3cqw; padding: 0 .1em; }
+  .mark.bad { background: var(--fail-soft); box-shadow: 0 0 0 .2cqw var(--fail); }
+  .mark.ok { background: var(--pass-soft); box-shadow: 0 0 0 .2cqw var(--pass); }
+  .mark.mid { background: var(--mid-soft); box-shadow: 0 0 0 .2cqw var(--mid); }
+  .stamps { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0,1fr); gap: 1cqw; }
+  .stamp { background: var(--card); border-radius: .9cqw; border: .22cqw solid var(--edge); padding: .9cqw .7cqw; text-align: center; display: grid; gap: .2cqw; align-content: start; }
+  .stamp .g { font-size: 2cqw; font-weight: 800; line-height: 1; }
+  .stamp .who { font-family: var(--mono); font-size: .8cqw; letter-spacing: .1em; text-transform: uppercase; color: var(--judge); }
+  .stamp .nm { font-size: 1.3cqw; font-weight: 700; line-height: 1.15; }
+  .stamp .why { font-size: 1.05cqw; color: var(--muted); line-height: 1.25; font-weight: 500; margin: 0; padding: 0; border: 0; background: none; }
+  .stamp.ok { border-color: var(--pass); color: var(--pass); } .stamp.no { border-color: var(--fail); color: var(--fail); }
+  .stamp.hl { box-shadow: 0 0 0 .5cqw var(--mid-soft); border-color: var(--mid); color: var(--mid); }
+  .note { background: var(--card-2); border-radius: 1cqw; padding: 1.4cqw 1.6cqw; box-shadow: 0 0 0 .08cqw var(--edge); }
+  .note.prompt { border-left: .55cqw solid var(--prompt); } .note.judge { border-left: .55cqw solid var(--judge); }
+  .note .nh { display: flex; align-items: center; gap: .8cqw; font-family: var(--mono); font-size: 1.05cqw; letter-spacing: .1em; text-transform: uppercase; margin-bottom: .8cqw; }
+  .note .nh .as { margin-left: auto; color: var(--muted); }
+  .note .bd { font-family: var(--mono); font-size: 1.15cqw; line-height: 1.5; }
+  .note .old { color: var(--muted); } .note .add { color: var(--pass); } .note .del { color: var(--fail); text-decoration: line-through; }
+  .chip { font-size: 1.2cqw; font-weight: 600; border-radius: 99cqw; padding: .3cqw .9cqw; display: inline-block; }
+  .chip.prompt { color: var(--prompt); background: var(--prompt-soft); box-shadow: 0 0 0 .12cqw var(--prompt); }
+  .chip.judge { color: var(--judge); background: var(--judge-soft); box-shadow: 0 0 0 .12cqw var(--judge); }
+  .cap { position: absolute; left: 6cqw; right: 6cqw; text-align: center; }
+</style>
+</head>
+<body>
+<div class="page">
+
+<h1>The second half, rethought</h1>
+<p class="lede">A proposal from your run-through. Slides 1–47 stay as they are, with a few light touches. From slide 48 on, the talk goes from 51 presses to 31, built around one idea per slide. Each new or changed slide below has a mock (its final state, or two states where it changes a lot) and the talk track. Nothing is built yet.</p>
+
+<div class="box">
+  <b>What this fixes, against your notes</b>
+  <ul class="tight">
+    <li><b>Too long by ~10 minutes.</b> The second half drops from 51 to 31 presses, and from about 15 to about 11 minutes of speaking. That brings the whole talk to about 22½ minutes before the room's moments. The other half of your overrun was working out how to frame things on stage, and each slide now carries one idea with the framing written in.</li>
+    <li><b>What a judge is.</b> A new slide sets the Prompt (asks) against the Judge (checks): why you need both, why it's not all in the prompt, and how it differs from a normal test. The zoom-in then shows <i>why</i> you need different kinds of judge: a simple code check passes the two-weeks answer, and an AI judge catches it.</li>
+    <li><b>Slides 61–68 (hand-honing, the sticky notes, the numbers that didn't match).</b> Cut. There's no hand-fixed version any more. The versions are now v1 (two lines), v2 (more rules by gut feel) and v3 (improved from the reasons), all with real rehearsal numbers.</li>
+    <li><b>"Remember this tech debt rule."</b> Gone. The tech-debt moment is now effect → cause → fix on one slide: the room says the answer is fine, a judge fails it, its reason shows why, and the fix is to fix the judge first.</li>
+    <li><b>Judge first, then prompt.</b> This is now the spine of section 4: its chapter card, the order of the drop-down piles, and the order the AI rewrites them.</li>
+    <li><b>Slide 79's counts.</b> No counts that don't match the screen. Four reviewed answers, four drop-downs, colour-coded by what they fix (blue = Judge, teal = Prompt), sorted into piles of 1 and 3.</li>
+    <li><b>Slides 81–83.</b> No standalone prompt slide: the feedback flows into an AI, and out come the new judge, then the new prompt.</li>
+    <li><b>Slides 84–88.</b> One "did it work" chart: every version, same notices, same judges. Then the 80%-in-an-afternoon line.</li>
+    <li><b>Slides 89–93.</b> Two ends only: vibes (Friday drinks) vs evidence (HR leave policy), with "most things sit in between". The odd caption is gone.</li>
+    <li><b>Slides 94–95.</b> Swapped and joined: the leave policy passing first, then the needle swings to evidence as the payoff.</li>
+    <li><b>Homework.</b> Removed.</li>
+  </ul>
+</div>
+
+<h2 class="sec">The new running order, from slide 48</h2>
+<p class="sec-sub">Old slide numbers on the left. Struck-through rows are cut. About 11 minutes of speaking, down from about 15.</p>
+<div class="box">
+<table>
+  <tr><th>Old slides</th><th>Was</th><th>New</th><th>Presses</th><th></th></tr>
+  <tr><td>48–52</td><td>Recap (5 steps)</td><td>3.0 Recap: we can't vote on ten thousand a day</td><td>2</td><td><span class="pill chg">Shorter</span></td></tr>
+  <tr><td>—</td><td>—</td><td>3.1 The prompt and the judge</td><td>3</td><td><span class="pill new">New</span></td></tr>
+  <tr><td>53–56</td><td>Rules become judges, montage</td><td>3.2 Rules become judges, run on everything</td><td>3</td><td><span class="pill chg">Changed</span></td></tr>
+  <tr><td>57–60</td><td>Zoom in, stamps, room thumbs</td><td>3.3 Zoom in: why you need different judges</td><td>3</td><td><span class="pill chg">Changed</span></td></tr>
+  <tr><td class="cut">61–65</td><td class="cut">Read the failures, sticky notes, hone v3 by hand, tech-debt rule</td><td>—</td><td>—</td><td><span class="pill cut">Cut</span></td></tr>
+  <tr><td class="cut">66–68</td><td class="cut">Five tries each</td><td>—</td><td>—</td><td><span class="pill cut">Cut</span></td></tr>
+  <tr><td>69</td><td>Chapter: who checks the judges?</td><td>4.0 Chapter: check the checker first</td><td>1</td><td><span class="pill chg">Changed</span></td></tr>
+  <tr><td>70–74</td><td>A judge is wrong (the rule we added)</td><td>4.1 A judge that's wrong: effect, cause, fix</td><td>3</td><td><span class="pill chg">Changed</span></td></tr>
+  <tr><td>75–80</td><td>Reasoning; drop-downs</td><td>4.2 Reasons, then drop-downs</td><td>3</td><td><span class="pill chg">Merged</span></td></tr>
+  <tr><td>81–83</td><td>AI rewrites prompt and judge</td><td>4.3 The reasons go to an AI</td><td>3</td><td><span class="pill chg">Changed</span></td></tr>
+  <tr><td>84–85, 87–88</td><td>Did it work; every version</td><td>4.4 Did it work?</td><td>2</td><td><span class="pill chg">Merged</span></td></tr>
+  <tr><td>86</td><td>The loop, closed</td><td>4.5 The loop, closed</td><td>1</td><td><span class="pill keep">Reworded</span></td></tr>
+  <tr><td>89–93</td><td>Three gates</td><td>5.1 How good is good enough?</td><td>3</td><td><span class="pill chg">Changed</span></td></tr>
+  <tr><td>94–95</td><td>Needle home; the leave policy</td><td>5.2 The leave policy ships → vibes to evidence</td><td>2</td><td><span class="pill chg">Swapped</span></td></tr>
+  <tr><td>96–98</td><td>Close, homework, thank you</td><td>5.3 Close, thank you</td><td>2</td><td><span class="pill chg">No homework</span></td></tr>
+</table>
+</div>
+
+<h2 class="sec">First half: light touches only</h2>
+<div class="box">
+  <ul class="tight">
+    <li><b>Slide 16.</b> Take what you ad-libbed, which landed better: <i>"Now, a PM making up an estimate, that's pretty normal. But this is an HR policy. It shouldn't be made up."</i> Then on into "One small change…".</li>
+    <li><b>Slide 45, the golden wall.</b> Swap one bad example for <i>"Server patch? Classic tech debt. We'll sort it in v2."</i> with the reason "Waves the work away". It's on screen for the room to see, and it's where the over-strict judge in 4.1 learned its bad habit, without asking anyone to remember it.</li>
+    <li><b>Slide 34.</b> You asked the room "why don't we just put more in the prompt?" on the fly. Leave it out there: 3.1 now answers it properly.</li>
+    <li><b>The montage.</b> Remove the tech-debt highlighting and the "keep an eye on those last few rows" line.</li>
+  </ul>
+</div>
+
+<h2 class="sec">3 · Check every answer</h2>
+
+<!-- 3.0 -->
+<div class="prop">
+  <div class="prop-head"><span class="n">3.0</span><h3>Recap: we can't vote on ten thousand a day</h3><span class="pill chg">Shorter</span><span class="rep">replaces 48–52 (5 presses → 2)</span></div>
+  <div class="grid">
+    <div class="slide">
+      <svg viewBox="0 0 440 360" style="position:absolute;left:5cqw;top:6cqw;width:38cqw">
+        <ellipse cx="220" cy="180" rx="160" ry="125" fill="none" stroke="#a69e8d" stroke-width="3"/>
+        <circle cx="220" cy="55" r="46" fill="#1d1b17"/><text x="220" y="62" text-anchor="middle" font-size="20" fill="#fff" font-weight="700" font-family="Bricolage Grotesque">Define</text>
+        <circle cx="380" cy="180" r="46" fill="#1d1b17"/><text x="380" y="187" text-anchor="middle" font-size="20" fill="#fff" font-weight="700" font-family="Bricolage Grotesque">Build</text>
+        <circle cx="220" cy="305" r="46" fill="#d9480f"/><text x="220" y="312" text-anchor="middle" font-size="20" fill="#fff" font-weight="700" font-family="Bricolage Grotesque">Measure</text>
+        <circle cx="60" cy="180" r="46" fill="#fff" stroke="#e2d9c6" stroke-width="3"/><text x="60" y="187" text-anchor="middle" font-size="20" fill="#1d1b17" font-weight="700" font-family="Bricolage Grotesque">Learn</text>
+      </svg>
+      <div style="position:absolute;left:50cqw;right:5cqw;top:14cqw;display:grid;gap:1.6cqw">
+        <div class="ts" style="color:var(--muted)"><b style="color:var(--ink)">Define:</b> four rules, two instant fails.<br><b style="color:var(--ink)">Measure:</b> three answers, marked by hand.</div>
+        <div class="tl">You can't vote on ten thousand notices a day.</div>
+      </div>
+      <div class="needle"><svg viewBox="0 0 200 112"><path d="M22 100A78 78 0 0 1 178 100" fill="none" stroke="#d8c9b8" stroke-width="13" stroke-linecap="round"/><line x1="100" y1="100" x2="62" y2="40" stroke="#1d1b17" stroke-width="5" stroke-linecap="round"/><circle cx="100" cy="100" r="7" fill="#1d1b17"/></svg><div class="sc"><span>Vibes</span><span>Evidence</span></div></div>
+    </div>
+    <div class="track">
+      <ol>
+        <li>"So let's take stock. We built the PM Translator, we defined what a good translation looks like, and then we measured some real answers against those rules ourselves, by hand."</li>
+        <li>"But it took a whole room of people to mark three answers. If we shipped this, it might get ten thousand notices a day, and we can't vote on all of those. So we need something that checks every answer for us."</li>
+      </ol>
+      <div class="why"><b>Why:</b> the five-step recap repeated what had just happened. Two steps get the "we need automation" turn without the replay.</div>
+    </div>
+  </div>
+</div>
+
+<!-- 3.1 -->
+<div class="prop">
+  <div class="prop-head"><span class="n">3.1</span><h3>The prompt and the judge</h3><span class="pill new">New</span><span class="rep">answers "what's a judge?" and "why not just put it in the prompt?"</span></div>
+  <div class="grid">
+    <div class="slide">
+      <div class="q"><div class="lab">Two different jobs</div><div class="tm">The prompt asks. The judge checks.</div></div>
+      <div style="position:absolute;left:6cqw;right:6cqw;top:13cqw;display:grid;grid-template-columns:1fr 1fr;gap:2cqw">
+        <div class="note prompt" style="min-height:22cqw">
+          <div class="nh"><span class="ptag prompt">Prompt</span> what we tell the translator</div>
+          <div class="tm" style="font-size:2.2cqw;margin-bottom:1cqw">Tells it what to do.</div>
+          <div class="bd old">"Rewrite this like a pushy PM. Keep every number. Keep it short."</div>
+          <div class="ts" style="font-size:1.5cqw;margin-top:1.2cqw;color:var(--muted)">A request. The AI does its best, and we saw in version 2 that adding rules doesn't mean they're followed.</div>
+        </div>
+        <div class="note judge" style="min-height:22cqw">
+          <div class="nh"><span class="ptag judge">Judge</span> a separate check, after</div>
+          <div class="tm" style="font-size:2.2cqw;margin-bottom:1cqw">Checks what it actually did.</div>
+          <div class="bd old">"Is the notice period still 4 weeks?" → <span style="color:var(--fail)">✗ Fail: it became 2.</span></div>
+          <div class="ts" style="font-size:1.5cqw;margin-top:1.2cqw;color:var(--muted)">Runs on every answer, gives a pass or fail and a reason. You don't mark your own homework.</div>
+        </div>
+      </div>
+      <div style="position:absolute;left:6cqw;right:6cqw;top:39cqw;display:grid;grid-template-columns:1fr 1fr;gap:2cqw;align-items:center">
+        <div class="card" style="padding:1.2cqw 1.6cqw"><div class="lab" style="font-size:.95cqw">A normal software test</div><div class="ts" style="font-size:1.6cqw">Same input → <b>exactly</b> this output.</div></div>
+        <div class="card" style="padding:1.2cqw 1.6cqw;box-shadow:0 0 0 .2cqw var(--judge)"><div class="lab" style="font-size:.95cqw;color:var(--judge)">A judge</div><div class="ts" style="font-size:1.6cqw">Five different answers → <b>do the rules still hold?</b></div></div>
+      </div>
+    </div>
+    <div class="track">
+      <ol>
+        <li>"That's where a judge comes in, and it's worth being clear on how it's different from the prompt. The prompt is what we tell the PM Translator to do. It's a request, and the AI does its best." <span class="stage">Prompt card.</span></li>
+        <li>"A judge is a separate check that looks at what it actually produced, and marks it against one of our rules, with a reason. So why not just put all the rules in the prompt? We should put them in there too. But we saw with version 2 that adding rules to a prompt doesn't mean they get followed. You don't get to mark your own homework." <span class="stage">Judge card.</span></li>
+        <li>"And a judge isn't quite like a normal software test either. A normal test says: put this in, and you'll get exactly this out. But we saw five tries give five different answers. So a judge doesn't look for exact words. It checks whether our rules still hold." <span class="stage">The bottom strip.</span></li>
+      </ol>
+      <div class="why"><b>Why:</b> you said we never explain what a judge is, how it differs from a test, or why you need both. This also answers the question you asked the room on the fly at slide 34.</div>
+    </div>
+  </div>
+</div>
+
+<!-- 3.2 -->
+<div class="prop">
+  <div class="prop-head"><span class="n">3.2</span><h3>Rules become judges, run on everything</h3><span class="pill chg">Changed</span><span class="rep">replaces 53–56</span></div>
+  <div class="grid">
+    <div class="states">
+      <div><div class="state-lbl">→1 · rules become judges</div>
+      <div class="slide">
+        <div class="q"><div class="lab">Our rules, as judges · cheapest first</div></div>
+        <div style="position:absolute;left:6cqw;right:6cqw;top:12cqw" class="stamps">
+          <div class="stamp" style="border-color:var(--judge)"><span class="who">Judge · code</span><span class="nm" style="color:var(--ink)">Has a notice period?</span><span class="why">A number and days or weeks. Plain code, instant.</span></div>
+          <div class="stamp" style="border-color:var(--judge)"><span class="who">Judge · AI</span><span class="nm" style="color:var(--ink)">A rule stays a rule</span><span class="why">An AI reads our rule and our golden examples</span></div>
+          <div class="stamp" style="border-color:var(--judge)"><span class="who">Judge · AI</span><span class="nm" style="color:var(--ink)">Nothing added</span><span class="why">An AI reads our rule and our golden examples</span></div>
+          <div class="stamp" style="border-color:var(--judge)"><span class="who">Judge · AI</span><span class="nm" style="color:var(--ink)">Still sounds like a PM</span><span class="why">An AI reads our rule and our golden examples</span></div>
+          <div class="stamp" style="border-color:var(--judge)"><span class="who">Judge · people</span><span class="nm" style="color:var(--ink)">The room</span><span class="why">For the borderline ones, like "let's avoid"</span></div>
+        </div>
+        <div style="position:absolute;left:6cqw;right:6cqw;top:28cqw;display:grid;grid-template-columns:auto 1fr auto;gap:1.4cqw;align-items:center" class="lab"><span>Cheapest</span><i style="height:.25cqw;background:linear-gradient(90deg,#a9bdeb,var(--judge));border-radius:9cqw"></i><span>Dearest</span></div>
+      </div></div>
+      <div><div class="state-lbl">→2–3 · every notice, every judge</div>
+      <div class="slide">
+        <div class="lab" style="position:absolute;left:6cqw;top:4cqw;color:var(--accent);font-size:1.4cqw">PM Translator · v2 · 24 notices checked</div>
+        <div style="position:absolute;left:6cqw;right:6cqw;top:9cqw;display:grid;gap:.7cqw">
+          <div style="display:grid;grid-template-columns:1fr 18cqw;gap:1.4cqw" class="lab"><span style="font-size:.9cqw">Notice → translation</span><span style="display:grid;grid-template-columns:repeat(4,1fr);gap:.4cqw;font-size:.75cqw;text-align:center"><i>Period</i><i>Rule</i><i>Added</i><i>PM</i></span></div>
+          <script>
+            const rows=[["Code reviews within 24 hours.","Code reviews within 24 hours. I used to do them in 2.",[1,1,1,1]],["Book rooms 24 hours ahead.","Book rooms a day ahead, or just grab mine.",[1,0,0,1]],["The offsite is on 14 March.","Offsite's on 14 March. I've already booked an escape room.",[1,1,0,1]],["Never deploy on a Friday.","Never deploy on a Friday. Trust me, I've seen this movie.",[1,1,1,1]],["Standup starts at 9:15 sharp.","I've actually scheduled standup for 9.",[1,0,1,1]],["Annual leave needs 4 weeks' notice.","Actually, we're cutting that to 2 weeks. I already told everyone.",[1,0,0,1]],["Security training is mandatory.","Security training is mandatory. Yes, even you.",[1,1,1,1]]];
+            document.write(rows.map(([e,o,v])=>`<div style="display:grid;grid-template-columns:1fr 18cqw;gap:1.4cqw;align-items:center"><div class="card" style="padding:.6cqw 1cqw;font-size:1.15cqw;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;border-radius:.6cqw"><b>${e}</b> <span style="color:var(--faint)">→</span> ${o}</div><div style="display:grid;grid-template-columns:repeat(4,1fr);gap:.4cqw">${v.map(x=>`<i style="height:2.2cqw;border-radius:.3cqw;background:${x?'var(--pass)':'var(--fail)'}"></i>`).join("")}</div></div>`).join(""));
+          </script>
+        </div>
+        <div class="cap tm" style="top:47cqw;color:var(--accent);font-size:2.4cqw">Our rules. Every answer. Every time.</div>
+      </div></div>
+    </div>
+    <div class="track">
+      <ol>
+        <li>"So each of our rules becomes a judge, and they're not all the same. Some are just code, the kind of test your engineers already write: does the answer still have a notice period in it? That's cheap and instant. Others need judgement, like 'is let's avoid still a never?', so we use a second AI that reads our rule and our golden examples and marks the answer. And the borderline ones still go to people. We start with the cheapest."</li>
+        <li>"Now we can test much further than a handful of notices. Here's version 2 running on every notice we've collected, with every judge checking every translation." <span class="stage">Montage runs.</span></li>
+        <li>"And that's what an eval is: our rules, checked on every answer, every time. Green passed, red failed."</li>
+      </ol>
+      <div class="why"><b>Why:</b> the first judge is now <i>"Has a notice period?"</i>, the kind of shortcut test an engineer would write. That sets up the aha in 3.3 (your slide 58 note). There are no tech-debt rows to "keep an eye on".</div>
+    </div>
+  </div>
+</div>
+
+<!-- 3.3 -->
+<div class="prop">
+  <div class="prop-head"><span class="n">3.3</span><h3>Zoom in: why you need different judges</h3><span class="pill chg">Changed</span><span class="rep">replaces 57–60 (drops the room's thumbs)</span></div>
+  <div class="grid">
+    <div class="slide">
+      <div style="position:absolute;left:12cqw;right:12cqw;top:5cqw;display:grid;gap:1.4cqw">
+        <span class="lab" style="color:var(--accent)">Zoomed in · PM Translator v2 · our HR leave policy</span>
+        <div class="card"><div class="en">Annual leave needs <span class="mark ok">4 weeks'</span> notice.</div><div class="out">Actually, we're cutting that to <span class="mark bad">2 weeks</span>. <span class="mark bad">I already told everyone.</span></div></div>
+        <div class="stamps">
+          <div class="stamp ok hl"><span class="g">✓</span><span class="who">Judge · code</span><span class="nm">Has a notice period</span><span class="why">"2 weeks" is still a notice period</span></div>
+          <div class="stamp no"><span class="g">✗</span><span class="who">Judge · AI</span><span class="nm">A rule stays a rule</span><span class="why">4 weeks became 2</span></div>
+          <div class="stamp no"><span class="g">✗</span><span class="who">Judge · AI</span><span class="nm">Nothing added</span><span class="why">"I already told everyone"</span></div>
+          <div class="stamp ok"><span class="g">✓</span><span class="who">Judge · AI</span><span class="nm">Sounds like a PM</span><span class="why">every word of it</span></div>
+        </div>
+        <div style="text-align:center"><div class="tl" style="color:var(--fail)">Fail</div><div class="ts" style="color:var(--muted);font-size:1.5cqw">caught automatically, with the reasons why</div></div>
+      </div>
+      <div class="needle"><svg viewBox="0 0 200 112"><path d="M22 100A78 78 0 0 1 178 100" fill="none" stroke="#d8c9b8" stroke-width="13" stroke-linecap="round"/><line x1="100" y1="100" x2="88" y2="28" stroke="#1d1b17" stroke-width="5" stroke-linecap="round"/><circle cx="100" cy="100" r="7" fill="#1d1b17"/></svg><div class="sc"><span>Vibes</span><span>Evidence</span></div></div>
+    </div>
+    <div class="track">
+      <ol>
+        <li>"Let's zoom in on one we know well: the HR leave policy we nearly shipped."</li>
+        <li>"Look at the first judge. It's a simple code check: does it still have a notice period? And it passes, because two weeks is still a notice period. That's the limit of simple tests. But the 'rule stays a rule' judge reads it properly and catches that four weeks became two. And 'nothing added' catches 'I already told everyone'." <span class="stage">The code stamp is outlined amber.</span></li>
+        <li>"So it fails. It's the same answer we nearly shipped to customers, but this time it was caught automatically, and we know why."</li>
+      </ol>
+      <div class="why"><b>Why:</b> it does what you said on stage: the cheap code check passes, and the AI judge catches the real problem. That's the clearest reason to have different kinds of judge. The room's thumbs are dropped: by this point the judges are doing the marking, which is the point.</div>
+    </div>
+  </div>
+</div>
+
+<h2 class="sec">4 · Make it better: judge first, then the prompt</h2>
+
+<!-- 4.0 -->
+<div class="prop">
+  <div class="prop-head"><span class="n">4.0</span><h3>Chapter: check the checker first</h3><span class="pill chg">Changed</span><span class="rep">replaces 69</span></div>
+  <div class="grid">
+    <div class="slide">
+      <svg viewBox="0 0 440 360" style="position:absolute;left:5cqw;top:6cqw;width:38cqw">
+        <ellipse cx="220" cy="180" rx="160" ry="125" fill="none" stroke="#a69e8d" stroke-width="3"/>
+        <circle cx="220" cy="55" r="46" fill="#1d1b17"/><text x="220" y="62" text-anchor="middle" font-size="20" fill="#fff" font-weight="700" font-family="Bricolage Grotesque">Define</text>
+        <circle cx="380" cy="180" r="46" fill="#1d1b17"/><text x="380" y="187" text-anchor="middle" font-size="20" fill="#fff" font-weight="700" font-family="Bricolage Grotesque">Build</text>
+        <circle cx="220" cy="305" r="46" fill="#1d1b17"/><text x="220" y="312" text-anchor="middle" font-size="20" fill="#fff" font-weight="700" font-family="Bricolage Grotesque">Measure</text>
+        <circle cx="60" cy="180" r="46" fill="#d9480f"/><text x="60" y="187" text-anchor="middle" font-size="20" fill="#fff" font-weight="700" font-family="Bricolage Grotesque">Learn</text>
+      </svg>
+      <div style="position:absolute;left:50cqw;right:5cqw;top:17cqw;display:grid;gap:1.6cqw">
+        <div class="tl">Fix the <span class="ptag judge" style="font-size:.55em">Judge</span> first.<br>Then the <span class="ptag prompt" style="font-size:.55em">Prompt</span>.</div>
+        <div class="ts" style="color:var(--muted)">If the judge is wrong, every score it gives is wrong.</div>
+      </div>
+    </div>
+    <div class="track">
+      <ol>
+        <li>"So now the judges are marking every translation, and we want to use what they tell us to make the PM Translator better. But there's an order to it. Before we fix the translator, we check the checker. Because if the judge is wrong, every score it gives us is wrong."</li>
+      </ol>
+      <div class="why"><b>Why:</b> "judge first, then prompt" is the rule you wanted stressed, so it becomes the chapter title. Everything in section 4 follows that order.</div>
+    </div>
+  </div>
+</div>
+
+<!-- 4.1 -->
+<div class="prop">
+  <div class="prop-head"><span class="n">4.1</span><h3>A judge that's wrong: effect, cause, fix</h3><span class="pill chg">Changed</span><span class="rep">replaces 70–74 · no room vote, no "remember this rule"</span></div>
+  <div class="grid">
+    <div class="states">
+      <div><div class="state-lbl">→1 · a good translation, failed by a judge</div>
+      <div class="slide">
+        <div style="position:absolute;left:12cqw;right:12cqw;top:6cqw;display:grid;gap:1.6cqw">
+          <span class="lab" style="color:var(--accent)">From our release notes · PM Translator v2</span>
+          <div class="card"><div class="en">The release is delayed so we can pay down tech debt.</div><div class="out">The release is delayed so we can pay down tech debt. Obviously. Long overdue.</div></div>
+          <div class="stamps">
+            <div class="stamp ok" style="opacity:.35"><span class="g">✓</span><span class="who">Judge · code</span><span class="nm">Has a period</span></div>
+            <div class="stamp ok" style="opacity:.35"><span class="g">✓</span><span class="who">Judge · AI</span><span class="nm">Rule stays</span></div>
+            <div class="stamp no" style="transform:scale(1.08)"><span class="g">✗</span><span class="who">Judge · AI</span><span class="nm">Nothing added</span><span class="why">"waves work away as tech debt"</span></div>
+            <div class="stamp ok" style="opacity:.35"><span class="g">✓</span><span class="who">Judge · AI</span><span class="nm">Sounds PM</span></div>
+          </div>
+          <div class="ts" style="text-align:center;font-weight:700">Same facts. Sounds like a PM. So why did it fail?</div>
+        </div>
+      </div></div>
+      <div><div class="state-lbl">→2–3 · why it's wrong, and the fix</div>
+      <div class="slide">
+        <div class="q"><div class="lab">Why did the judge fail it?</div><div class="tm">It learned the word, not the idea.</div></div>
+        <div style="position:absolute;left:6cqw;right:6cqw;top:13cqw;display:grid;grid-template-columns:1fr 1fr;gap:2cqw">
+          <div class="note judge"><div class="nh"><span class="ptag judge">Judge</span> Nothing added · its guide</div>
+            <div class="bd old">Fail anything that adds scope, promises or work. Fail work being waved away, like "that's just <span class="mark mid">tech debt</span>, we'll do it in v2".</div></div>
+          <div class="card" style="padding:1.4cqw 1.6cqw"><div class="lab" style="font-size:.95cqw">From the golden wall · bad</div><div class="ts" style="font-size:1.6cqw;font-weight:700;margin:.5cqw 0">"Server patch? Classic <span class="mark mid">tech debt</span>. We'll sort it in v2."</div><div class="ts" style="font-size:1.25cqw;color:var(--muted)">Waves the work away.</div></div>
+        </div>
+        <div style="position:absolute;left:6cqw;right:6cqw;top:35cqw;border-radius:1cqw;background:var(--judge-soft);box-shadow:0 0 0 .2cqw var(--judge);padding:1.6cqw 2cqw;display:grid;gap:.5cqw">
+          <div class="tm" style="color:var(--judge);font-size:2.4cqw">Paying down tech debt <i>is</i> the work. The judge is wrong.</div>
+          <div class="ts" style="font-size:1.6cqw">Fix the judge first, or we'll "fix" the prompt to please a broken judge.</div>
+        </div>
+      </div></div>
+    </div>
+    <div class="track">
+      <ol>
+        <li>"Here's one from our release notes: 'The release is delayed so we can pay down tech debt.' And the PM Translator's done a pretty good job. It kept the facts, and it sounds like a PM. But one of our judges fails it: 'nothing added'." <span class="stage">Effect.</span></li>
+        <li>"Its reason is that it 'waves work away as tech debt'. When we wrote this judge, our bad examples were full of the PM dodging work, like this one from the golden wall: 'Classic tech debt, we'll sort it in v2'. So the judge learned to flag the words 'tech debt', not the idea. Here, paying down tech debt is the actual reason for the delay. It might be the most honest thing our PM has said all day." <span class="stage">Cause.</span></li>
+        <li>"So the judge is wrong, and that matters more than it looks. If we trusted it, we'd go and 'fix' the prompt to please a broken judge. So we always check the judge first, and then fix the prompt." <span class="stage">Fix.</span></li>
+      </ol>
+      <div class="why"><b>Why:</b> effect → cause → fix in three presses, with no room vote. You just say it's a good translation and let the failed stamp do the work. The bad habit comes from a golden example the room has already seen, so there's no "remember this" setup.</div>
+    </div>
+  </div>
+</div>
+
+<!-- 4.2 -->
+<div class="prop">
+  <div class="prop-head"><span class="n">4.2</span><h3>Reasons, then drop-downs</h3><span class="pill chg">Merged</span><span class="rep">replaces 75–80 · open and axial coding, softly</span></div>
+  <div class="grid">
+    <div class="states">
+      <div><div class="state-lbl">→1–2 · a reason for every call, then a drop-down</div>
+      <div class="slide">
+        <div class="q"><div class="lab">Reasons · drop-downs</div><div class="tm">Say why. Then sort it.</div></div>
+        <div style="position:absolute;left:5cqw;right:5cqw;top:12.5cqw;display:grid;gap:.8cqw">
+          <div style="display:grid;grid-template-columns:22cqw 11cqw 1fr 17cqw;gap:1.2cqw;padding:0 1.2cqw" class="lab"><span style="font-size:.9cqw">The answer</span><span style="font-size:.9cqw"><span class="ptag judge" style="font-size:.75cqw">Judge</span> said ✗</span><span style="font-size:.9cqw">Your reason</span><span style="font-size:.9cqw">Drop-down</span></div>
+          <script>
+            const rr=[["We're cutting that to 2 weeks.",1,"4 weeks became 2.","Changed a number","prompt"],["I already told them we'd demo it.",1,"Promised a demo nobody agreed to.","Promised something","prompt"],["Let's avoid deploying on Fridays.",1,"“Never” went soft.","Softened a rule","prompt"],["…so we can pay down tech debt.",0,"Paying it down IS the reason.","Judge too strict","judge"]];
+            document.write(rr.map(([a,ag,r,dd,k])=>`<div class="card" style="display:grid;grid-template-columns:22cqw 11cqw 1fr 17cqw;gap:1.2cqw;align-items:center;padding:1cqw 1.2cqw;${ag?'':'box-shadow:0 0 0 .2cqw var(--judge)'}"><span style="font-size:1.3cqw;font-weight:600;color:var(--muted)">${a}</span><span style="font-family:var(--mono);font-size:1cqw;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:${ag?'var(--fail)':'var(--judge)'}">You ${ag?'agree':'disagree'}</span><span style="font-family:var(--mono);font-size:1.25cqw">${r}</span><span class="chip ${k}" style="font-size:1.1cqw">${dd} ▾</span></div>`).join(""));
+          </script>
+        </div>
+        <div class="cap ts" style="top:46cqw;color:var(--muted);font-size:1.5cqw"><span class="chip judge" style="font-size:1.1cqw">blue</span> fixes the judge &nbsp; <span class="chip prompt" style="font-size:1.1cqw">teal</span> fixes the prompt</div>
+      </div></div>
+      <div><div class="state-lbl">→3 · two piles, judge first</div>
+      <div class="slide">
+        <div class="q"><div class="lab">Every drop-down points to a fix</div><div class="tm">Judge first, then the prompt.</div></div>
+        <div style="position:absolute;left:6cqw;right:6cqw;top:13cqw;display:grid;grid-template-columns:1fr 1.4fr;gap:2.4cqw">
+          <div style="border:.22cqw dashed var(--judge);border-radius:1.2cqw;padding:1.6cqw;display:grid;gap:1cqw;align-content:start">
+            <div class="tm" style="font-size:2.2cqw"><span class="lab" style="color:var(--judge)">1 ·</span> Fix the <span class="ptag judge">Judge</span></div>
+            <div class="ts" style="font-size:1.4cqw;color:var(--muted)">Where you disagreed with the judge</div>
+            <span class="chip judge" style="justify-self:start">Judge too strict</span>
+          </div>
+          <div style="border:.22cqw dashed var(--prompt);border-radius:1.2cqw;padding:1.6cqw;display:grid;gap:1cqw;align-content:start">
+            <div class="tm" style="font-size:2.2cqw"><span class="lab" style="color:var(--prompt)">2 ·</span> Fix the <span class="ptag prompt">Prompt</span></div>
+            <div class="ts" style="font-size:1.4cqw;color:var(--muted)">Where you agreed: the answer really is bad</div>
+            <div style="display:flex;flex-wrap:wrap;gap:.8cqw"><span class="chip prompt">Changed a number</span><span class="chip prompt">Promised something</span><span class="chip prompt">Softened a rule</span></div>
+          </div>
+        </div>
+      </div></div>
+    </div>
+    <div class="track">
+      <ol>
+        <li>"So how do we fix things without guessing? It starts with something you've already done today. For every fail, someone who knows the work says whether they agree with the judge, and writes down why, in their own words. That's the reasoning." <span class="stage">Reasons type in.</span></li>
+        <li>"Then we tag each reason with a drop-down: the handful of ways the PM Translator goes wrong. Four here. After a few hundred reviews, those drop-downs tell us which problems we have and how often. That's evidence, not vibes." <span class="stage">Drop-downs stamp in, coloured.</span></li>
+        <li>"And every drop-down tells us what to fix. Where we disagreed with the judge, the judge needs fixing, so that pile goes first. Where we agreed, the answer really is bad, so the prompt needs fixing." <span class="stage">The rows sort into two piles.</span></li>
+      </ol>
+      <div class="why"><b>Why:</b> one beat instead of two, and no counts that don't match the screen. Four answers, four drop-downs, piles of 1 and 3. Colour does the linking: blue always means the Judge and teal always means the Prompt, from the drop-down chip to the pile to the rewrite in 4.3.</div>
+    </div>
+  </div>
+</div>
+
+<!-- 4.3 -->
+<div class="prop">
+  <div class="prop-head"><span class="n">4.3</span><h3>The reasons go to an AI</h3><span class="pill chg">Changed</span><span class="rep">replaces 81–83 · no standalone prompt slide</span></div>
+  <div class="grid">
+    <div class="slide">
+      <div class="q"><div class="lab">We say what went wrong and why · the AI does the rewrite</div></div>
+      <div style="position:absolute;left:5cqw;top:12cqw;width:20cqw;display:grid;gap:.9cqw">
+        <span class="chip judge">Judge too strict</span><span class="chip prompt">Changed a number</span><span class="chip prompt">Promised something</span><span class="chip prompt">Softened a rule</span>
+        <div class="ts" style="font-size:1.25cqw;color:var(--muted)">+ every reason, word for word</div>
+      </div>
+      <div style="position:absolute;left:27cqw;top:15cqw;width:12cqw;height:12cqw;border-radius:1.4cqw;background:var(--ink);color:#fff;display:grid;place-items:center;font-weight:800;font-size:2.6cqw">AI</div>
+      <div style="position:absolute;left:24.5cqw;top:20.2cqw;font-size:2cqw;color:var(--faint)">→</div>
+      <div style="position:absolute;left:40cqw;top:20.2cqw;font-size:2cqw;color:var(--faint)">→</div>
+      <div style="position:absolute;left:43cqw;right:5cqw;top:9cqw;display:grid;gap:1.4cqw">
+        <div class="note judge"><div class="nh"><span class="ptag judge">Judge</span> Nothing added · v2 <span class="as">1 · first</span></div>
+          <div class="bd"><div class="del">Fail work being waved away, like "that's just tech debt".</div><div class="add">+ Catch work being waved away ("later", "v2"), not the words. Paying tech debt down is the work, and passes.</div></div></div>
+        <div class="note prompt"><div class="nh"><span class="ptag prompt">Prompt</span> PM Translator · v3 <span class="as">2 · then</span></div>
+          <div class="bd add">What good looks like:<br>- Same message. Every rule stays a rule, every number exactly as written.<br>- Add nothing: no new deadlines or promises.<br>- The attitude goes in the tone, never in the facts.</div></div>
+      </div>
+    </div>
+    <div class="track">
+      <ol>
+        <li>"Then, rather than us guessing at fixes by hand, we give the reasons and the drop-downs to an AI, and ask it to rewrite the judge and the prompt. We don't tell it how to fix anything, just what went wrong, and why." <span class="stage">Chips flow into the AI box.</span></li>
+        <li>"Judge first. Our blunt tech debt line is gone, replaced with what we actually meant: catch work being waved away, not the words." <span class="stage">Judge diff.</span></li>
+        <li>"Then the prompt. Version 3 stops listing a PM's bad habits, and describes what a good translation looks like instead, straight from your reasons." <span class="stage">Prompt diff.</span></li>
+      </ol>
+      <div class="why"><b>Why:</b> no slide that shows a prompt only to rewrite it on the next press. The same chips from 4.2 go in, the judge comes out first and then the prompt, in their colours.</div>
+    </div>
+  </div>
+</div>
+
+<!-- 4.4 -->
+<div class="prop">
+  <div class="prop-head"><span class="n">4.4</span><h3>Did it work?</h3><span class="pill chg">Merged</span><span class="rep">replaces 84–85 and 87–88 · no percentages</span></div>
+  <div class="grid">
+    <div class="states">
+      <div><div class="state-lbl">→1 · out of every 10 translations, how many passed every judge</div>
+      <div class="slide">
+        <div class="q" style="left:8cqw"><div class="lab">Same notices · every judge checking</div><div class="tm">Out of every 10 translations, how many passed?</div></div>
+        <div style="position:absolute;left:8cqw;right:8cqw;top:14.5cqw;display:grid;grid-template-columns:27cqw 1fr;gap:2.2cqw 2cqw;align-items:center">
+<div><div class="ts" style="font-weight:700;font-size:1.9cqw">PM Translator · v1</div><div class="ts" style="font-size:1.25cqw;color:var(--muted)">the first two lines</div></div><div style="display:flex;gap:.8cqw;align-items:center"><i style="width:2.6cqw;height:2.6cqw;border-radius:50%;background:#fff;box-shadow:0 0 0 .12cqw var(--edge)"></i><i style="width:2.6cqw;height:2.6cqw;border-radius:50%;background:#fff;box-shadow:0 0 0 .12cqw var(--edge)"></i><i style="width:2.6cqw;height:2.6cqw;border-radius:50%;background:#fff;box-shadow:0 0 0 .12cqw var(--edge)"></i><i style="width:2.6cqw;height:2.6cqw;border-radius:50%;background:#fff;box-shadow:0 0 0 .12cqw var(--edge)"></i><i style="width:2.6cqw;height:2.6cqw;border-radius:50%;background:#fff;box-shadow:0 0 0 .12cqw var(--edge)"></i><i style="width:2.6cqw;height:2.6cqw;border-radius:50%;background:#fff;box-shadow:0 0 0 .12cqw var(--edge)"></i><i style="width:2.6cqw;height:2.6cqw;border-radius:50%;background:#fff;box-shadow:0 0 0 .12cqw var(--edge)"></i><i style="width:2.6cqw;height:2.6cqw;border-radius:50%;background:#fff;box-shadow:0 0 0 .12cqw var(--edge)"></i><i style="width:2.6cqw;height:2.6cqw;border-radius:50%;background:#fff;box-shadow:0 0 0 .12cqw var(--edge)"></i><i style="width:2.6cqw;height:2.6cqw;border-radius:50%;background:#fff;box-shadow:0 0 0 .12cqw var(--edge)"></i><span style="font-family:var(--mono);font-size:1.5cqw;font-weight:600;margin-left:1.2cqw">none</span></div><div><div class="ts" style="font-weight:700;font-size:1.9cqw">PM Translator · v2</div><div class="ts" style="font-size:1.25cqw;color:var(--muted)">more rules, by gut feel</div></div><div style="display:flex;gap:.8cqw;align-items:center"><i style="width:2.6cqw;height:2.6cqw;border-radius:50%;background:var(--faint);box-shadow:0 0 0 .12cqw var(--edge)"></i><i style="width:2.6cqw;height:2.6cqw;border-radius:50%;background:#fff;box-shadow:0 0 0 .12cqw var(--edge)"></i><i style="width:2.6cqw;height:2.6cqw;border-radius:50%;background:#fff;box-shadow:0 0 0 .12cqw var(--edge)"></i><i style="width:2.6cqw;height:2.6cqw;border-radius:50%;background:#fff;box-shadow:0 0 0 .12cqw var(--edge)"></i><i style="width:2.6cqw;height:2.6cqw;border-radius:50%;background:#fff;box-shadow:0 0 0 .12cqw var(--edge)"></i><i style="width:2.6cqw;height:2.6cqw;border-radius:50%;background:#fff;box-shadow:0 0 0 .12cqw var(--edge)"></i><i style="width:2.6cqw;height:2.6cqw;border-radius:50%;background:#fff;box-shadow:0 0 0 .12cqw var(--edge)"></i><i style="width:2.6cqw;height:2.6cqw;border-radius:50%;background:#fff;box-shadow:0 0 0 .12cqw var(--edge)"></i><i style="width:2.6cqw;height:2.6cqw;border-radius:50%;background:#fff;box-shadow:0 0 0 .12cqw var(--edge)"></i><i style="width:2.6cqw;height:2.6cqw;border-radius:50%;background:#fff;box-shadow:0 0 0 .12cqw var(--edge)"></i><span style="font-family:var(--mono);font-size:1.5cqw;font-weight:600;margin-left:1.2cqw">barely any</span></div><div><div class="ts" style="font-weight:700;font-size:1.9cqw">PM Translator · v3</div><div class="ts" style="font-size:1.25cqw;color:var(--muted)">improved from your reasons</div></div><div style="display:flex;gap:.8cqw;align-items:center"><i style="width:2.6cqw;height:2.6cqw;border-radius:50%;background:var(--pass);box-shadow:0 0 0 .12cqw var(--edge)"></i><i style="width:2.6cqw;height:2.6cqw;border-radius:50%;background:var(--pass);box-shadow:0 0 0 .12cqw var(--edge)"></i><i style="width:2.6cqw;height:2.6cqw;border-radius:50%;background:var(--pass);box-shadow:0 0 0 .12cqw var(--edge)"></i><i style="width:2.6cqw;height:2.6cqw;border-radius:50%;background:var(--pass);box-shadow:0 0 0 .12cqw var(--edge)"></i><i style="width:2.6cqw;height:2.6cqw;border-radius:50%;background:var(--pass);box-shadow:0 0 0 .12cqw var(--edge)"></i><i style="width:2.6cqw;height:2.6cqw;border-radius:50%;background:var(--pass);box-shadow:0 0 0 .12cqw var(--edge)"></i><i style="width:2.6cqw;height:2.6cqw;border-radius:50%;background:var(--pass);box-shadow:0 0 0 .12cqw var(--edge)"></i><i style="width:2.6cqw;height:2.6cqw;border-radius:50%;background:#fff;box-shadow:0 0 0 .12cqw var(--edge)"></i><i style="width:2.6cqw;height:2.6cqw;border-radius:50%;background:#fff;box-shadow:0 0 0 .12cqw var(--edge)"></i><i style="width:2.6cqw;height:2.6cqw;border-radius:50%;background:#fff;box-shadow:0 0 0 .12cqw var(--edge)"></i><span style="font-family:var(--mono);font-size:1.5cqw;font-weight:600;margin-left:1.2cqw">7 in 10</span></div>
+        </div>
+        <div class="needle"><svg viewBox="0 0 200 112"><path d="M22 100A78 78 0 0 1 178 100" fill="none" stroke="#d8c9b8" stroke-width="13" stroke-linecap="round"/><line x1="100" y1="100" x2="152" y2="50" stroke="#1d1b17" stroke-width="5" stroke-linecap="round"/><circle cx="100" cy="100" r="7" fill="#1d1b17"/></svg><div class="sc"><span>Vibes</span><span>Evidence</span></div></div>
+      </div></div>
+      <div><div class="state-lbl">→2 · quite good is quick; extremely good takes time</div>
+      <div class="slide">
+        <div class="q" style="left:8cqw"><div class="lab">How long it takes</div><div class="tm">Quite good, quickly. Extremely good takes a lot more.</div></div>
+        <div style="position:absolute;left:8cqw;right:8cqw;top:20cqw;height:1.4cqw;border-radius:99cqw;background:linear-gradient(90deg,#e9e1cf 0%,var(--pass) 100%)"></div>
+        <div style="position:absolute;left:8cqw;width:12cqw;top:17cqw" class="lab">Where we started</div>
+        <div style="position:absolute;left:46cqw;top:18.4cqw;width:4.4cqw;height:4.4cqw;border-radius:50%;background:var(--pass);box-shadow:0 0 0 .5cqw #fff"></div>
+        <div style="position:absolute;left:38cqw;width:22cqw;top:25cqw;text-align:center"><div class="tm" style="font-size:2.3cqw">Quite good</div><div class="ts" style="font-size:1.5cqw;color:var(--muted)">7 in 10 · an afternoon</div></div>
+        <div style="position:absolute;right:8cqw;top:18.4cqw;width:4.4cqw;height:4.4cqw;border-radius:50%;background:#fff;box-shadow:0 0 0 .3cqw var(--ink)"></div>
+        <div style="position:absolute;right:4cqw;width:24cqw;top:25cqw;text-align:right"><div class="tm" style="font-size:2.3cqw">Extremely good</div><div class="ts" style="font-size:1.5cqw;color:var(--muted)">good enough for an HR policy<br>· months of work</div></div>
+        <div class="cap ts" style="top:42cqw;font-size:1.8cqw;color:var(--muted)">The evals tell you whether that work is paying off.</div>
+      </div></div>
+    </div>
+    <div class="track">
+      <ol>
+        <li>"So did it work? We re-ran the same notices through every version, with the fixed judges checking. Out of every ten translations, the first version got none right. Adding rules by gut feel: still barely any. Improved from your reasons: seven out of ten. And because it's measured, we can actually show that."</li>
+        <li>"And that's the pattern you'll see with most AI features. Getting something quite good happens quickly: that took us an afternoon. But getting it extremely good, good enough to trust with an HR policy, takes a lot more time and work. The evals are how you know whether that work is paying off."</li>
+      </ol>
+      <div class="why"><b>Why:</b> "7 out of 10" says what it means in a way a percentage doesn't. The second press swaps "the last 20–30 points" for a simple quite good → extremely good line with the time it takes. The numbers are still the real rehearsal run: 0 of 30, 1 of 30 and 21 of 30, shown out of 10.</div>
+    </div>
+  </div>
+</div>
+
+<!-- 4.5 -->
+<div class="prop">
+  <div class="prop-head"><span class="n">4.5</span><h3>The loop, closed</h3><span class="pill keep">Reworded</span><span class="rep">replaces 86 · the end-of-section recap</span></div>
+  <div class="grid">
+    <div class="slide">
+      <svg viewBox="0 0 440 360" style="position:absolute;left:5cqw;top:6cqw;width:38cqw">
+        <ellipse cx="220" cy="180" rx="160" ry="125" fill="none" stroke="#d9480f" stroke-width="5"/>
+        <circle cx="220" cy="55" r="46" fill="#d9480f"/><text x="220" y="62" text-anchor="middle" font-size="20" fill="#fff" font-weight="700" font-family="Bricolage Grotesque">Define</text>
+        <circle cx="380" cy="180" r="46" fill="#d9480f"/><text x="380" y="187" text-anchor="middle" font-size="20" fill="#fff" font-weight="700" font-family="Bricolage Grotesque">Build</text>
+        <circle cx="220" cy="305" r="46" fill="#d9480f"/><text x="220" y="312" text-anchor="middle" font-size="20" fill="#fff" font-weight="700" font-family="Bricolage Grotesque">Measure</text>
+        <circle cx="60" cy="180" r="46" fill="#d9480f"/><text x="60" y="187" text-anchor="middle" font-size="20" fill="#fff" font-weight="700" font-family="Bricolage Grotesque">Learn</text>
+      </svg>
+      <div style="position:absolute;left:50cqw;right:5cqw;top:11cqw;display:grid;gap:1.1cqw">
+        <div class="lab" style="color:var(--accent);font-size:1.3cqw">The loop, closed</div>
+        <div class="ts" style="font-size:1.7cqw"><b>Define</b> <span style="color:var(--muted)">what good looks like: rules and golden examples</span></div>
+        <div class="ts" style="font-size:1.7cqw"><b>Build</b> <span style="color:var(--muted)">the <span class="ptag prompt" style="font-size:.7em">Prompt</span></span></div>
+        <div class="ts" style="font-size:1.7cqw"><b>Measure</b> <span style="color:var(--muted)">every answer, with <span class="ptag judge" style="font-size:.7em">Judges</span></span></div>
+        <div class="ts" style="font-size:1.7cqw"><b>Learn</b> <span style="color:var(--muted)">from the reasons: judge first, then the prompt</span></div>
+        <div class="tm" style="margin-top:.8cqw">And round again, tonight.</div>
+      </div>
+    </div>
+    <div class="track">
+      <ol><li>"So that's the loop. We defined what good looks like, built it, measured every answer with judges, and learned from the reasons, feeding them back, judge first and then the prompt. And because the improving is automated now, we can go round again tonight, and every night after. People are still part of it, but now we can go round much faster." <span class="stage">The loop draws itself, each station lighting in turn.</span></li></ol>
+      <div class="why"><b>Why:</b> one slide that ties the whole method together with the same Prompt and Judge tags, just before "should we ship it?". Same as the current loop card, but with each station's line spelled out so you're not recalling it from memory.</div>
+    </div>
+  </div>
+</div>
+
+<h2 class="sec">5 · Ship it?</h2>
+
+<!-- 5.1 -->
+<div class="prop">
+  <div class="prop-head"><span class="n">5.1</span><h3>How good is good enough?</h3><span class="pill chg">Changed</span><span class="rep">replaces 89–93 · two ends, not three gates</span></div>
+  <div class="grid">
+    <div class="slide">
+      <div class="q"><div class="lab">Good enough depends on</div><div class="tm">your goal, and the quality you need.</div></div>
+      <div style="position:absolute;left:6cqw;right:6cqw;top:14cqw;height:1.2cqw;border-radius:99cqw;background:linear-gradient(90deg,var(--vibes),#e9b44c,var(--pass));opacity:.55"></div>
+      <div style="position:absolute;left:6cqw;right:6cqw;top:16.5cqw;display:flex;justify-content:space-between" class="lab"><span style="color:var(--vibes)">Vibes</span><span style="font-size:1cqw">most things sit somewhere in between</span><span style="color:var(--pass)">Evidence</span></div>
+      <div style="position:absolute;left:6cqw;right:6cqw;top:21cqw;display:grid;grid-template-columns:1fr 1fr;gap:3cqw">
+        <div class="card" style="border-top:.6cqw solid var(--vibes);display:grid;gap:.8cqw"><div class="tm" style="font-size:2.3cqw">Friday drinks email</div><div class="tl" style="color:var(--vibes);font-size:3.4cqw">Vibes</div><div class="ts" style="font-size:1.5cqw;color:var(--muted)">Version 1 would do. Read it, send it. If it's a bit off, nobody's hurt.</div></div>
+        <div class="card" style="border-top:.6cqw solid var(--ink);display:grid;gap:.8cqw"><div class="tm" style="font-size:2.3cqw">HR leave policy</div><div class="tl" style="font-size:3.4cqw">100%</div><div class="ts" style="font-size:1.5cqw;color:var(--muted)">Every rule. Both instant fails pass, every time. A human signs off.</div></div>
+      </div>
+    </div>
+    <div class="track">
+      <ol>
+        <li>"So, back to the question from the start: should we ship it? Earlier we were reluctant without knowing how reliable it was, and now we can measure that. But how good it needs to be depends on what you're trying to achieve, and the quality you need."</li>
+        <li>"At one end, a Friday drinks email. Vibes are fine. Version 1 would have done, and if it's a bit off, nobody gets hurt."</li>
+        <li>"At the other end, our HR leave policy. Every rule we wrote today, both instant fails passing every time, and a human still signs off. Most things sit somewhere in between. Your job is to decide where, write it down before you see the results, and measure against it every time you change something."</li>
+      </ol>
+      <div class="why"><b>Why:</b> one simple story with only the two ends. The marketing middle and the caption you found odd are gone.</div>
+    </div>
+  </div>
+</div>
+
+<!-- 5.2 -->
+<div class="prop">
+  <div class="prop-head"><span class="n">5.2</span><h3>The leave policy ships → vibes to evidence</h3><span class="pill chg">Swapped</span><span class="rep">replaces 94–95</span></div>
+  <div class="grid">
+    <div class="states">
+      <div><div class="state-lbl">→1 · the original translation, now passing</div>
+      <div class="slide">
+        <div style="position:absolute;left:14cqw;right:18cqw;top:9cqw;display:grid;gap:1.4cqw">
+          <div class="card"><div class="lab" style="font-size:.95cqw;margin-bottom:.8cqw">PM Translator · v3 · our HR leave policy</div><div class="en">Annual leave needs 4 weeks' notice.</div><div class="out">Annual leave needs <span class="mark ok">4 weeks'</span> notice. Non-negotiable, I've checked.</div></div>
+          <div class="stamps">
+            <div class="stamp ok"><span class="g">✓</span><span class="nm">Notice period</span></div><div class="stamp ok"><span class="g">✓</span><span class="nm">Rule stays</span></div><div class="stamp ok"><span class="g">✓</span><span class="nm">Nothing added</span></div><div class="stamp ok"><span class="g">✓</span><span class="nm">Sounds PM</span></div><div class="stamp ok"><span class="g">✓</span><span class="nm">Human signs off</span></div>
+          </div>
+          <div class="ts" style="text-align:center;color:var(--muted);font-size:1.5cqw">Ready to ship, with the evidence to back it up.</div>
+        </div>
+      </div></div>
+      <div><div class="state-lbl">→2 · the needle comes home</div>
+      <div class="slide">
+        <svg viewBox="0 0 200 112" style="position:absolute;left:30cqw;width:40cqw;top:5cqw"><defs><linearGradient id="g" x1="0" x2="1"><stop offset="0" stop-color="#e2669a"/><stop offset=".5" stop-color="#e9b44c"/><stop offset="1" stop-color="#1f7a45"/></linearGradient></defs><path d="M22 100A78 78 0 0 1 178 100" fill="none" stroke="url(#g)" stroke-width="13" stroke-linecap="round" opacity=".35"/><line x1="100" y1="100" x2="174" y2="96" stroke="#1d1b17" stroke-width="4.5" stroke-linecap="round"/><circle cx="100" cy="100" r="7.5" fill="#1d1b17"/></svg>
+        <div style="position:absolute;left:30cqw;width:40cqw;top:28cqw;display:flex;justify-content:space-between" class="lab"><span style="color:var(--vibes)">Vibes</span><span style="color:var(--pass)">Evidence</span></div>
+        <div class="cap" style="top:34cqw"><div class="tl" style="font-size:5cqw">From vibes to evidence.</div><div class="ts" style="color:var(--muted);margin-top:1cqw">Rules, examples, judges, and a reason for every call.</div></div>
+      </div></div>
+    </div>
+    <div class="track">
+      <ol>
+        <li>"And here's that same HR leave policy, through everything we built today. Four weeks stays four weeks. Every judge passes it, a human signs it off, and now we can ship it, with the evidence to back it up."</li>
+        <li>"Remember the needle? At the start, the room put us firmly on vibes, and you were right. You wrote the rules, marked the answers, gave the reasons, and overruled the judge. That's what moved it from vibes to evidence." <span class="stage">The needle swings across.</span></li>
+      </ol>
+      <div class="why"><b>Why:</b> the success comes first, then the needle as the payoff, so it's no longer a standalone slide.</div>
+    </div>
+  </div>
+</div>
+
+<!-- 5.3 -->
+<div class="prop">
+  <div class="prop-head"><span class="n">5.3</span><h3>Close</h3><span class="pill chg">No homework</span><span class="rep">replaces 96–98</span></div>
+  <div class="grid">
+    <div class="slide dark">
+      <div style="position:absolute;left:9cqw;right:9cqw;top:14cqw;display:grid;gap:2cqw">
+        <div style="width:12cqw;height:.55cqw;background:#f4c843"></div>
+        <div class="tl" style="font-size:5.4cqw;color:#f4c843">A great demo doesn't mean a shippable product.</div>
+        <div class="tm" style="color:#f3eee3">Say what good looks like. Then prove it.</div>
+        <div class="tl" style="color:#f4c843;margin-top:2cqw">Thank you.</div>
+      </div>
+    </div>
+    <div class="track">
+      <ol>
+        <li>"A great demo doesn't mean a shippable product. So say what good looks like, and then prove it."</li>
+        <li>"Thank you." <span class="stage">"Thank you" rises in.</span></li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<h2 class="sec">Things to decide</h2>
+<div class="box">
+  <ul class="tight">
+    <li><b>The second half no longer asks the room anything.</b> The thumbs on 3.3 and the vote on 4.1 are both gone, so the room's moments all sit in the first half: their notices, the needle, the rules and the votes. If you want one beat of engagement back, the 3.3 thumbs ("would you have caught that?") is the cheapest, at about 20 seconds.</li>
+    <li><b>Dropping the hand-fixed version</b> means the "people are great at spotting failures but fallible at fixing them" point now lives in 4.1, where we (the people who wrote the judge) got it wrong. If you want it said explicitly, it's one line at the end of 4.1.</li>
+    <li><b>The code judge now passes the two-weeks answer</b> (per your slide 58 note). That means the first rule card, "Numbers and dates stay put", becomes the judge "Has a notice period?". The point is that the cheap test is a weaker version of the rule. Happy to word that differently.</li>
+  </ul>
+</div>
+
+</div>
+</body>
+</html>
