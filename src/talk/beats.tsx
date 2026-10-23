@@ -1,7 +1,7 @@
-import { Fragment, useEffect, useMemo, useState, type ComponentType, type CSSProperties, type ReactNode } from "react";
+import { useEffect, useMemo, useState, type ComponentType, type CSSProperties, type ReactNode } from "react";
 import {
   APP_NAME, DEFAULT_RULES, DEFAULT_VOTES, ENDS, FINAL, FIVE_TRIES, FRIDAY, JUDGE_GUIDE, JUDGE_LINE_NEW, JUDGE_LINE_OLD, JUDGE_SHORT,
-  JUDGES, KIND_LABEL, LEAVE, MONTAGE, MONTAGE_JUDGES, MONTAGE_ROOM_AT, NOT_NOW, OPENERS, PAIRS, REASONS, RESULTS, STAMPED_FAIL,
+  JUDGES, KIND_LABEL, LEAVE, MONTAGE, MONTAGE_JUDGES, MONTAGE_ROOM_AT, NOT_NOW, OPENERS, PAIRS, REASONS, JOURNEY, STAMPED_FAIL,
   TECH_DEBT, TECH_DEBT_OUT, TECH_DEBT_STAMPS, TECH_DEBT_WALL, V1, V2_ADDED, V3_EXCERPT, VOTE_ITEMS, VOTE_SPLITS, WALL, stillHasNumber,
   vName, type Beat, type BeatKind, type JudgeKind, type VoteKey,
 } from "./content";
@@ -680,7 +680,7 @@ function Montage({ notices }: { notices: Notice[] }) {
     return () => clearInterval(iv);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-  const shown = rows.slice(Math.max(0, Math.min(n, rows.length) - 7), Math.min(n, rows.length));
+  const shown = rows.slice(Math.max(0, Math.min(n, rows.length) - 6), Math.min(n, rows.length));
   return (
     <>
       <div className="mcount" data-box="counter">
@@ -772,36 +772,37 @@ function PromptJudgeView({ step }: P) {
 }
 
 function JudgesView({ step, state }: P) {
+  const instant = useInstant();
   return (
     <>
       {step === 0 && (
-        <>
-          <div className="judge-head" data-box="question">
-            <div className="label">Our rules, as judges · cheapest first</div>
-          </div>
-          <div className="judge-bottom judge-top" data-box="stamps">
-            <div className="stamps">
-              {JUDGES.map((j, i) => (
-                <div key={j.id} className="a-stamp" style={d(0.3 + i * 0.15)}>
-                  <div className="stamp kind-only" data-box="stamp">
-                    <span className="who">{KIND_LABEL[j.kind]}</span>
-                    <span className="name">{i === 0 ? JUDGE_SHORT.numbers : i < 4 ? ruleText(state, i) : "The room"}</span>
-                    <span className="why">{j.check}</span>
-                  </div>
-                </div>
-              ))}
+        <div className="judge-head" data-box="question">
+          <div className="label">Our rules, as judges · cheapest first</div>
+        </div>
+      )}
+      <div className={`judge-cards ${step >= 1 ? "small" : ""}`} data-box="stamps">
+        <div className="stamps">
+          {JUDGES.map((j, i) => (
+            <div key={j.id} className="a-stamp" style={d(0.3 + i * 0.15)}>
+              <div className="stamp kind-only" data-box="stamp">
+                <span className="who">{KIND_LABEL[j.kind]}</span>
+                <span className="name">{i === 0 ? JUDGE_SHORT.numbers : i < 4 ? ruleText(state, i) : "The room"}</span>
+                <span className="why">{j.check}</span>
+              </div>
             </div>
-          </div>
-          <div className="cost cost-top a-fade" style={d(1.2)} data-box="cost">
-            <span>Cheapest</span>
-            <i />
-            <span>Dearest</span>
-          </div>
-        </>
+          ))}
+        </div>
+      </div>
+      {step === 0 && (
+        <div className="cost cost-top a-fade" style={d(1.2)} data-box="cost">
+          <span>Cheapest</span>
+          <i />
+          <span>Dearest</span>
+        </div>
       )}
       {step >= 1 && <Montage notices={state.room.notices} />}
-      {step >= 2 && (
-        <div className="caption a-rise" style={{ top: "50.5cqw" }} data-box="caption">
+      {step >= 1 && (
+        <div className="caption a-rise" style={{ top: "49cqw", ...d(instant ? 0 : 8.5) }} data-box="caption">
           Our rules. Every answer. Every time.
         </div>
       )}
@@ -822,7 +823,6 @@ function StampedView({ step }: P) {
             text={STAMPED_FAIL.out}
             marks={[
               { phrase: "2 weeks", kind: "bad", on: step >= 1 },
-              { phrase: "I already told everyone.", kind: "bad", on: step >= 1 },
             ]}
           />
         </div>
@@ -913,45 +913,35 @@ function ExposeView({ step }: P) {
 }
 
 function ReasonsView({ step }: P) {
-  if (step >= 2) {
-    const piles = [
-      { fix: "judge" as const, n: "1", title: "Fix the", when: "Where you disagreed with the judge" },
-      { fix: "prompt" as const, n: "2", title: "Fix the", when: "Where you agreed: the answer really is bad" },
-    ];
-    return (
-      <>
-        <div className="question" data-box="question">
-          <div className="label">Every drop-down points to a fix</div>
-          <div className="t-m">Judge first, then the prompt.</div>
-        </div>
-        <div className="piles" data-box="piles">
-          {piles.map((p, i) => (
-            <div key={p.fix} className={`pile ${p.fix} a-rise`} style={d(i * 0.3)}>
-              <div className="ph">
-                <span className="pn">{p.n} ·</span> {p.title} <Tag kind={p.fix} />
-              </div>
-              <div className="pw">{p.when}</div>
-              <div className="pc">
-                {REASONS.filter((r) => r.fix === p.fix).map((r, k) => (
-                  <span key={r.dropdown} className={`dchip ${p.fix} a-drop`} style={d(0.5 + i * 0.3 + k * 0.15)}>
-                    {r.dropdown}
-                  </span>
-                ))}
-              </div>
-            </div>
-          ))}
-        </div>
-      </>
-    );
-  }
+  const row = (r: (typeof REASONS)[number], i: number) => (
+    <div key={r.dropdown} className={`rrow a-rise ${r.agree ? "" : "dis"}`} style={d(i * 0.15)}>
+      <span className="ans">{r.out}</span>
+      <span className={`call ${r.agree ? "agree" : "dis"}`}>{r.agree ? "You agree" : "You disagree"}</span>
+      <span className="txt">
+        <Type text={r.text} speed={22} delay={600 + i * 700} />
+      </span>
+      <span className="dd-slot">
+        {step >= 1 && (
+          <span className={`dchip ${r.fix} a-stamp`} style={d(0.3 + i * 0.3)}>
+            {r.dropdown} ▾
+          </span>
+        )}
+      </span>
+    </div>
+  );
+  const groups = [
+    { fix: "judge" as const, n: "1", rows: REASONS.filter((r) => r.fix === "judge") },
+    { fix: "prompt" as const, n: "2", rows: REASONS.filter((r) => r.fix === "prompt") },
+  ];
+  let i = 0;
   return (
     <>
       <div className="question" data-box="question">
         <div className="label">Reasons · drop-downs</div>
-        <div className="t-m">Say why. Then sort it.</div>
+        <div className="t-m">{step >= 2 ? "Judge first, then the prompt." : "Say why. Then sort it."}</div>
       </div>
       <div className="reasons" data-box="reasons">
-        <div className="rhead">
+        <div className={`rhead ${step >= 2 ? "gone" : ""}`}>
           <span>The answer</span>
           <span>
             <Tag kind="judge" /> said ✗
@@ -959,25 +949,19 @@ function ReasonsView({ step }: P) {
           <span>Your reason</span>
           <span>Drop-down</span>
         </div>
-        {REASONS.map((r, i) => (
-          <div key={i} className={`rrow a-rise ${r.agree ? "" : "dis"}`} style={d(i * 0.15)}>
-            <span className="ans">{r.out}</span>
-            <span className={`call ${r.agree ? "agree" : "dis"}`}>{r.agree ? "You agree" : "You disagree"}</span>
-            <span className="txt">
-              <Type text={r.text} speed={22} delay={600 + i * 700} />
-            </span>
-            <span className="dd-slot">
-              {step >= 1 && (
-                <span className={`dchip ${r.fix} a-stamp`} style={d(0.3 + i * 0.3)}>
-                  {r.dropdown} ▾
-                </span>
-              )}
-            </span>
+        {groups.map((g, k) => (
+          <div key={g.fix} className={`rgroup ${g.fix} ${step >= 2 ? "on" : ""}`} style={d(k * 1.4)}>
+            {g.rows.map((r) => row(r, i++))}
+            {step >= 2 && (
+              <span className={`rg-label ${g.fix} a-stamp`} style={d(0.3 + k * 1.4)}>
+                {g.n} · Fix the <Tag kind={g.fix} />
+              </span>
+            )}
           </div>
         ))}
       </div>
-      {step >= 1 && (
-        <div className="caption key-line a-fade" style={{ ...d(1.6), top: "46cqw" }} data-box="caption">
+      {step === 1 && (
+        <div className="caption key-line a-fade" style={{ ...d(1.6), top: "47cqw" }} data-box="caption">
           <span className="dchip judge">blue</span> fixes the judge · <span className="dchip prompt">teal</span> fixes the prompt
         </div>
       )}
@@ -986,43 +970,62 @@ function ReasonsView({ step }: P) {
 }
 
 function DiffsView({ step }: P) {
+  const judgeIn = REASONS.filter((r) => r.fix === "judge");
+  const promptIn = REASONS.filter((r) => r.fix === "prompt");
+  // Inputs sit on the left, then fly into the AI box; the rewrite comes out on the right.
+  const fly = (dx: number, dy: number, delay: number) => ({ "--dx": `${dx}cqw`, "--dy": `${dy}cqw`, "--fd": `${delay}s` }) as CSSProperties;
   return (
     <>
       <div className="question" data-box="question">
         <div className="label">We say what went wrong and why · the AI does the rewrite</div>
       </div>
-      <div className="feed-in" data-box="feed">
-        {REASONS.map((r, i) => (
-          <span key={r.dropdown} className={`dchip ${r.fix} a-rise`} style={d(i * 0.15)}>
-            {r.dropdown}
-          </span>
-        ))}
-        <span className="feed-more a-fade" style={d(0.8)}>
-          + every reason, word for word
-        </span>
+      <div className="ai-in" data-box="feed" key={step}>
+        {step === 0 ? (
+          <>
+            <div className="mini-note judge fly" style={fly(21, 5, 0.9)}>
+              <Tag kind="judge" /> Nothing added · v1
+              <small>{JUDGE_LINE_OLD}</small>
+            </div>
+            {judgeIn.map((r) => (
+              <span key={r.dropdown} className={`dchip ${r.fix} fly`} style={fly(21, -3, 1.1)}>
+                {r.dropdown}: {r.text}
+              </span>
+            ))}
+          </>
+        ) : (
+          <>
+            <div className="mini-note prompt fly" style={fly(21, 6, 0.9)}>
+              <Tag kind="prompt" /> {vName(2)}
+              <small>Rewrite this the way a pushy, know-it-all PM would say it…</small>
+            </div>
+            {promptIn.map((r, i) => (
+              <span key={r.dropdown} className={`dchip ${r.fix} fly`} style={fly(21, -1 - i * 3.4, 1.05 + i * 0.12)}>
+                {r.dropdown}
+              </span>
+            ))}
+          </>
+        )}
       </div>
-      <div className="ai-arrow a-fade" style={{ left: "24.5cqw", ...d(1) }}>
+      <div className="ai-arrow" style={{ left: "24.5cqw" }}>
         →
       </div>
-      <div className="ai-box a-grow" style={d(1.1)} data-box="ai">
+      <div className="ai-box work" key={`ai${step}`} data-box="ai">
         AI
       </div>
-      <div className="ai-arrow a-fade" style={{ left: "39.5cqw", ...d(1.4) }}>
+      <div className="ai-arrow" style={{ left: "39.5cqw" }}>
         →
       </div>
       <div className="ai-out" data-box="diffs">
+        <Note kind="judge" title="Nothing added · v2" aside="1 · first" className="a-rise" style={d(step === 0 ? 2 : 0)}>
+          <div className="struck">{JUDGE_LINE_OLD}</div>
+          <div className="add">
+            <Type text={`+ ${JUDGE_LINE_NEW}`} speed={16} delay={step === 0 ? 2300 : 0} />
+          </div>
+        </Note>
         {step >= 1 && (
-          <Note kind="judge" title="Nothing added · v2" aside="1 · first" className="a-rise">
-            <div className="struck">{JUDGE_LINE_OLD}</div>
+          <Note kind="prompt" title={vName(3)} aside="2 · then" className="a-rise" style={d(2)}>
             <div className="add">
-              <Type text={`+ ${JUDGE_LINE_NEW}`} speed={16} delay={500} />
-            </div>
-          </Note>
-        )}
-        {step >= 2 && (
-          <Note kind="prompt" title={vName(3)} aside="2 · then" className="a-rise">
-            <div className="add">
-              <Type text={V3_EXCERPT} speed={9} delay={300} />
+              <Type text={V3_EXCERPT} speed={9} delay={2300} />
             </div>
           </Note>
         )}
@@ -1032,55 +1035,32 @@ function DiffsView({ step }: P) {
 }
 
 function ResultsView({ step }: P) {
-  if (step === 0) {
-    return (
-      <>
-        <div className="question" data-box="question">
-          <div className="label">Same notices · the fixed judges checking</div>
-          <div className="t-m">Out of every 10 translations, how many passed?</div>
-        </div>
-        <div className="results" data-box="results">
-          {RESULTS.map((r, i) => (
-            <Fragment key={r.label}>
-              <div className="lbl a-rise" style={d(i * 0.3)}>
-                {r.label}
-                <small>{r.sub}</small>
-              </div>
-              <div className="odots a-rise" style={d(i * 0.3)}>
-                {Array.from({ length: 10 }, (_, k) => (
-                  <i key={k} className={k < Math.ceil(r.outOf10) ? (r.outOf10 >= 1 ? "on a-stamp" : "faint a-stamp") : ""} style={d(0.5 + i * 0.3 + k * 0.08)} />
-                ))}
-                <span className="say">{r.say}</span>
-              </div>
-            </Fragment>
-          ))}
-        </div>
-      </>
-    );
-  }
   return (
     <>
       <div className="question" data-box="question">
-        <div className="label">How long it takes</div>
-        <div className="t-m">Quite good, quickly. Extremely good takes a lot more.</div>
+        <div className="label">Did it work? · same notices, all the way through</div>
+        <div className="t-m">From no measurement to evidence on every answer.</div>
       </div>
-      <div className="journey" data-box="journey">
-        <div className="track a-grow" />
-        <span className="start label">Where we started</span>
-        <div className="stop quite a-stamp" style={d(0.4)} />
-        <div className="stop-l quite a-rise" style={d(0.6)}>
-          <b>Quite good</b>
-          <small>7 in 10 · an afternoon</small>
+      <div className="journey2" data-box="journey">
+        <div className="j-track a-grow" />
+        {JOURNEY.map((j, i) =>
+          j.far && step < 1 ? null : (
+            <div key={j.label} className={`j-stop ${j.far ? "far" : ""} ${j.result ? "best" : ""} a-rise`} style={d(j.far ? 0.2 : 0.4 + i * 0.9)}>
+              <i className="j-dot" />
+              <div className="j-label">{j.label}</div>
+              <div className="j-when">{j.when}</div>
+              <div className="j-how">{j.how}</div>
+              {j.result && <div className="j-result">{j.result}</div>}
+              {j.later && <div className="j-later">{j.later}</div>}
+            </div>
+          ),
+        )}
+      </div>
+      {step >= 1 && (
+        <div className="caption a-rise" style={{ ...d(0.8), top: "45cqw", color: "var(--muted)", fontSize: "1.9cqw" }} data-box="caption">
+          The evals tell you whether that work is paying off.
         </div>
-        <div className="stop far a-stamp" style={d(1.1)} />
-        <div className="stop-l far a-rise" style={d(1.3)}>
-          <b>Extremely good</b>
-          <small>good enough for an HR policy · months of work</small>
-        </div>
-      </div>
-      <div className="caption a-rise" style={{ ...d(1.8), top: "42cqw", color: "var(--muted)", fontSize: "1.9cqw" }} data-box="caption">
-        The evals tell you whether that work is paying off.
-      </div>
+      )}
     </>
   );
 }

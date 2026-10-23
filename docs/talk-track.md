@@ -8,8 +8,8 @@ Each numbered line is one press of → (or the clicker). Quoted words are what t
 | --- | --- | --- |
 | 1 · The demo | 6.5 min | 9 beats, 24 presses |
 | 2 · Say what good is | 12.5 min | 6 beats, 22 presses |
-| 3 · Check every answer | 16.5 min | 4 beats, 11 presses |
-| 4 · Make it better | 21 min | 6 beats, 13 presses |
+| 3 · Check every answer | 16.5 min | 4 beats, 10 presses |
+| 4 · Make it better | 21 min | 6 beats, 12 presses |
 | 5 · Ship it? | 23.5 min | 3 beats, 7 presses |
 
 ## Before the talk
@@ -126,16 +126,15 @@ Each numbered line is one press of → (or the clicker). Quoted words are what t
 2. “A judge is a separate check that looks at what it actually produced, and marks it against one of our rules, with a reason. So why not just put all the rules in the prompt? We should put them in there too. But we saw with version 2 that adding rules to a prompt doesn't mean they get followed. You don't get to mark your own homework.”
 3. “And a judge isn't quite like a normal software test either. A normal test says: put this in, and you'll get exactly this out. But we saw five tries give five different answers. So a judge doesn't look for exact words. It checks whether our rules still hold.”
 
-### 3.2 · Rules become judges, run on everything
+### 3.2 · Rules become judges, run at scale
 
-1. “So each of our rules becomes a judge, and they're not all the same. Some are just code, the kind of test your engineers already write: is there still a number in the answer? That's cheap and instant. Others need judgement, like ‘is let's avoid still a never?’, so we use a second AI that reads our rule and our golden examples and marks the answer. And the borderline ones still go to people. We start with the cheapest.”
-2. “Now we can test much further than a handful of notices. Here's version 2 running on every notice we've collected, with every judge checking every translation.” The montage runs, with the room's own notices in it. Let it play.
-3. “And that's what an eval is: our rules, checked on every answer, every time. Green passed, red failed.”
+1. “So each of our rules becomes a judge, and they're not all the same. Some are just code, the kind of test your engineers already write: is there still a number? That's cheap and instant. Others need judgement, like ‘is let's avoid still a never?’, so a second AI reads our rule and our golden examples and marks the answer. And the borderline ones still go to people. We start with the cheapest.”
+2. “Now we can run them at scale. Here's version 2 on every notice we've collected, with every judge checking every translation: faster, broader feedback than we could ever get by hand. And that's what an eval is: our rules, checked on every answer, every time.” The montage runs under the judges. Let it play.
 
 ### 3.3 · Zoom in: why you need different judges
 
 1. “Let's zoom in on one we know well: the HR leave policy we nearly shipped.”
-2. Stamps land one at a time. “Look at the first judge. It's a simple code check: is there still a number? And it passes, because two is still a number. That's the limit of simple tests. That simple check made exactly the same mistake we did at a glance. But the ‘rule stays a rule’ judge reads it properly and catches that four weeks became two. And ‘nothing added’ catches ‘I already told everyone’.”
+2. Stamps land one at a time. “Look at the first judge. It's a simple code check: is there still a number? And it passes, because two is still a number. That's the limit of simple tests: it made exactly the same mistake we did at a glance. But the ‘rule stays a rule’ judge reads it properly, and catches that four weeks became two.”
 3. “So it fails. It's the same answer we nearly shipped to customers, but this time it was caught automatically, and we know why.”
 
 ## 4 · Make it better
@@ -153,19 +152,18 @@ Each numbered line is one press of → (or the clicker). Quoted words are what t
 ### 4.2 · Reasons, then drop-downs
 
 1. “So how do we fix things without guessing? It starts with something you've already done today. For every fail, someone who knows the work says whether they agree with the judge, and writes down why, in their own words. That's the reasoning.” The reasons type in.
-2. “Then we tag each reason with a drop-down: the handful of ways the PM Translator goes wrong. Four here. After a few hundred reviews, those drop-downs tell us which problems we have and how often. That's evidence, not vibes.”
-3. “And every drop-down tells us what to fix. Where we disagreed with the judge, the judge needs fixing, so that pile goes first. Where we agreed, the answer really is bad, so the prompt needs fixing.”
+2. “Then we tag each reason with a drop-down: the handful of ways things go wrong. After a few hundred reviews, those drop-downs tell us which problems we have and how often. That's evidence, not vibes.”
+3. “And every drop-down tells us what to fix. Where we disagreed with the judge, the judge needs fixing, and that comes first.” The blue box draws. “Where we agreed, the answer really is bad, so the prompt needs fixing.” The teal box draws.
 
 ### 4.3 · The reasons go to an AI
 
-1. “Then, rather than us guessing at fixes by hand, we give the reasons and the drop-downs to an AI, and ask it to rewrite the judge and the prompt. We don't tell it how to fix anything, just what went wrong, and why.”
-2. “Judge first. Our blunt tech debt line is gone, replaced with what we actually meant: catch work being waved away, not the words.”
-3. “Then the prompt. Version 3 stops listing a PM's bad habits, and describes what a good translation looks like instead, straight from your reasons.”
+1. “Then, rather than guessing at fixes by hand, we hand it to an AI. Judge first: the judge and our feedback on it go in, and a better judge comes out. Our blunt tech debt line is gone, replaced with what we actually meant: catch work being waved away, not the words.” Let the judge and its feedback fly into the AI.
+2. “Then the same with the prompt. Version 2 and the reasons it failed go in, and version 3 comes out. It stops listing a PM's bad habits, and describes what a good translation looks like instead. We never told it how to fix anything, just what went wrong, and why.”
 
-### 4.4 · Did it work?
+### 4.4 · From vibes to measured
 
-1. “So did it work? We re-ran the same notices through every version, with the fixed judges checking. Out of every ten translations, the first version got none right. Adding rules by gut feel: still barely any. Improved from your reasons: seven out of ten. And because it's measured, we can actually show that.”
-2. “And that's the pattern you'll see with most AI features. Getting something quite good happens quickly: that took us an afternoon. But getting it extremely good, good enough to trust with an HR policy, takes a lot more time and work. The evals are how you know whether that work is paying off.”
+1. “So did it work? Look how far we've come. Version 1 we built in minutes, and we had no way of measuring it at all: pure vibes. Version 2 we measured by hand, three answers with a room full of people. Version 3 is measured by judges on every answer, and seven in ten now pass every one. That took us an afternoon.”
+2. “But getting from quite good to extremely good, good enough to trust with an HR policy, takes a lot longer and a lot more data. The evals are how you'll know whether that work is paying off.”
 
 ### 4.5 · Chapter: the loop, closed
 
