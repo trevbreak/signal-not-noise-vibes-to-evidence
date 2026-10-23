@@ -15,13 +15,13 @@ The two moving parts are always labelled the same way, in the same colour: the *
 
 | Movement | What happens | Finish by |
 | --- | --- | --- |
-| 1 · The demo | Build PM Translator v1, try it on company notices, ship it on vibes, the two-weeks reveal, five tries, v2 adds rules by gut feel, "no way to check" | 6.5 min |
-| 2 · Say what good is | The loop with a gap, the room writes the rules (Define), marks three answers (Measure), the soft-rule split, the golden wall, why a reason matters | 12.5 min |
-| 3 · Check every answer | Recap, the prompt asks and the judge checks, rules become judges, the montage, the zoom-in where the cheap code check passes "2 weeks" and the AI judge catches it | 16.5 min |
-| 4 · Make it better | Fix the judge first; a judge that's wrong about tech debt (effect, cause, fix); reasons then drop-downs; the AI rewrites judge then prompt; results out of 10; the loop closed | 21 min |
+| 1 · The demo | Build PM Translator v1, try it on company notices, ship it on vibes, the two-weeks reveal, introduce yourself at the title drop, five tries, v2 side by side with "no way to check" | 7 min |
+| 2 · Say what good is | The loop with a gap, the room writes the rules (Define), marks three answers (Measure), the soft-rule split on one press, the golden wall and why a reason matters | 12.5 min |
+| 3 · Check every answer | Recap, the prompt asks and the judge checks, rules become judges and run at scale, the zoom-in where the cheap code check passes "2 weeks" and the AI judge catches it | 16.5 min |
+| 4 · Make it better | Fix the judge first; a judge that's wrong about tech debt; reasons and drop-downs, with boxes for judge then prompt; the judge, then the prompt, fly through the AI; from no measurement to evidence | 21 min |
 | 5 · Ship it? | Good enough depends on your goal (vibes vs 100%), the leave policy ships and the needle swings to evidence, the close | 23.5 min |
 
-The clock in the presenter window starts when you leave the title card and turns red when you're behind a checkpoint. The speaking lines come to about 22¾ minutes at 150 words a minute, before the room's moments, so there's a little room in the 25-minute slot.
+The clock in the presenter window starts when you leave the title card and turns red when you're behind a checkpoint. The script comes to about 21¼ minutes at 150 words a minute (70 presses). In the 24 Oct practice run you spoke about 1.3× the script, mostly by expanding lines in your own words, so the lines are now written the way you said them. Read them close to the script and you'll land well inside 25 minutes, with room for the audience.
 
 ## Setting up
 
@@ -101,10 +101,10 @@ All of it lives in [`src/talk/content.ts`](../src/talk/content.ts).
 
 ## If you're running long
 
-Cut in this order. Each is one beat, and the story holds without it.
+The 24 Oct cuts are already made: one introduction (at the title drop), v2 and "no way to check" on one slide, the split on one press, no "bad examples" hold, and no separate loop-closed chapter. If you're still long, cut in this order:
 
-1. **1.5 Version 2: more rules** (the side-by-side pairs, about 45 seconds). Say "so we added more rules by gut feel, and some got better and some got worse" over the five tries, then go straight to the "no way to check" hold.
-2. **4.5 The loop, closed** (about 30 seconds). Its line works at the end of 4.4.
-3. **The 3.1 bottom strip** (the normal test vs a judge, about 20 seconds). Skip the third press's line; the two cards carry the point.
+1. **2.2's "not now" press** (about 20 seconds). Leave the chips on screen and press past it.
+2. **3.1's third press** (normal test vs a judge, about 20 seconds). The two cards carry the point.
+3. **2.3's reasons for A and C** (about 15 seconds). Read the room's split and move on.
 
 Use the beat strip at the bottom of the presenter window to jump past a beat.

@@ -300,29 +300,32 @@ function PairsView({ step }: P) {
           </div>
         ))}
       </Note>
-      {step >= 1 && (
-        <div className="pairs" data-box="pairs">
-          <div className="head">
-            <span className="label">{vName(1)}</span>
-            <span />
-            <span className="label">{vName(2)}</span>
-          </div>
-          {PAIRS.map((p, i) => (
-            <div className="pair" key={i}>
-              <div className="en a-fade" style={d(i * 0.55)}>
-                {p.en}
+      <div className="pairs" data-box="pairs">
+        <div className="head a-fade" style={d(4.2)}>
+          <span className="label">{vName(1)}</span>
+          <span />
+          <span className="label">{vName(2)}</span>
+        </div>
+        {PAIRS.map((p, i) => (
+          <div className="pair" key={i}>
+            <div className="en a-fade" style={d(4.4 + i * 0.55)}>
+              {p.en}
+            </div>
+            <div className="two">
+              <div className="card a-deal" style={d(4.5 + i * 0.55)}>
+                {p.v1}
               </div>
-              <div className="two">
-                <div className="card a-deal" style={d(0.1 + i * 0.55)}>
-                  {p.v1}
-                </div>
-                <div className="q">{step >= 2 && <span className="a-stamp" style={d(i * 0.3)}>?</span>}</div>
-                <div className="card a-deal" style={d(0.3 + i * 0.55)}>
-                  {p.v2}
-                </div>
+              <div className="q">{step >= 1 && <span className="a-stamp" style={d(i * 0.3)}>?</span>}</div>
+              <div className="card a-deal" style={d(4.7 + i * 0.55)}>
+                {p.v2}
               </div>
             </div>
-          ))}
+          </div>
+        ))}
+      </div>
+      {step >= 1 && (
+        <div className="no-check a-rise" style={d(1.1)} data-box="caption">
+          We asked for better. We've no way to check we got it.
         </div>
       )}
     </>
@@ -564,19 +567,19 @@ function SplitView({ step, state }: P) {
           </span>
         </div>
       </div>
-      {step >= 1 && (
+      {step >= 0 && (
         <div className="checks" data-box="checks">
-          <span className="chk ok a-rise">✓ No made-up date</span>
-          <span className="chk ok a-rise" style={d(0.3)}>
+          <span className="chk ok a-rise" style={d(1.4)}>✓ No made-up date</span>
+          <span className="chk ok a-rise" style={d(1.8)}>
             ✓ Nothing promised
           </span>
-          <span className="chk mid a-rise" style={d(0.6)}>
+          <span className="chk mid a-rise" style={d(2.4)}>
             ! “Never” became “try not to”
           </span>
         </div>
       )}
-      {step >= 2 && (
-        <div className="decide a-rise" data-box="decide">
+      {step >= 0 && (
+        <div className="decide a-rise" style={d(3.4)} data-box="decide">
           <div>
             <Bar split={splitOf(state, "B")} big />
             <div className="bar-legend">

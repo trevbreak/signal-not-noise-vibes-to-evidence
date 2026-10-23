@@ -533,3 +533,4 @@ button, input, textarea { font: inherit; color: inherit; }
 .rgroup.on.prompt { margin-top: 1.6cqw; }
 .rhead { transition: opacity 0.4s; }
 .rhead.gone { opacity: 0; }
+.no-check { position: absolute; left: 4cqw; width: 34cqw; top: 43.5cqw; font-size: 2.3cqw; font-weight: 800; letter-spacing: -0.015em; line-height: 1.15; color: var(--accent); text-wrap: balance; }
