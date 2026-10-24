@@ -1,5 +1,4 @@
-import { runCheck } from "../lib/checks";
-import { LIVE_CONTEXT, LIVE_CRITERIA, V1 } from "./content";
+import { LIVE_CONTEXT, LIVE_CRITERIA, V1, stillHasNumber } from "./content";
 import { useTalk, type Notice } from "./store";
 
 // The only live AI calls in the talk: the room's own notices, translated with Version 1 and then
@@ -44,7 +43,7 @@ export async function translate(text: string): Promise<string> {
 }
 
 export async function judge(source: string, output: string): Promise<(boolean | null)[]> {
-  const numbers = runCheck("numbers", source, output).pass;
+  const numbers = stillHasNumber(source, output);
   if (mock) {
     await wait(700);
     return [numbers, true, false, true];

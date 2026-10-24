@@ -11,7 +11,6 @@ import { mock } from "./live";
 // say, the keys that matter on this step, and a control for every moment the room takes part.
 
 const VOTE_LABELS = ["Mostly good", "Leaning good", "Split", "Leaning bad", "Mostly bad"];
-const AGREE_LABELS = ["Agree", "Leaning agree", "Split", "Leaning disagree", "Disagree"];
 const FIELD_LABEL: Record<Field, string> = {
   notice: "The room's notice",
   "rule:0": "Card 1, in the room's words",
@@ -191,29 +190,13 @@ function Controls({ state }: { state: TalkState }) {
       {step.field && <FieldBox field={step.field} state={state} />}
       {step.vote && (
         <div className="pv-ctl">
-          <div className="pv-label">The room's call {state.room.votes[step.vote] ? "" : `(→ uses ${(step.vote === "judge" ? AGREE_LABELS : VOTE_LABELS)[DEFAULT_VOTES[step.vote] - 1].toLowerCase()})`}</div>
+          <div className="pv-label">The room's call {state.room.votes[step.vote] ? "" : `(→ uses ${VOTE_LABELS[DEFAULT_VOTES[step.vote] - 1].toLowerCase()})`}</div>
           <div className="pv-row">
-            {(step.vote === "judge" ? AGREE_LABELS : VOTE_LABELS).map((l, i) => (
+            {VOTE_LABELS.map((l, i) => (
               <button key={l} className={`pv-btn ${state.room.votes[step.vote!] === i + 1 ? "on" : ""}`} onClick={() => dispatch("numberKey", i + 1)}>
                 <kbd>{i + 1}</kbd> {l}
               </button>
             ))}
-          </div>
-        </div>
-      )}
-      {step.thumbs && (
-        <div className="pv-ctl">
-          <div className="pv-label">
-            The room's thumbs on the leave answer
-            {state.room.thumbs[step.thumbs] ? "" : " (→ uses thumbs down)"}
-          </div>
-          <div className="pv-row">
-            <button className={`pv-btn ${state.room.thumbs[step.thumbs] === "up" ? "on" : ""}`} onClick={() => dispatch("upDown", true)}>
-              <kbd>↑</kbd> Thumbs up
-            </button>
-            <button className={`pv-btn ${state.room.thumbs[step.thumbs] === "down" ? "on" : ""}`} onClick={() => dispatch("upDown", false)}>
-              <kbd>↓</kbd> Thumbs down
-            </button>
           </div>
         </div>
       )}

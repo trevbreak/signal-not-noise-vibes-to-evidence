@@ -1,22 +1,58 @@
 import { useEffect, useState } from "react";
 import { snapshot, useTalk, type ActionName, type TalkState } from "./store";
 
-// Two windows, one talk. The projector window owns the state: it applies every action and
+// Two windows, one talk. One projector window owns the state: it applies every action and
 // broadcasts a snapshot. The presenter window (?presenter) sends actions and mirrors snapshots,
-// so the two can never disagree. Live calls only ever run in the projector window.
+// so the two can never disagree. Live calls only ever run in the owner.
+//
+// Only one projector window may own the talk (a browser lock decides). Any other projector
+// window, say one left open from an earlier rehearsal, becomes a mirror like the presenter:
+// two owners would each run the room's notices and the presenter would flip between them.
+// If the owner closes, a waiting mirror reloads and takes over.
 
 type Msg =
-  | { type: "state"; state: TalkState }
+  | { type: "state"; from: string; state: TalkState }
   | { type: "action"; name: ActionName; args: unknown[] }
   | { type: "hello" };
 
 export const isPresenter = new URLSearchParams(location.search).has("presenter");
 const channel = typeof BroadcastChannel !== "undefined" ? new BroadcastChannel("signal-talk") : null;
 let lastSeen = 0;
+/** This window's id, sent with every snapshot it broadcasts as the owner. */
+const myId = Math.random().toString(36).slice(2, 10);
+/** The owner a mirror is following. Mirrors ignore snapshots from anyone else (and untagged ones from older builds). */
+let followingId: string | null = null;
+const SILENT_MS = 4000;
+/** True in the one window that owns the talk's state. Set by claimOwnership() before anything renders. */
+export let isOwner = false;
+const LOCK = "signal-talk-owner";
+
+/** Projector windows: try to own the talk. Resolves true for the owner, false for a mirror. */
+export function claimOwnership(): Promise<boolean> {
+  if (isPresenter) return Promise.resolve(false);
+  const locks = typeof navigator !== "undefined" ? navigator.locks : undefined;
+  if (!locks) return Promise.resolve((isOwner = true));
+  return new Promise((resolve) => {
+    void locks.request(LOCK, { ifAvailable: true }, (lock) => {
+      if (!lock) {
+        resolve(false);
+        // Wait our turn: when the owner closes, reload and take over cleanly.
+        void locks.request(LOCK, () => {
+          location.reload();
+          return new Promise(() => {});
+        });
+        return;
+      }
+      isOwner = true;
+      resolve(true);
+      return new Promise(() => {}); // hold the lock for as long as this window is open
+    });
+  });
+}
 
 /** Run an action: here in the projector window, or sent to it from the presenter window. */
 export function dispatch(name: ActionName, ...args: unknown[]) {
-  if (isPresenter) {
+  if (!isOwner) {
     channel?.postMessage({ type: "action", name, args } satisfies Msg);
     return;
   }
@@ -25,16 +61,20 @@ export function dispatch(name: ActionName, ...args: unknown[]) {
 
 export function startSync() {
   if (!channel) return;
-  if (isPresenter) {
+  if (!isOwner) {
     channel.onmessage = (e: MessageEvent<Msg>) => {
-      if (e.data.type !== "state") return;
-      lastSeen = Date.now();
+      if (e.data.type !== "state" || !e.data.from) return;
+      const now = Date.now();
+      // Follow one owner. Switch only when it has gone quiet (it closed, and another window took over).
+      if (followingId && e.data.from !== followingId && now - lastSeen < SILENT_MS) return;
+      followingId = e.data.from;
+      lastSeen = now;
       useTalk.setState(e.data.state);
     };
     channel.postMessage({ type: "hello" } satisfies Msg);
     return;
   }
-  const send = () => channel.postMessage({ type: "state", state: snapshot(useTalk.getState()) } satisfies Msg);
+  const send = () => channel.postMessage({ type: "state", from: myId, state: snapshot(useTalk.getState()) } satisfies Msg);
   useTalk.subscribe(send);
   // Say hello straight away (a reloaded projector shouldn't wait for the heartbeat)…
   send();
@@ -56,5 +96,5 @@ export function useConnected() {
     const t = setInterval(() => setNow(Date.now()), 1000);
     return () => clearInterval(t);
   }, []);
-  return now - lastSeen < 4000;
+  return now - lastSeen < SILENT_MS;
 }

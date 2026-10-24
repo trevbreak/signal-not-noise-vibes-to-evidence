@@ -6,11 +6,11 @@ Each numbered line is one press of → (or the clicker). Quoted words are what t
 
 | Movement | Finish by | Beats |
 | --- | --- | --- |
-| 1 · The demo | 6.5 min | 9 beats, 24 presses |
-| 2 · Say what good is | 12 min | 6 beats, 22 presses |
-| 3 · Check every answer | 17 min | 5 beats, 21 presses |
-| 4 · Learn from the reasons | 22.5 min | 8 beats, 20 presses |
-| 5 · Ship it? | 25 min | 3 beats, 10 presses |
+| 1 · The demo | 7 min | 8 beats, 22 presses |
+| 2 · Say what good is | 12.5 min | 5 beats, 19 presses |
+| 3 · Check every answer | 16.5 min | 4 beats, 9 presses |
+| 4 · Make it better | 21 min | 5 beats, 10 presses |
+| 5 · Ship it? | 23.5 min | 3 beats, 7 presses |
 
 ## Before the talk
 
@@ -22,199 +22,151 @@ Each numbered line is one press of → (or the clicker). Quoted words are what t
 
 ### 1.1 · Cold open
 
-1. “Hands up if an AI demo blew your mind this year. Something a colleague built, something an engineer showed off, or something you knocked up yourself in an afternoon.” Wait for the hands.
-2. “Keep it up if, when it went live, it was just as good.” Most go down. “That gap, between the demo and production, is what the next 25 minutes are about. So let's build a demo of our own, and watch the gap open up.”
+1. “Hands up if you've seen an AI demo this year that blew your mind. Something a colleague built, something an engineer showed off, or something you knocked up yourself in an afternoon.” Wait for the hands. Don't introduce yourself yet: the title card does that.
+2. “Now, keep your hand up if it was just as good when it hit production. Just as impressive.” Most go down. “That gap, between the demo and production, is what we're going to talk about for the next 25 minutes. So we're going to build a demo of our own, and watch that gap open up.”
 
 ### 1.2 · Build the PM Translator
 
-1. “I'm a product manager, and I've got a problem: nobody reads the delivery team's notices. So, idea: an AI tool that rewrites them in the voice of the one person everyone definitely listens to. The product manager. The PM Translator.” The prompt types itself. “That's version 1 of the prompt. Two lines. That's the whole product. No code.”
-2. “Let's try our PM Translator on some real notices we've collected from around the company. First, from the team Slack: ‘Good morning team, lunch is provided today.’” Read the answer in your best PM voice.
-3. “From the kitchen: ‘The coffee machine is broken.’” Let the laugh land.
+1. “So, I'm a product manager, and I've got a problem: nobody in my team reads the notices I send out. So I'm building a tool that rewrites them in the voice of the one person everyone listens to: the product manager. The PM Translator.” The prompt types itself. “Like most of us, I start with a prompt. That's version 1. Two lines, and that's the whole product. No code.”
+2. “So let's try it on some real notices we've collected from around the company. First, from the team Slack: ‘Good morning team, lunch is provided today.’” Read the answer in your best PM voice.
+3. “From the kitchen: ‘The coffee machine is broken.’” Let the laugh land. “That definitely sounds like a PM taking the credit.”
 4. “And one off the HR wall: ‘Annual leave needs four weeks' notice.’” Read it fast and move on. Don't linger: it's the one that slips past.
-5. “Give me one from your office. Something that deserves the PM treatment.” E to type it (or the box in this window), Enter to run it live through version 1. Take two at most. X removes the last one. *(keys: E type · Enter run · X remove last)*
+5. “What about one from your world? Give me something from your office that deserves the PM treatment.” E to type it (or the box in this window), Enter to run it live through version 1. Take two at most. X removes the last one. *(keys: E type · Enter run · X remove last)*
 
 ### 1.3 · Ship it? The needle
 
-1. “Ninety seconds, a handful of notices, and a working PM Translator. Twenty years ago that was a start-up. So: do we ship it? How sure are we? Tell me when to stop.” Tap or hold ↑ to push the needle toward Evidence while they cheer, ↓ to pull it back. → when they say stop. *(keys: ↑ ↓ move the needle · → lock it in)*
+1. “So, a quick prompt with a few simple instructions, and we've got a working translator. Years ago that would have been a whole start-up; now anyone can build it. But how good is it? Should we ship it? Is it built on vibes, or built on evidence? Up here at evidence, or down here at vibes?” Move the needle with the room: ↑ toward Evidence, ↓ toward Vibes. → when they've settled. *(keys: ↑ ↓ move the needle · → lock it in)*
 2. Locked. “That much?”
-3. “Here's how much of that is evidence.” It snaps to Vibes. “None. We typed in a few notices, liked what came out, and called it done. That's vibes.”
+3. It snaps to Vibes. “Of course, this is all vibes. It sounds like a PM we might have worked with, but we'd be reluctant to ship this to customers without knowing how reliable it is.”
 
 ### 1.4 · The reveal
 
-1. “Let's look again at what we were about to ship.” The three answers come back.
-2. “This one, from the HR wall.” The leave answer comes forward. Let them read it.
-3. “The notice said four weeks.”
-4. “Our PM Translator says two. And that it's already told the team.”
-5. “It's one small detail. It sounds confident, it sounds exactly like a PM, and it was buried in a demo that felt great. That's the danger of moving fast: we skim, it sounds right, and a small detail slips through. This small detail halves everyone's notice period. We moved fast, and we accidentally shipped it.”
+1. “So let's start testing further, and see if we can turn this into something we can ship.” The three answers come back.
+2. “Let's look at this HR leave policy.” The leave answer comes forward. Let them read it.
+3. “The notice says four weeks.”
+4. “But our translator has changed the meaning, and turned four weeks into two. Which, to be fair, is what product managers do with estimates.”
+5. “And at a glance, it looks fine: there's still a notice period, and it still reads like a PM. But it's hallucinating, and this is an HR policy. One small tweak, and it's changed the meaning, with a real impact on people if we send it out. It's incredibly easy to build solutions like this, but miss the small details and you create big consequences.”
 
-### 1.4 · Hold: the demo is not the evidence
+### 1.4 · Hold: a great demo isn't a shippable product
 
-1. “The demo is not the evidence.” Say it once, slowly. Then let the title card do the rest.
+1. “A great demo doesn't mean a shippable product.” Say it once, slowly. Then let the title card do the rest.
 
 ### 1.4 · Title drop
 
-1. Introduce yourself in one line. “Today: how we get an AI feature like our PM Translator from a demo to evidence.”
+1. Now introduce yourself. “I'm Trevor, I'm a principal product manager at Go1, and I look after our AI products. Today we're going to take that PM Translator from a great demo to something we can ship to customers. From vibes to evidence.”
 
 ### 1.5 · Five tries, five answers
 
-1. “So was the leave notice just bad luck? Here's the thing about AI: it isn't like normal software. Ask it the same thing twice and you can get two different answers. So let's take a notice off the engineering wiki and run it through the PM Translator five times. Same notice, same prompt.”
-2. Point at the outlined words as they appear. “One kept the rule. The others: ‘not this Friday’. ‘Fine if you're organised’. ‘Let's avoid’.”
-3. “Five tries, five answers. One right, four different kinds of wrong. If we'd tested it once, and happened to get try three, we'd have said it works. That's how small changes with a big impact sneak through: it depends on how you test. What passes once can fail over five tries, or five thousand.”
+1. “So was that just bad luck? This is the thing that catches people out all the time: AI isn't like normal software. It's not deterministic. Ask it the same thing twice and you'll get two different answers. So here's a rule off our engineering wiki, run through the PM Translator five times, with the same prompt.”
+2. Point at the outlined words as they appear. “Only one of these kept the rule. Everything else has changed it in some way, softened it or adapted it: ‘not this Friday’, ‘fine if you're organised’, ‘let's avoid’.”
+3. “So, five tries, five different answers, and only one out of five kept the rule. If we'd tested it once, we might have got the good one and shipped it. Some failures show up in five tries; some take hundreds, or thousands. So we still don't know how reliable it is.”
 
-### 1.5 · Version 2: more rules
+### 1.5 · Version 2: more rules, but no way to check
 
-1. “So we do what everyone does. We've seen it fail, so we add more rules to the prompt. One so it stops talking back, and two notes from the boss: more PM, and keep it short. PM Translator, version 2.” Three lines type in green.
-2. “Then we run the same notices through version 1 and version 2, side by side.” The pairs deal in.
-3. “So… which ones got better?” Let them try. Nobody can say for sure.
-
-### 1.5 · Hold: we can't tell
-
-1. “Some better, some worse, depending on what you think ‘better’ means. And next week someone changes one line of the prompt and breaks what we fixed today. We'd never know.”
+1. “So when we see stuff like this, we do what most people do: there's a problem in the prompt, let's add more to it. One instruction to stop it talking back, and a couple of notes from the boss: more PM, and keep it short. That's version 2: more rules, by gut feel. And here it is side by side with version 1.” Three lines type in green, then the pairs deal in.
+2. “So, is version 2 better? Some are, some are worse; it depends what you think ‘better’ means. We've added rules, but we've no way to check it followed them. And next week someone changes the prompt, or a new model drops, and it breaks in ways we won't know about. We're still on vibes.” The question marks land, then the caption.
 
 ## 2 · Say what good is
 
 ### 2.1 · Chapter: the loop with a gap
 
-1. “If you've built product, you know this loop: build, measure, learn. I'm adding one step in front: define.”
-2. “Here's what we did with the PM Translator. We skipped straight to build. We built it, ran it, and hoped.”
-3. “We never said what a good translation looks like. So we can't measure it, and we can't learn from it. All we can do is build, get some vibes, and build again. Let's fill that gap, together.”
+1. “If you've built a product before, you'll know this loop: build, measure, learn, from Eric Ries and The Lean Startup. I'd add one more step at the front: define.”
+2. “And with the PM Translator, what did we do? What most of us do with AI, because it's so easy: we jumped straight into building. We built it, ran a few notices, and hoped for the best.”
+3. “And that's the reason we're stuck on vibes. We never defined what good looks like. Without that, we can't really measure it, and we can't learn from it. All we can do is build, get a feeling, make some changes, and build again. So let's start filling that gap, together.”
 
 ### 2.2 · The room writes the rules
 
-1. “So instead of telling the PM Translator what to do, let's say what a good translation looks like. What must never change when we rewrite a notice into PM-speak? I'll start you off: numbers and dates stay put. Four weeks stays four weeks.” *(keys: E retype the card in the room's words)*
-2. “What else? Shout.” E to retype the card in their words; Enter to keep it. *(keys: E retype · Enter keep)*
+1. “So instead of just telling the PM Translator what to do, let's start with define: what does a good translation look like? What must never change when we translate a notice? I'll start you off: numbers and dates stay put. Four weeks should stay four weeks, however confident our PM sounds.” *(keys: E retype the card in the room's words)*
+2. “What else? Has anyone got another rule we should add?” E to retype the card in their words; Enter to keep it. *(keys: E retype · Enter keep)*
 3. “Good. What else?” *(keys: E retype · Enter keep)*
 4. “And it still has to sound like a PM, or nobody reads it. That's the whole point of the product.” *(keys: E retype · Enter keep)*
-5. “Two of these are different. Break the number or the rule and it doesn't matter how funny the rest is: instant fail. In eval-speak, that's an invariant. You'll only hear that word once.”
-6. “And some things we're deliberately not judging yet: emoji, how long it is, whether it's actually funny. We'll come back to them. Writing down ‘not now’ is a decision too. It stops the same argument every week.”
+5. “Now, two of these are a bit different. They're hard rules, what we call invariants: break the number or the rule, and it doesn't matter how funny the rest is, it's an instant fail.”
+6. “And there are things we've thought about, but decided are out of scope for now: emoji, length, whether it's actually funny. Writing those down matters too. Every time we say what's in and what's out, we get clearer on what's important, and we don't have the same debate next week.”
 
 ### 2.3 · Be the judge
 
-1. “Now let's use those rules. Here are three real answers the PM Translator gave to the Friday notice. Mark them against your rules. Hands up: is A good or bad?” Press 1 (mostly good) to 5 (mostly bad), or → for the usual. *(keys: 1–5 the room's split)*
-2. Read the reason. “Still a never. The attitude sits on top.” *(keys: 1–5 adjust)*
-3. “B?” Hands. Expect a split. *(keys: 1–5 the room's split)*
-4. Let the split sit. Don't resolve it yet. *(keys: 1–5 adjust)*
-5. “C?” *(keys: 1–5 the room's split)*
-6. “Reversed. Easy.” *(keys: 1–5 adjust)*
+1. “So now, let's measure. By hand, for now. Here are three real answers the PM Translator gave to the Friday notice. Let's mark them against our rules. Where would you put A: good, or bad?” Press 1 (mostly good) to 5 (mostly bad), or → for the usual. *(keys: 1–5 the room's split)*
+2. Read the reason. “That's looking pretty good. It's still a never, and it sounds like a PM who's seen this movie before.” *(keys: 1–5 adjust)*
+3. “What about B?” Hands. Expect a split. *(keys: 1–5 the room's split)*
+4. Let the split sit. “It's getting softer. ‘Let's avoid’ isn't ‘never’. Not wrong, exactly, but not right either.” Don't resolve it yet: that's the next slide. *(keys: 1–5 adjust)*
+5. “And C?” *(keys: 1–5 the room's split)*
+6. “‘Friday deploys are totally fine.’ It's funny, and probably true of some PMs, but it's changed the rule. That one's clearly bad.” *(keys: 1–5 adjust)*
 
-### 2.4 · The split
+### 2.4 · The split: a human call
 
-1. “Let's look at B again, because you didn't agree on it. The notice says never. That's a hard rule: no exceptions. B says ‘let's avoid’. That's a soft rule. A suggestion.”
-2. “And notice what it didn't do. It didn't make up a date. It didn't promise the client anything. It sounds harmless. But it's added just enough wiggle room that the rule now means something different: ‘never’ has become ‘try not to’. Small words, big change.”
-3. “So is that OK? The model can't answer that, and neither can a language expert. It's a product decision: how strict does ‘never’ have to be for our team? The people who know the work make that call, and write down the reason. Keep the borderline ones. They're where the rules are still fuzzy.”
+1. “So let's look at B again, because we split right down the middle. It's gone from a never to ‘let's avoid’. It hasn't broken any of our rules, but it's added just enough wiggle room to change what it means. So which side does it land on? The model can't answer that. That's a human call: the people who know the work decide, and write down why.”
 
 ### 2.5 · The golden wall
 
-1. “What you just did has a name: golden examples. Real notices, real answers, marked by people who know the work, with the reason why. Your three go up first.”
-2. “Then we do it again, and again, across the notices we've collected.” The rest arrive. “Notice which column is biggest.”
-3. “Good examples show the PM Translator what to copy. Bad ones, with the reason, show what to avoid. Borderline ones show where our own rules are still fuzzy. Twelve here. In a real product, hundreds.”
-
-### 2.5 · Hold: bad examples teach
-
-1. Let it sit. “Hold onto that word: reason. It comes back.”
+1. “And what we've just done has a name: golden examples. Real answers, marked by the people who know the work, with the reason why. Your three go up first.”
+2. “And we keep doing this, working with the people who know the work, across all the notices we've collected.” The rest arrive. “And notice which column's biggest. We spend a lot more time defining what's bad than what's good, because with non-deterministic systems we can't write everything down. We have to go and find the edges.” Don't point out the tech-debt card: 4.1 comes back to it.
+3. “Good examples show the PM Translator what to copy, but the bad ones, with the reason why, show it what to avoid. We've got twelve here; in a real product you'd want hundreds. And the reason matters. ‘Bad’ just tells someone it's bad. ‘Four weeks became two’ tells them, or an AI, exactly what to fix.”
 
 ## 3 · Check every answer
 
-### 3.0 · Recap: define, measure… at scale?
+### 3.0 · Recap: we can't vote on ten thousand a day
 
-1. “Let's take stock. We built the PM Translator first. That's the bit everyone does.”
-2. “Then we went back and defined good: four rules for a good PM translation, two of them instant fails.”
-3. “Then we measured: we marked real answers against those rules ourselves, and kept them as golden examples, with the reasons.”
-4. “But we marked three answers, by hand, with a room full of people. A real PM Translator gets ten thousand notices a day. You can't vote on ten thousand notices a day.”
-5. “So we automate the checking. Every rule becomes an automatic check, run on every single translation, every time. That automatic check has a name: a judge.”
+1. “So let's take stock. We've built a PM Translator, and it's a bit vibey. We've defined what good looks like. And we've started measuring, by hand.”
+2. “But it took this whole room a few minutes to mark three answers. If we ship this, we'll get thousands of notices a day, maybe millions, and we can't vote on all of those. We need something that checks every answer for us.”
 
-### 3.1 · Your rules become judges
+### 3.1 · The prompt is the brief, the judge is the editor
 
-1. “Here are our rules for a good PM translation.”
-2. “Each one becomes a judge. Some are plain code: is the 4 still there? No AI needed, and it's instant. Some need judgement, like ‘is let's avoid still a never?’ For those, a second AI reads our rule and our golden examples, and marks the answer. And some still need people, for the ones that split the room. Cheapest first.”
-3. “Now every translation gets checked by every judge. Here's PM Translator version 2 on every notice we've collected.” The montage runs, with the room's own notices in it. Let it play.
-4. “That's an eval: our rules, applied to every answer, every time. Green passed, red failed. And keep an eye on those last few. We'll come back to them.”
+1. “So we need something that checks every answer for us. Let's be clear on two things first. The prompt is the brief: it tells the PM Translator what to do, and it does its best.”
+2. “The judge is the editor. It's separate, and it checks what was actually written against our rules, and tells us why. So why not just put all the rules in the prompt? Three reasons. A writer shouldn't edit their own work. It's not one judge, it's many, each an expert on one rule, far more than you could fit in a prompt. And when you change the prompt, the judges stay the same, so you know whether the change actually helped.” The judge card, then the three reasons.
 
-### 3.2 · Zoom in: the leave notice, judged
+### 3.2 · Rules become judges, run at scale
 
-1. “Let's zoom in on one row we know: the leave notice from the HR wall, through version 2.”
-2. Stamps land one at a time. “Every judge gives a verdict and a reason. Numbers: the 4 is gone. Still a rule: the notice period's halved. Nothing added: it's told everyone. And it passed ‘sounds like a PM’ with flying colours. That's exactly why it fooled us.”
-3. “Last judge is you. Room: thumbs?” Wait for them, then ↑ or ↓ (→ for thumbs down). *(keys: ↑ thumbs up · ↓ thumbs down)*
-4. The room's stamp lands. “Fail. The same answer we nearly shipped, caught automatically this time, with the reasons why.” *(keys: ↑ ↓ change the room's call)*
+1. “So each of our rules becomes a test, and there are different kinds. Some are just code tests, like we've always written: is there still a number? Some are AI tests, our judges, for the ones that need interpretation: does ‘let's avoid’ still mean ‘never’? They don't look for exact words; they check whether the rule still holds. And some still need people. Cheapest first.”
+2. “With those tests automated, we can rerun version 2 against every notice we've collected, far faster than marking by hand, and it gives us a baseline. That's what an eval is: our rules written down as tests, giving us objective data back.” The montage runs under the tests. Let it play.
 
-### 3.3 · Read the failures, hone the prompt
+### 3.3 · Zoom in: why you need different judges
 
-1. “Now we've got something we never had before: a list of failures, each with a reason. So we do what any good team does. We read them.”
-2. “And patterns jump out. The numbers keep moving. And the PM keeps promising things nobody agreed to.”
-3. “And remember those last rows in the montage? The PM keeps waving work away as ‘tech debt’: ‘we'll sort it in v2’. That one really bugged us.”
-4. “So we fix it by hand. Two new lines in the prompt, one for each pattern: keep every number, don't promise anything. PM Translator, version 3.”
-5. “And that tech debt habit annoyed us so much, we changed a judge too. New rule: any answer that says ‘tech debt’ fails. Remember that rule. It comes back.”
+1. “Now let's zoom in on one from the start: that HR policy we nearly shipped.”
+2. Stamps land one at a time. “Look at the first one. It's a simple code test: is there still a number? And yes, the number's changed, but it's still a number. That's the limit of simple tests: it made the same mistake we did at a glance. But the ‘rule stays a rule’ judge reads it properly, and catches that four weeks became two.”
+3. “So it fails. It's the same answer we nearly shipped earlier, but now it's caught automatically, and we know why.”
 
-### 3.4 · Better, and proven. Partly.
+## 4 · Make it better
 
-1. “Did it work? Same leave notice, five tries for each version of the prompt, every judge marking. The bar is how many of the five passed every judge. Version 1: none. Version 2, more rules by gut feel: none. Version 3, honed by reading the failures: two.”
-2. “That's the first time in this talk we can say the PM Translator got better, and prove it. Look at the needle.”
-3. “But two in five isn't shippable. And look what it took: we added lines that argue with the first line of our own prompt. People are great at spotting failures. We're not so great at fixing them without breaking something else. Hold that thought.”
+### 4.0 · Chapter: wrong answer, or wrong test?
 
-## 4 · Learn from the reasons
+1. “So now the judges are marking every translation. And when something fails, there's one question: is it a wrong answer, or a wrong test? Wrong answer, fix the prompt. Wrong test, fix the judge. Always check the test first, because if the test is wrong, every score it gives us is wrong.”
 
-### 4.0 · Chapter: learn
+### 4.1 · A judge that's wrong
 
-1. “The judges are marking every translation now. But remember: we wrote those judges ourselves, by hand, a few minutes ago. So who's checking the judges?” Beat. “You are.”
+1. “Here's one from our engineering release notes: ‘The release is delayed so we can pay down tech debt.’ Not something you hear a PM say very often! But the translator's done a decent job: it's kept the facts, and it sounds like a PM. Yet one of our judges fails it: ‘nothing added’.”
+2. “And its reason? It ‘waves work away as tech debt’. Our bad examples were full of PMs dodging work, like this one from the golden wall: ‘Classic tech debt, we'll sort it in v2’. So the judge learned the words, not the idea. Here, paying it down is the actual reason for the delay. It might be the most honest thing our PM has said all day.”
+3. “So the judge is wrong, and that matters more than it looks. If we trusted it, we'd go and ‘fix’ the prompt just to please a broken judge. So we always check the judge first, and then fix the prompt.”
 
-### 4.1 · A judge is wrong
+### 4.2 · Reviews: a drop-down and a reason, then sort
 
-1. “Here's a notice from the release notes, through PM Translator version 3: ‘The release is delayed so we can pay down tech debt.’”
-2. Stamps land. “Three passes. One fail: nothing added.”
-3. “Read why: it says ‘tech debt’. That's the rule we added by hand a few minutes ago. But here, tech debt isn't an excuse. Paying it down is the actual reason for the delay. It's the one honest sentence in the whole demo.”
-4. “So: agree with the judge, or disagree? Hands.” 1 (agree) to 5 (disagree), or → for the usual. *(keys: 1–5 agree … disagree)*
-5. “The judge did exactly what we told it. We told it the wrong thing. That's what happens when people fix things by gut feel: we spot the problem, and our fix breaks something else.” *(keys: 1–5 adjust)*
+1. “So how do we fix things without guessing? Every time there's a fail, someone who knows the work reviews it. You don't need to review everything, just enough to keep the judges calibrated. Do they agree with the judge? They pick a drop-down, from the handful of ways things usually go wrong, and they write down the reason in their own words. And the more words, the better. After a few hundred of these, the drop-downs show us the patterns: evidence, not vibes.” Rows land with their drop-down and reason. (If you want the research terms: the reasons are open coding, the drop-downs axial coding.)
+2. “Then we sort them. Wrong test, fix the judge: that one goes first.” The blue box draws. “Wrong answer, fix the prompt.” The teal box draws.
 
-### 4.2 · Write the reasoning
+### 4.3 · The reasons go to an AI
 
-1. “So how do we fix things without guessing? It starts with something you already did today. Whenever someone looks at an answer, they don't just say agree or disagree with the judge. They write the reason, in their own words.”
-2. “Here's a few from our team.” The reasons type in. “Notice the last one: that's you, overruling the judge.”
-3. “‘Wrong’ teaches nothing. The reason teaches everything.”
+1. “Then we take everything about the judge, the judge's own prompt and all the feedback on it, and give it to another AI. ‘Here's the judge, here's the feedback: improve it.’ And out comes a better judge. The blunt tech debt line is gone, replaced with what we actually meant: catch work being waved away, not the words.” Let the judge and its feedback fly into the AI.
+2. “Then the same for the prompt. Version 2 and all the reasons it failed go in, and out comes version 3, built from your feedback and reasoning. We didn't write it ourselves. We asked a separate AI to improve it, based on what people told us.”
 
-### 4.3 · Group them into drop-downs
+### 4.4 · From vibes to measured
 
-1. “Once we've got a pile of reasons, we read them all and group them into a few drop-downs: the handful of ways our PM Translator actually goes wrong.” The reasons sort themselves.
-2. “Now the feedback has a shape. Not ‘it feels a bit off’, but which problems, and how often.”
-3. “And every drop-down points somewhere. Agree with a fail: the answer really is bad, so it's a fix for the prompt. Disagree: the judge got it wrong, so it's a fix for the judge.”
-
-### 4.4 · Let the reasons rewrite it
-
-1. “Here's the shift. Last time, we read the failures and edited the prompt ourselves, and broke a judge. This time, we hand the reasons and the drop-downs to an AI, and ask it to rewrite the prompt and the judge. We never tell it how to fix anything, only what went wrong, and why.”
-2. “It rewrote the prompt. Version 4 stops listing habits, and describes what a good translation looks like, straight from your reasons.”
-3. “And it rewrote the judge. Out goes our blunt ‘tech debt’ rule. In goes what we actually meant: catch work being waved away, not the words.”
-
-### 4.5 · Did it work?
-
-1. “Did it actually get better? A fair fight: the same six notices, five tries each, the same judges. Top: how often the PM Translator passes every judge. Version 3, honed by hand: seven in thirty. Version 4, rewritten from your reasons: twenty-one.”
-2. “Bottom: how often the judge agrees with the room. With our hand-written tech debt rule: four in six. Rewritten from your reasons: all six.”
-
-### 4.5 · Chapter: the loop, closed
-
-1. “Define what good looks like. Build. Measure with judges. Learn from the reasons. And because the improving is automated now, we can go round again tonight, and every night. That's the loop, closed.”
-
-### 4.6 · Months, not minutes
-
-1. “Here's every version of the PM Translator on the same notices, every judge marking. More rules by gut feel: barely better than the first two lines. Honed by hand: a step up. Rewritten from your reasons: the jump.”
-2. “And none of them is done. Getting to 70 or 80% takes an afternoon. The last 20 points take months, and the evals tell you which months were worth it.”
+1. “So, did it work? Look how far we've come. Version 1 was total vibes. Version 2, we checked by hand. And version 3 is judged automatically, on every answer, and it's improving itself from our feedback.”
+2. “And that's the pattern with most AI features. Getting to quite good happens quickly. Getting to extremely good, good enough to trust with an HR policy, takes a lot more time. The evals tell you whether that time is paying off.” “Extremely good” lands.
 
 ## 5 · Ship it?
 
-### 5.1 · Ship it? Depends who it's for
+### 5.1 · How good is good enough?
 
-1. “So, do we ship it? It depends who it's for, because different things need different rules.”
-2. “A Friday drinks email? Vibes are fine. Paste it into a chatbot, read it, send it. If it's a bit off, nobody gets hurt. No rules, no judges.”
-3. “A customer marketing email needs a few rules: sounds like our brand, promises nothing we can't deliver. One instant fail: no made-up claims. And the bar can sit lower, say 80%, because a person reviews it before it goes out.”
-4. “The leave policy? Every rule we wrote today, and both instant fails. A hundred percent on those, and a human signs off.”
-5. “Some things can run on vibes. Some need a few rules. Some need every rule and an instant fail. What matters is that you decide which, write the rules down before you see the results, and measure against them every time you change something.”
+1. “So, back to the question from the start: should we ship it? Earlier we were reluctant, because we didn't know how reliable it was. Now we can measure it. But whether we ship really depends on what we're trying to achieve.”
+2. “If we were just writing a Friday drinks email, vibes are fine. We'd have shipped version 1: write the prompt, paste it into Slack or Teams, done.”
+3. “But if this is going to rewrite every HR policy, we want a really high bar: every rule passing, all the time, and a human still signs off. Most things sit somewhere in between. Our job is to decide where, and write those rules down before we build.”
 
-### 5.2 · The needle comes home
+### 5.2 · The leave policy ships, from vibes to evidence
 
-1. “Remember this? It started on vibes, pushed there by a demo that felt great.”
-2. “Same notice we started with, through PM Translator version 4. Every judge passes it, a human signs off, and it ships behind the strictest gate. You wrote the rules, you marked the answers, you gave the reasons, and you overruled the judge.”
+1. “And here's that same HR policy, through everything we've built today. Four weeks stays four weeks, and it's the same answer you'd have put on the good side of the golden wall. Every judge passes it, a human signs it off, and now we can ship it, with the evidence to back it up.”
+2. “Remember the needle at the start? We were firmly on vibes. We wrote the rules, marked the answers, captured our reasoning, and improved the judge and the prompt. That's how we moved from vibes to evidence.” The needle swings across.
 
-### 5.2 · Close
+### 5.3 · Close
 
-1. “The demo is not the evidence. Say what good looks like. Then prove it.”
-2. “Homework. This week, pick one AI feature and write five golden examples, with a reason for each. Three of them bad. That's how it starts.”
-3. “Thank you.”
+1. “A great demo doesn't mean a shippable product. So say what good looks like, and then prove it.”
+2. “Thank you.”
 

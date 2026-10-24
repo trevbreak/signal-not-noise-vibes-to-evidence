@@ -3,6 +3,7 @@ import { BEATS } from "./content";
 import { Stage } from "./Stage";
 import { useTalk } from "./store";
 import { useKeys } from "./keys";
+import { dispatch } from "./sync";
 
 // The projector window: the stage, full window, and nothing else.
 
@@ -31,15 +32,15 @@ function EditCapture() {
       className="edit-capture"
       aria-label="Type the room's words"
       value={draft}
-      onChange={(e) => useTalk.getState().setDraft(e.target.value)}
+      onChange={(e) => dispatch("setDraft", e.target.value)}
       onBlur={() => setTimeout(() => ref.current?.focus(), 0)}
       onKeyDown={(e) => {
         if (e.key === "Enter") {
           e.preventDefault();
-          useTalk.getState().commitEdit();
+          dispatch("commitEdit");
         } else if (e.key === "Escape") {
           e.preventDefault();
-          useTalk.getState().cancelEdit();
+          dispatch("cancelEdit");
         }
       }}
     />

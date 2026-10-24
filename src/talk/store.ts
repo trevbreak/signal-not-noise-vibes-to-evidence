@@ -18,8 +18,6 @@ export type Room = {
   /** The room's wording for each rule card; "" keeps the default. */
   rules: string[];
   votes: Partial<Record<VoteKey, number>>;
-  /** The room's thumbs on the leave answer (3.2). */
-  thumbs: Partial<Record<"fail", "up" | "down">>;
   /** Where the presenter moved the needle in 1.3. */
   needleHand: number | null;
 };
@@ -39,7 +37,7 @@ export type TalkState = {
 export const MAX_ROOM_NOTICES = 2;
 export const MAX_NOTICE_LENGTH = 90;
 
-export const freshRoom = (): Room => ({ notices: [], rules: ["", "", "", ""], votes: {}, thumbs: {}, needleHand: null });
+export const freshRoom = (): Room => ({ notices: [], rules: ["", "", "", ""], votes: {}, needleHand: null });
 
 const initial = (): TalkState => ({ beat: 0, step: 0, dir: 0, room: freshRoom(), blackout: false, editing: null, draft: "" });
 
@@ -50,7 +48,6 @@ type Actions = {
   prev: () => void;
   goTo: (beat: number, step?: number) => void;
   setVote: (key: VoteKey, n: number) => void;
-  setThumbs: (which: "fail", t: "up" | "down") => void;
   nudge: (delta: number) => void;
   startEdit: () => void;
   setDraft: (text: string) => void;
@@ -64,13 +61,13 @@ type Actions = {
   reset: () => void;
   /** Number keys: a vote where the step takes one. */
   numberKey: (n: number) => void;
-  /** ↑ ↓: thumbs or needle, whichever the step takes. */
+  /** ↑ ↓: move the needle (1.3). */
   upDown: (up: boolean) => void;
 };
 
 export type Talk = TalkState & Actions;
 export const ACTIONS = [
-  "next", "prev", "goTo", "setVote", "setThumbs", "nudge", "startEdit", "setDraft", "commitEdit",
+  "next", "prev", "goTo", "setVote", "nudge", "startEdit", "setDraft", "commitEdit",
   "cancelEdit", "removeLastNotice", "removeNotice", "retryNotice", "patchNotice", "toggleBlackout", "reset", "numberKey", "upDown",
 ] as const;
 export type ActionName = (typeof ACTIONS)[number];
@@ -99,7 +96,6 @@ export const useTalk = create<Talk>((set, get) => {
     },
 
     setVote: (key, n) => room({ votes: { ...get().room.votes, [key]: Math.max(1, Math.min(5, n)) } }),
-    setThumbs: (which, t) => room({ thumbs: { ...get().room.thumbs, [which]: t } }),
     nudge: (delta) => {
       const v = get().room.needleHand ?? HAND_START;
       room({ needleHand: Math.max(0, Math.min(100, v + delta)) });
@@ -145,20 +141,14 @@ export const useTalk = create<Talk>((set, get) => {
       if (st.advance) get().next();
     },
     upDown: (up) => {
-      const st = stepOf(get());
-      if (st.thumbs) {
-        get().setThumbs(st.thumbs, up ? "up" : "down");
-        if (st.advance) get().next();
-      } else if (st.nudge) {
-        get().nudge(up ? 4 : -4);
-      }
+      if (stepOf(get()).nudge) get().nudge(up ? 4 : -4);
     },
   };
 });
 
 // ── Saving: the projector keeps its place and the room's input across a refresh ──
 
-const KEY = "talk-state-v2";
+const KEY = "talk-state-v3";
 
 export function restore() {
   // A hash like #12.3 (beat 12, step 3) jumps there: handy for rehearsing one beat.
@@ -169,8 +159,7 @@ export function restore() {
       useTalk.setState({
         beat: saved.beat,
         step: Math.min(saved.step, BEATS[saved.beat].steps.length - 1),
-        // Saved by an earlier build, thumbs was a single value: start it fresh.
-        room: { ...freshRoom(), ...saved.room, thumbs: typeof saved.room?.thumbs === "object" && saved.room.thumbs ? saved.room.thumbs : {} },
+        room: { ...freshRoom(), ...saved.room },
         dir: 0,
       });
     }
