@@ -38,7 +38,7 @@ export const V2_ADDED = [
   "More PM! Make it even MORE know-it-all product manager.",
   "Keep it short and punchy. Under 10 words.",
 ];
-/** Version 3: rewritten by an AI from the room's reasons and drop-downs (pm.ts's "what good looks like").
+/** Version 3: rewritten by an AI from the room's reasons and categories (pm.ts's "what good looks like").
  *  Rehearsal: it passes every judge 21 times in 30, against 0 for v1 and 1 for v2. */
 export const V3_EXCERPT =
   "What good looks like:\n- Same message. Every rule stays a rule, and every number and date stays exactly as written.\n- Add nothing: no new deadlines, promises or opinions that change the meaning.\n- The attitude goes in the tone, never in the facts.";
@@ -183,7 +183,7 @@ export const TECH_DEBT_WALL = { out: "Server patch? Classic tech debt. We'll sor
 export const JUDGE_LINE_OLD = "Fail work being waved away, like “that's just tech debt”.";
 export const JUDGE_LINE_NEW = "Catch work being waved away (“later”, “v2”), not the words. Paying tech debt down is the work, and passes.";
 
-/** 4.2: every fail gets a reason in the reviewer's own words, then a drop-down. `agree`: did they agree with the judge's fail? */
+/** 4.2: every review gets a category and a reason in the reviewer's own words. `agree`: did they agree with the judge's fail? */
 export const REASONS: { out: string; agree: boolean; text: string; dropdown: string; fix: "prompt" | "judge" }[] = [
   { out: "…so we can pay down tech debt.", agree: false, text: "Paying it down IS the reason for the delay. It's honest, not an excuse.", dropdown: "Judge too strict", fix: "judge" },
   { out: "We're cutting that to 2 weeks.", agree: true, text: "4 weeks became 2. On an HR policy, that changes people's plans.", dropdown: "Changed a number", fix: "prompt" },
@@ -270,7 +270,7 @@ export const MOVEMENTS: { n: number; name: string; ends: number }[] = [
   { n: 2, name: "Say what good is", ends: 12.5 },
   { n: 3, name: "Check every answer", ends: 16.5 },
   { n: 4, name: "Make it better", ends: 21 },
-  { n: 5, name: "Ship it?", ends: 23.5 },
+  { n: 5, name: "Ship it?", ends: 24 },
 ]
 
 export const BEATS: Beat[] = [
@@ -381,72 +381,78 @@ export const BEATS: Beat[] = [
     id: "wall", num: "2.5", title: "The golden wall", movement: 2, kind: "wall", needle: "corner", loop: "measure",
     steps: [
       { say: "“And what we've just done has a name: golden examples. Real answers, marked by the people who know the work, with the reason why. Your three go up first.”", needle: 34 },
-      { say: "“And we keep doing this, working with the people who know the work, across all the notices we've collected.” The rest arrive. “And notice which column's biggest. We spend a lot more time defining what's bad than what's good, because with non-deterministic systems we can't write everything down. We have to go and find the edges.” Don't point out the tech-debt card: 4.1 comes back to it.", needle: 38 },
-      { say: "“Good examples show the PM Translator what to copy, but the bad ones, with the reason why, show it what to avoid. We've got twelve here; in a real product you'd want hundreds. And the reason matters. ‘Bad’ just tells someone it's bad. ‘Four weeks became two’ tells them, or an AI, exactly what to fix.”" },
+      { say: "“And we keep doing this with the people who know the work, across every notice we've collected.” The rest arrive. “And notice which column's biggest. We spend far more time defining bad than good, because with AI we can't write every rule down. We have to find the edges.” Don't point out the tech-debt card: 4.1 comes back to it.", needle: 38 },
+      { say: "“Good examples show the PM Translator what to copy. The bad ones, with the reason why, show it what to avoid. And the reason is the important bit. ‘Bad’ just tells someone it's bad. ‘Four weeks became two’ tells them why. That reason is human judgement, from the people who know the work, and that's what we want to build into the system over time. We've got twelve here; in a real product, you'd want hundreds.”" },
     ],
   },
   {
     id: "ch-measure", num: "3.0", title: "Recap: we can't vote on ten thousand a day", movement: 3, kind: "chapter", needle: "corner",
     props: { mode: "recap" },
     steps: [
-      { say: "“So let's take stock. We've built a PM Translator, and it's a bit vibey. We've defined what good looks like. And we've started measuring, by hand.”", needle: 40 },
-      { say: "“But it took this whole room a few minutes to mark three answers. If we ship this, we'll get thousands of notices a day, maybe millions, and we can't vote on all of those. We need something that checks every answer for us.”" },
+      { say: "“So let's take stock. We've built a PM Translator, we've defined what good looks like, and we've started measuring, by hand. But it took this whole room a few minutes to mark three answers, and if we ship this, we'll get thousands of notices a day. We need something that checks every answer for us.”", needle: 40 },
     ],
   },
   {
-    id: "prompt-judge", num: "3.1", title: "The prompt is the brief, the judge is the editor", movement: 3, kind: "promptJudge", needle: "corner",
+    id: "prompt-judge", num: "3.1", title: "The prompt is the brief, the judges are the editors", movement: 3, kind: "promptJudge", needle: "corner",
     steps: [
-      { say: "“So we need something that checks every answer for us. Let's be clear on two things first. The prompt is the brief: it tells the PM Translator what to do, and it does its best.”", needle: 42 },
-      { say: "“The judge is the editor. It's separate, and it checks what was actually written against our rules, and tells us why. So why not just put all the rules in the prompt? Three reasons. A writer shouldn't edit their own work. It's not one judge, it's many, each an expert on one rule, far more than you could fit in a prompt. And when you change the prompt, the judges stay the same, so you know whether the change actually helped.” The judge card, then the three reasons." },
+      { say: "“Let's be clear on two things first. The prompt is the brief: it tells the PM Translator what to do, the AI does its best, and out comes an answer.” The brief goes through an AI, and the leave policy answer comes out.", needle: 42 },
+      { say: "“And the judges are the editors. Each judge is just another AI, with its own prompt, checking that answer against one of our rules, and telling us why. We keep them separate for two reasons.” The answer flows into three judges, and their verdicts land." },
+      { say: "“One: a writer shouldn't edit their own work.”" },
+      { say: "“And two: when we change the prompt, the judges stay the same, so we can tell whether the change made the answers better or worse.”" },
     ],
   },
   {
     id: "judges", num: "3.2", title: "Rules become judges, run at scale", movement: 3, kind: "judges", needle: "corner",
     steps: [
       { say: "“So each of our rules becomes a test, and there are different kinds. Some are just code tests, like we've always written: is there still a number? Some are AI tests, our judges, for the ones that need interpretation: does ‘let's avoid’ still mean ‘never’? They don't look for exact words; they check whether the rule still holds. And some still need people. Cheapest first.”", needle: 44 },
-      { say: "“With those tests automated, we can rerun version 2 against every notice we've collected, far faster than marking by hand, and it gives us a baseline. That's what an eval is: our rules written down as tests, giving us objective data back.” The montage runs under the tests. Let it play.", needle: 48 },
+      { say: "“Now with our tests automated, we can rerun version 2 against every notice we've collected. It's far faster than marking by hand, and it gives us a baseline. That's what evals are: our rules and behaviours written down as tests, giving us objective data back.” The montage runs under the tests. Let it play.", needle: 48 },
     ],
   },
   {
     id: "stamped", num: "3.3", title: "Zoom in: why you need different judges", movement: 3, kind: "stamped", needle: "corner",
     steps: [
-      { say: "“Now let's zoom in on one from the start: that HR policy we nearly shipped.”" },
-      { say: "Stamps land one at a time. “Look at the first one. It's a simple code test: is there still a number? And yes, the number's changed, but it's still a number. That's the limit of simple tests: it made the same mistake we did at a glance. But the ‘rule stays a rule’ judge reads it properly, and catches that four weeks became two.”", needle: 52 },
-      { say: "“So it fails. It's the same answer we nearly shipped earlier, but now it's caught automatically, and we know why.”", needle: 54 },
+      { say: "“Now let's zoom in on the HR policy we translated at the start.”" },
+      { say: "The stamps land in the order you say them: the code test, nothing added, sounds like a PM, then the fail. “So we run our tests. First a code test: is the number still a number? It is, so that looks fine. Then our judges run: other AIs checking the first one's work, each on its own rule. Nothing added: pass. Sounds like a PM: pass. But ‘a rule stays a rule’ spots that four weeks became two, and that changes what the policy means.”", needle: 52 },
+      { say: "“So it fails. It's the same mistake we saw at the start, but now it's caught automatically. Across thousands of translations, we'd never have caught that by hand.”", needle: 54 },
     ],
   },
   {
     id: "ch-learn", num: "4.0", title: "Chapter: wrong answer, or wrong test?", movement: 4, kind: "chapter", needle: "hidden",
     props: { mode: "learn" },
-    steps: [{ say: "“So now the judges are marking every translation. And when something fails, there's one question: is it a wrong answer, or a wrong test? Wrong answer, fix the prompt. Wrong test, fix the judge. Always check the test first, because if the test is wrong, every score it gives us is wrong.”" }],
+    steps: [
+      { say: "“And look: we've defined what good looks like, we've built it, and we're measuring every answer. That connects the whole loop, so now we can learn.” The loop from 2.1 closes, and Learn lights up." },
+      { say: "“And when something fails, there's one question: is it a wrong answer, or a wrong test? Wrong answer, fix the prompt. Wrong test, fix the judge. And always check the test first, because if the test is wrong, every score it gives us is wrong.”" },
+    ],
   },
   {
     id: "expose", num: "4.1", title: "A judge that's wrong", movement: 4, kind: "expose", needle: "corner",
     steps: [
-      { say: "“Here's one from our engineering release notes: ‘The release is delayed so we can pay down tech debt.’ Not something you hear a PM say very often! But the translator's done a decent job: it's kept the facts, and it sounds like a PM. Yet one of our judges fails it: ‘nothing added’.”", needle: 56 },
-      { say: "“And its reason? It ‘waves work away as tech debt’. Our bad examples were full of PMs dodging work, like this one from the golden wall: ‘Classic tech debt, we'll sort it in v2’. So the judge learned the words, not the idea. Here, paying it down is the actual reason for the delay. It might be the most honest thing our PM has said all day.”" },
-      { say: "“So the judge is wrong, and that matters more than it looks. If we trusted it, we'd go and ‘fix’ the prompt just to please a broken judge. So we always check the judge first, and then fix the prompt.”", needle: 60 },
+      { say: "“Here's one from our engineering release notes: ‘The release is delayed so we can pay down tech debt.’ Not something you hear a PM say very often! The translator's done a decent job: it's kept the facts, and it sounds like a PM. But one of our judges fails it: ‘nothing added’.”", needle: 56 },
+      { say: "“So why did it fail? When we built this judge, we gave it our golden examples, and a lot of the bad ones were PMs waving work away as tech debt, like this one. So the judge learned the words, not the idea. But here, paying down tech debt is the actual reason for the delay. It might be the most honest thing our PM Translator has said all day.” The answer stays; the wall card and the judge's prompt appear under it." },
+      { say: "“So the judge is wrong, and that matters. If we'd trusted it, we'd have changed the prompt to please a broken judge, and been chasing our tail. So check the judge first, then fix the prompt.”", needle: 60 },
     ],
   },
   {
-    id: "reasons", num: "4.2", title: "Reviews: a drop-down and a reason, then sort", movement: 4, kind: "reasons", needle: "corner",
+    id: "reasons", num: "4.2", title: "Reviews: a category and a reason, then sort", movement: 4, kind: "reasons", needle: "corner",
     steps: [
-      { say: "“So how do we fix things without guessing? Every time there's a fail, someone who knows the work reviews it. You don't need to review everything, just enough to keep the judges calibrated. Do they agree with the judge? They pick a drop-down, from the handful of ways things usually go wrong, and they write down the reason in their own words. And the more words, the better. After a few hundred of these, the drop-downs show us the patterns: evidence, not vibes.” Rows land with their drop-down and reason. (If you want the research terms: the reasons are open coding, the drop-downs axial coding.)", needle: 64 },
-      { say: "“Then we sort them. Wrong test, fix the judge: that one goes first.” The blue box draws. “Wrong answer, fix the prompt.” The teal box draws." },
+      { say: "“So how do we fix things without guessing? We bring in people. The experts who know the work review a sample of the answers, passes and fails, but especially the fails. Do they agree with the judge? They pick a category, and write down why, in their own words. The more words, the better. The categories show us the patterns, like a judge that's too strict, and the reasons tell us how to fix them.” Rows land with their category and reason. (If you want the research terms: the reasons are open coding, the categories axial coding.)", needle: 64 },
+      { say: "“Then we sort them. Where the judge was wrong, that's a wrong test: fix the judge first.” The blue box draws. “Where the judge was right, that's a wrong answer: fix the prompt.” The teal box draws." },
     ],
   },
   {
     id: "diffs", num: "4.3", title: "The reasons go to an AI", movement: 4, kind: "diffs", needle: "corner",
     steps: [
-      { say: "“Then we take everything about the judge, the judge's own prompt and all the feedback on it, and give it to another AI. ‘Here's the judge, here's the feedback: improve it.’ And out comes a better judge. The blunt tech debt line is gone, replaced with what we actually meant: catch work being waved away, not the words.” Let the judge and its feedback fly into the AI.", needle: 68 },
-      { say: "“Then the same for the prompt. Version 2 and all the reasons it failed go in, and out comes version 3, built from your feedback and reasoning. We didn't write it ourselves. We asked a separate AI to improve it, based on what people told us.”", needle: 72 },
+      { say: "The old judge and prompt sit on the left; the judge's feedback appears under the AI. “Then we take the judge's own prompt, and everything people said about it, and give both to another AI: ‘Here's the judge, here's the feedback. Can you improve it?’”", needle: 66 },
+      { say: "The judge and its feedback fly into the AI, and the new judge comes out on the right. “And out comes a better judge. The blunt ‘tech debt’ line is gone, replaced with what we actually meant: catch work being waved away, not the words.”", needle: 68 },
+      { say: "The prompt's feedback appears under the AI. “Now we've got a calibrated judge, we fix the brief. We take version 2, the prompt we were still vibing over, and all the reasons it failed, and ask an AI to improve it.”" },
+      { say: "Version 2 and its feedback fly in, and version 3 comes out. “And out comes version 3, built from what people told us. We didn't write it ourselves.”", needle: 72 },
     ],
   },
   {
     id: "results", num: "4.4", title: "From vibes to measured", movement: 4, kind: "results", needle: "corner",
     steps: [
-      { say: "“So, did it work? Look how far we've come. Version 1 was total vibes. Version 2, we checked by hand. And version 3 is judged automatically, on every answer, and it's improving itself from our feedback.”", needle: 80 },
-      { say: "“And that's the pattern with most AI features. Getting to quite good happens quickly. Getting to extremely good, good enough to trust with an HR policy, takes a lot more time. The evals tell you whether that time is paying off.” “Extremely good” lands." },
+      { say: "“So, did it work? Version 1 was total vibes: we made up a prompt and went with it. Version 2, we checked by hand, but that didn't scale. Version 3 has judges: we've separated doing the work from checking it, and it's improving from our feedback.”", needle: 80 },
+      { say: "“And it's getting quite good. But getting to extremely good, good enough to trust with every HR policy, takes a lot more time. The evals tell you whether you're heading in the right direction. You still decide when it's good enough to ship.” “Extremely good” lands." },
     ],
   },
   {
@@ -454,20 +460,33 @@ export const BEATS: Beat[] = [
     steps: [
       { say: "“So, back to the question from the start: should we ship it? Earlier we were reluctant, because we didn't know how reliable it was. Now we can measure it. But whether we ship really depends on what we're trying to achieve.”", needle: 84 },
       { say: "“If we were just writing a Friday drinks email, vibes are fine. We'd have shipped version 1: write the prompt, paste it into Slack or Teams, done.”" },
-      { say: "“But if this is going to rewrite every HR policy, we want a really high bar: every rule passing, all the time, and a human still signs off. Most things sit somewhere in between. Our job is to decide where, and write those rules down before we build.”", needle: 88 },
+      { say: "“But if we're automating HR policies or legal documents, we need a much higher bar: more rules, every rule passing every time, and a human signing off. Most AI products sit somewhere in between. Our job is to decide where the bar is, by deciding the rules and what good looks like, before we build.”", needle: 88 },
     ],
   },
   {
-    id: "home", num: "5.2", title: "The leave policy ships, from vibes to evidence", movement: 5, kind: "home", needle: "big",
+    id: "home", num: "5.2", title: "The leave policy ships", movement: 5, kind: "home", needle: "corner",
     steps: [
-      { needleMode: "corner", say: "“And here's that same HR policy, through everything we've built today. Four weeks stays four weeks, and it's the same answer you'd have put on the good side of the golden wall. Every judge passes it, a human signs it off, and now we can ship it, with the evidence to back it up.”", needle: 92 },
-      { say: "“Remember the needle at the start? We were firmly on vibes. We wrote the rules, marked the answers, captured our reasoning, and improved the judge and the prompt. That's how we moved from vibes to evidence.” The needle swings across.", needle: 100 },
+      { say: "“And here's that same HR policy, through everything we've built today. Four weeks stays four weeks, and it's the same answer you'd have put on the good side of the golden wall. Every judge passes it, a human signs it off, and now we can ship it, with the evidence to back it up.”", needle: 92 },
     ],
   },
   {
-    id: "close", num: "5.3", title: "Close", movement: 5, kind: "close", needle: "hidden", dark: true,
+    id: "recap", num: "5.3", title: "Recap: the whole loop, connected", movement: 5, kind: "chapter", needle: "hidden",
+    props: { mode: "lap" },
     steps: [
-      { say: "“A great demo doesn't mean a shippable product. So say what good looks like, and then prove it.”" },
+      { say: "Each stage lights up as you say it. “So let's recap. We defined what good looks like: our rules, and golden examples with the reasons why. We built the PM Translator. We measured every answer, with code tests, AI judges and people. And we learned: fix the judge first, then the prompt. That's the whole loop, connected.”" },
+    ],
+  },
+  {
+    id: "evidence", num: "5.4", title: "From vibes to evidence", movement: 5, kind: "home", needle: "big",
+    props: { variant: "evidence" },
+    steps: [
+      { say: "“Remember the needle at the start? We were firmly on vibes. With that loop running, we've got the evidence. That's how we moved from vibes to evidence.” The needle swings across.", needle: 100 },
+    ],
+  },
+  {
+    id: "close", num: "5.5", title: "Close", movement: 5, kind: "close", needle: "hidden", dark: true,
+    steps: [
+      { say: "“So, your AI feature works in the demo. That's the easy part, and that's OK. Define what good looks like, measure every answer, learn from every fail, and you can get from demo to shippable, fast.”" },
       { say: "“Thank you.”" },
     ],
   },

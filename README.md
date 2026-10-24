@@ -30,9 +30,9 @@ The room writes the rules (Define), then becomes the judge and marks three answe
 
 ### 3 · Check every answer
 
-We can't vote on ten thousand answers a day. The prompt is the brief and the judge is the editor, kept separate for three reasons: a writer shouldn't edit their own work; it's many judges, each an expert on one rule; and when the prompt changes the judges stay the same, so you know whether the change helped.
+We can't vote on ten thousand answers a day. The prompt is the brief: it goes through an AI, and out comes an answer. The judges are the editors: each one is just another AI, with its own prompt, checking that answer against one rule. They're kept separate for two reasons. A writer shouldn't edit their own work. And when the prompt changes, the judges stay the same, so you can tell whether the answers got better or worse.
 
-![The prompt is the brief, the judge is the editor](docs/screenshots/06-brief-and-editor.png)
+![The prompt is the brief; its answer flows into the judges](docs/screenshots/06-brief-and-editor.png)
 
 Each rule becomes a test, cheapest first: code tests, AI judges, then people for the borderline calls. Run against every notice, they give a baseline. That's an eval. Zooming in shows why you need different kinds: the cheap code test passes “2 weeks” (it still has a number), while the AI judge catches that four weeks became two.
 
@@ -42,7 +42,7 @@ Each rule becomes a test, cheapest first: code tests, AI judges, then people for
 
 ### 4 · Make it better
 
-Every failure asks one question: is it a wrong answer or a wrong test? A wrong answer means fixing the prompt, and a wrong test means fixing the judge. Always check the test first: if the test is wrong, every score is wrong. Reviews are a drop-down and a reason, then they're sorted, judges first. The reasons go to an AI, which rewrites the judge and then the prompt.
+Once we're measuring every answer, the loop is connected and we can learn. Every failure asks one question: is it a wrong answer or a wrong test? A wrong answer means fixing the prompt, and a wrong test means fixing the judge. Always check the test first: if the test is wrong, every score is wrong. People review a sample of the answers, giving each one a category and a reason, and then the reviews are sorted, judges first. The feedback goes to an AI, which rewrites the judge and then the prompt: the old versions stay on the left and the new ones come out on the right.
 
 | | |
 | --- | --- |
@@ -54,7 +54,7 @@ From v1 (total vibes) to v2 (checked by hand) to v3 (judged automatically, and i
 
 ### 5 · Ship it?
 
-Should we ship it? It depends on your goal, and the quality you need. A Friday drinks email can ship on vibes, but the HR leave policy needs every rule, 100% on the instant fails, and a human signing off. The leave policy ships, and the needle swings to evidence.
+Should we ship it? It depends on your goal, and the quality you need. A Friday drinks email can ship on vibes, but the HR leave policy needs every rule, 100% on the instant fails, and a human signing off. The leave policy ships, a recap shows the whole loop connected, and the needle swings to evidence. The close answers the title: “Your AI feature works in the demo. Now you can prove it.”
 
 ![How good is good enough?](docs/screenshots/12-good-enough.png)
 

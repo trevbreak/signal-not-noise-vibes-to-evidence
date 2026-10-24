@@ -417,33 +417,17 @@ button, input, textarea { font: inherit; color: inherit; }
 .cost i::after { content: ""; position: absolute; right: -0.2cqw; top: -0.55cqw; border: 0.65cqw solid transparent; border-left-color: var(--judge); border-right: 0; }
 .cost-top { top: 27cqw; }
 
-.pj { position: absolute; left: 6cqw; right: 6cqw; top: 12.5cqw; display: grid; grid-template-columns: 1fr 1fr; gap: 2cqw; align-items: start; }
-.pj-note { position: static; width: auto; min-height: 22cqw; display: grid; align-content: start; gap: 1cqw; }
-.pj-h { font-size: 2.3cqw; font-weight: 700; letter-spacing: -0.01em; }
-.pj-c { font-size: 1.5cqw; color: var(--muted); line-height: 1.35; }
 .t-fail { color: var(--fail); }
-.pj-strip { position: absolute; left: 6cqw; right: 6cqw; top: 38.5cqw; display: grid; grid-template-columns: 1fr 1fr; gap: 2cqw; }
-.pj-strip .card { padding: 1.2cqw 1.6cqw; display: grid; gap: 0.4cqw; }
-.pj-strip .label { font-size: 0.95cqw; }
-.pj-strip .t-s { font-size: 1.7cqw; }
-.pj-strip .judge-edge { box-shadow: 0 0 0 0.2cqw var(--judge); }
-.pj-strip .judge-edge .label { color: var(--judge); }
 
 .stamp.hl { box-shadow: 0 0 0 0.5cqw var(--mid-soft); border-color: var(--mid); color: var(--mid); }
 
 /* ── 4.1: a judge that's wrong ───────────────────────────────────────────── */
 .dim-late { animation: dim-late 0.6s ease 2.4s both; }
 @keyframes dim-late { to { opacity: 0.3; } }
-.why-pair { position: absolute; left: 6cqw; right: 6cqw; top: 13cqw; display: grid; grid-template-columns: 1fr 1fr; gap: 2cqw; align-items: stretch; }
-.why-pair .note { position: static; width: auto; }
-.why-pair .note .body { font-size: 1.45cqw; }
 .wall-ref { padding: 1.6cqw 2cqw; display: grid; gap: 0.6cqw; align-content: start; border-top: 0.3cqw solid var(--fail); }
 .wall-ref .label { font-size: 1cqw; }
 .wr-out { font-size: 2cqw; font-weight: 700; line-height: 1.25; }
 .wr-why { font-size: 1.4cqw; color: var(--muted); }
-.fix-first { position: absolute; left: 6cqw; right: 6cqw; top: 35cqw; border-radius: 1cqw; background: var(--judge-soft); box-shadow: 0 0 0 0.2cqw var(--judge); padding: 1.6cqw 2cqw; display: grid; gap: 0.5cqw; }
-.fix-first .t-m { color: var(--judge); font-size: 2.5cqw; }
-.fix-first .t-s { font-size: 1.7cqw; }
 
 /* ── 4.2: reasons, then drop-downs ───────────────────────────────────────── */
 .dchip { display: inline-block; font-size: 1.25cqw; font-weight: 600; border-radius: 99cqw; padding: 0.3cqw 1cqw; white-space: nowrap; }
@@ -465,10 +449,6 @@ button, input, textarea { font: inherit; color: inherit; }
 
 /* ── 4.3: the reasons go to an AI ────────────────────────────────────────── */
 .ai-box { position: absolute; left: 27cqw; top: 15cqw; width: 12cqw; height: 12cqw; border-radius: 1.4cqw; background: var(--ink); color: #fff; display: grid; place-items: center; font-weight: 800; font-size: 2.8cqw; letter-spacing: 0.02em; }
-.ai-arrow { position: absolute; top: 19.6cqw; font-size: 2.4cqw; color: var(--faint); }
-.ai-out { position: absolute; left: 43cqw; right: 4cqw; top: 12.5cqw; display: grid; gap: 1.4cqw; }
-.ai-out .note { position: static; width: auto; }
-.ai-out .note .body { font-size: 1.25cqw; }
 
 /* ── 4.4: did it work? ───────────────────────────────────────────────────── */
 
@@ -506,13 +486,6 @@ button, input, textarea { font: inherit; color: inherit; }
 .rg-label .ptag { font-size: 0.75em; }
 
 /* ── 4.3: inputs fly into the AI, the rewrite comes out ──────────────────── */
-.ai-in { position: absolute; left: 4cqw; top: 13cqw; width: 20cqw; display: grid; gap: 1cqw; justify-items: start; }
-.mini-note { background: var(--card-2); border-radius: 0.8cqw; padding: 0.9cqw 1.1cqw; font-family: var(--mono); font-size: 1cqw; letter-spacing: 0.06em; text-transform: uppercase; display: grid; gap: 0.4cqw; box-shadow: 0 0 0 0.08cqw var(--edge); }
-.mini-note.judge { border-left: 0.45cqw solid var(--judge); }
-.mini-note.prompt { border-left: 0.45cqw solid var(--prompt); }
-.mini-note .ptag { justify-self: start; }
-.mini-note small { font-size: 1cqw; letter-spacing: 0; text-transform: none; color: var(--muted); line-height: 1.35; }
-.ai-in .dchip { white-space: normal; }
 .fly { animation: fly 1.5s cubic-bezier(0.5, 0, 0.3, 1) both; animation-delay: var(--fd, 0.8s); }
 @keyframes fly { 0%, 20% { transform: none; opacity: 1; } 100% { transform: translate(var(--dx), var(--dy)) scale(0.15); opacity: 0; } }
 .ai-box.work { animation: work 1.1s ease 1.6s both; }
@@ -541,16 +514,74 @@ button, input, textarea { font: inherit; color: inherit; }
 .split2 .card .out { font-size: 3.2cqw; }
 .decide2 { display: grid; grid-template-columns: 1fr 36cqw; gap: 3cqw; align-items: center; }
 .decide2 .human { margin-top: 0.6cqw; font-weight: 700; font-size: 2.4cqw; }
-.pj-note { min-height: 15cqw; }
-.pj-why { top: 30.5cqw; }
-.pj-strip:not(.pj-why) { top: 42.5cqw; }
 .reasons .rhead, .reasons .rrow { grid-template-columns: 22cqw 9cqw 17cqw 1fr; }
 .reasons .txt { font-size: 1.25cqw; }
 .chapter .t-m.heur { font-size: 2.35cqw; white-space: nowrap; }
 .chapter .t-m.heur .ptag { font-size: 0.75em; }
 .j-big { font-size: 2.5cqw; font-weight: 800; letter-spacing: -0.015em; line-height: 1.15; }
 .j-stop.best .j-big { color: var(--pass); }
-.pj-three { position: absolute; left: 6cqw; right: 6cqw; top: 31cqw; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.6cqw; }
-.pj-three .card { padding: 1.3cqw 1.5cqw; display: grid; gap: 0.5cqw; align-content: start; }
-.pj-three .label { font-size: 0.95cqw; }
-.pj-three .t-s { font-size: 1.55cqw; line-height: 1.3; }
+
+/* ── Practice run 4 ───────────────────────────────────────────────────────── */
+/* 3.1: the brief → an AI → the answer → the judges, read left to right. */
+.pj-flow { position: absolute; left: 5cqw; right: 5cqw; top: 12cqw; height: 23cqw; display: grid; grid-template-columns: 18cqw 2.6cqw 6.5cqw 2.6cqw 22cqw 2.6cqw 1fr; align-items: center; }
+.pj-flow .note { position: static; width: auto; padding: 1.3cqw 1.5cqw; }
+.pj-flow .note .body { font-size: 1.25cqw; }
+.pj-arrow { text-align: center; font-size: 2.2cqw; color: var(--faint); }
+.pj-arrow.judge { color: var(--judge); }
+.ai-chip { background: var(--ink); color: #fff; border-radius: 1cqw; display: grid; place-items: center; font-weight: 800; font-size: 2cqw; aspect-ratio: 1; }
+.ai-chip.small { font-size: 1cqw; border-radius: 0.5cqw; width: 3.2cqw; }
+.pj-answer { padding: 1.3cqw 1.5cqw; }
+.pj-answer .en { font-size: 1.15cqw; color: var(--muted); margin-bottom: 0.5cqw; }
+.pj-answer .out { font-size: 1.75cqw; font-weight: 700; line-height: 1.2; }
+.pj-judges { display: grid; gap: 0.8cqw; }
+.pj-judge { display: grid; grid-template-columns: 3.2cqw 1fr 2.4cqw; gap: 1cqw; align-items: center; background: var(--card-2); border-radius: 0.8cqw; padding: 0.7cqw 1cqw; box-shadow: 0 0 0 0.08cqw var(--edge); border-left: 0.45cqw solid var(--judge); }
+.pj-judge b { font-size: 1.35cqw; }
+.pj-judge small { display: block; font-size: 1.05cqw; color: var(--muted); margin-top: 0.2cqw; }
+.pj-judge .ptag { font-size: 0.7cqw; }
+.pj-mark { font-size: 2.2cqw; font-weight: 800; text-align: center; }
+.pj-mark.ok { color: var(--pass); }
+.pj-mark.no { color: var(--fail); }
+.pj-each { position: absolute; left: 5cqw; right: 5cqw; top: 36.5cqw; text-align: center; font-family: var(--mono); font-size: 1.1cqw; letter-spacing: 0.1em; text-transform: uppercase; color: var(--judge); }
+.pj-two { position: absolute; left: 5cqw; right: 5cqw; top: 40cqw; display: grid; grid-template-columns: 1fr 1fr; gap: 2cqw; }
+.pj-two .card { display: flex; gap: 1.6cqw; align-items: center; padding: 1.4cqw 1.8cqw; }
+.pj-two .n { font-size: 3.4cqw; font-weight: 800; color: var(--accent); line-height: 1; }
+.pj-two .t-s { font-size: 1.8cqw; line-height: 1.3; }
+
+/* 4.1: the answer on top; the wall card and the judge's prompt under it, on the same grid. */
+.ex-top { position: absolute; left: 8cqw; right: 8cqw; top: 12.5cqw; display: grid; grid-template-columns: 1fr 20cqw; gap: 2cqw; align-items: stretch; }
+.ex-top > .a-stamp, .ex-top .stamp { display: grid; height: 100%; }
+.ex-top .stamp { align-content: center; justify-items: center; }
+.ex-answer { padding: 1.5cqw 2cqw; display: grid; align-content: center; gap: 0.6cqw; }
+.ex-answer .label { font-size: 1cqw; }
+.ex-answer .out { font-size: 2.4cqw; font-weight: 700; line-height: 1.2; }
+.ex-follow { position: absolute; left: 8cqw; right: 8cqw; top: 27cqw; text-align: center; color: var(--accent); font-size: 1.25cqw; }
+.ex-bottom { position: absolute; left: 8cqw; right: 8cqw; top: 30.5cqw; display: grid; grid-template-columns: 1fr 4cqw 1fr; align-items: stretch; }
+.ex-bottom .wall-ref { align-content: center; }
+.ex-bottom .note { position: static; width: auto; display: grid; align-content: center; }
+.ex-bottom .note .body { font-size: 1.4cqw; }
+.ex-arrow { display: grid; place-items: center; font-size: 2.6cqw; color: var(--muted); }
+.ex-caption { position: absolute; left: 8cqw; right: 8cqw; top: 48.5cqw; text-align: center; font-size: 2.3cqw; font-weight: 600; color: var(--muted); }
+.ex-caption b { color: var(--ink); }
+.ex-judge { color: var(--judge); font-weight: 700; }
+.ex-judge b { color: var(--judge); font-weight: 800; }
+
+/* 4.3: old on the left, feedback under the AI, new on the right. */
+.df-old, .df-new { position: absolute; }
+.df-old { left: 4cqw; width: 28cqw; }
+.df-new { left: 64cqw; right: 4cqw; }
+.df-old.judge, .df-new.judge { top: 12cqw; }
+.df-old.prompt, .df-new.prompt { top: 28cqw; }
+.df-old .note, .df-new .note { position: static; width: auto; padding: 1.3cqw 1.6cqw; }
+.df-old .note .body, .df-new .note .body { font-size: 1.1cqw; line-height: 1.45; }
+.df-old .note .label, .df-new .note .label { margin-bottom: 0.7cqw; }
+.df-new .note .body .old { color: var(--muted); }
+.df-arrow { position: absolute; top: 19.6cqw; font-size: 2.4cqw; color: var(--faint); }
+.df-ai { left: 41.5cqw; top: 15.5cqw; }
+.df-feed { position: absolute; left: 36.5cqw; width: 22cqw; top: 31cqw; background: var(--card); border-radius: 1cqw; box-shadow: var(--shadow); padding: 1.1cqw 1.3cqw; display: grid; gap: 0.8cqw; }
+.df-feed .label { font-size: 0.95cqw; }
+.fb-row { display: grid; gap: 0.35cqw; justify-items: start; font-size: 1.15cqw; line-height: 1.3; }
+.fb-row .dchip { font-size: 1cqw; }
+
+/* 5.3: the end-of-talk recap. */
+.chapter .text.recap .t-m { margin-bottom: 0.6cqw; }
+.title-card.close .t-xl { font-size: 5.6cqw; max-width: 84cqw; }

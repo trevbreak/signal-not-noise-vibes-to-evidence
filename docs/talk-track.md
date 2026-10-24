@@ -8,9 +8,9 @@ Each numbered line is one press of → (or the clicker). Quoted words are what t
 | --- | --- | --- |
 | 1 · The demo | 7 min | 8 beats, 22 presses |
 | 2 · Say what good is | 12.5 min | 5 beats, 19 presses |
-| 3 · Check every answer | 16.5 min | 4 beats, 9 presses |
-| 4 · Make it better | 21 min | 5 beats, 10 presses |
-| 5 · Ship it? | 23.5 min | 3 beats, 7 presses |
+| 3 · Check every answer | 16.5 min | 4 beats, 10 presses |
+| 4 · Make it better | 21 min | 5 beats, 13 presses |
+| 5 · Ship it? | 24 min | 5 beats, 8 presses |
 
 ## Before the talk
 
@@ -99,58 +99,62 @@ Each numbered line is one press of → (or the clicker). Quoted words are what t
 ### 2.5 · The golden wall
 
 1. “And what we've just done has a name: golden examples. Real answers, marked by the people who know the work, with the reason why. Your three go up first.”
-2. “And we keep doing this, working with the people who know the work, across all the notices we've collected.” The rest arrive. “And notice which column's biggest. We spend a lot more time defining what's bad than what's good, because with non-deterministic systems we can't write everything down. We have to go and find the edges.” Don't point out the tech-debt card: 4.1 comes back to it.
-3. “Good examples show the PM Translator what to copy, but the bad ones, with the reason why, show it what to avoid. We've got twelve here; in a real product you'd want hundreds. And the reason matters. ‘Bad’ just tells someone it's bad. ‘Four weeks became two’ tells them, or an AI, exactly what to fix.”
+2. “And we keep doing this with the people who know the work, across every notice we've collected.” The rest arrive. “And notice which column's biggest. We spend far more time defining bad than good, because with AI we can't write every rule down. We have to find the edges.” Don't point out the tech-debt card: 4.1 comes back to it.
+3. “Good examples show the PM Translator what to copy. The bad ones, with the reason why, show it what to avoid. And the reason is the important bit. ‘Bad’ just tells someone it's bad. ‘Four weeks became two’ tells them why. That reason is human judgement, from the people who know the work, and that's what we want to build into the system over time. We've got twelve here; in a real product, you'd want hundreds.”
 
 ## 3 · Check every answer
 
 ### 3.0 · Recap: we can't vote on ten thousand a day
 
-1. “So let's take stock. We've built a PM Translator, and it's a bit vibey. We've defined what good looks like. And we've started measuring, by hand.”
-2. “But it took this whole room a few minutes to mark three answers. If we ship this, we'll get thousands of notices a day, maybe millions, and we can't vote on all of those. We need something that checks every answer for us.”
+1. “So let's take stock. We've built a PM Translator, we've defined what good looks like, and we've started measuring, by hand. But it took this whole room a few minutes to mark three answers, and if we ship this, we'll get thousands of notices a day. We need something that checks every answer for us.”
 
-### 3.1 · The prompt is the brief, the judge is the editor
+### 3.1 · The prompt is the brief, the judges are the editors
 
-1. “So we need something that checks every answer for us. Let's be clear on two things first. The prompt is the brief: it tells the PM Translator what to do, and it does its best.”
-2. “The judge is the editor. It's separate, and it checks what was actually written against our rules, and tells us why. So why not just put all the rules in the prompt? Three reasons. A writer shouldn't edit their own work. It's not one judge, it's many, each an expert on one rule, far more than you could fit in a prompt. And when you change the prompt, the judges stay the same, so you know whether the change actually helped.” The judge card, then the three reasons.
+1. “Let's be clear on two things first. The prompt is the brief: it tells the PM Translator what to do, the AI does its best, and out comes an answer.” The brief goes through an AI, and the leave policy answer comes out.
+2. “And the judges are the editors. Each judge is just another AI, with its own prompt, checking that answer against one of our rules, and telling us why. We keep them separate for two reasons.” The answer flows into three judges, and their verdicts land.
+3. “One: a writer shouldn't edit their own work.”
+4. “And two: when we change the prompt, the judges stay the same, so we can tell whether the change made the answers better or worse.”
 
 ### 3.2 · Rules become judges, run at scale
 
 1. “So each of our rules becomes a test, and there are different kinds. Some are just code tests, like we've always written: is there still a number? Some are AI tests, our judges, for the ones that need interpretation: does ‘let's avoid’ still mean ‘never’? They don't look for exact words; they check whether the rule still holds. And some still need people. Cheapest first.”
-2. “With those tests automated, we can rerun version 2 against every notice we've collected, far faster than marking by hand, and it gives us a baseline. That's what an eval is: our rules written down as tests, giving us objective data back.” The montage runs under the tests. Let it play.
+2. “Now with our tests automated, we can rerun version 2 against every notice we've collected. It's far faster than marking by hand, and it gives us a baseline. That's what evals are: our rules and behaviours written down as tests, giving us objective data back.” The montage runs under the tests. Let it play.
 
 ### 3.3 · Zoom in: why you need different judges
 
-1. “Now let's zoom in on one from the start: that HR policy we nearly shipped.”
-2. Stamps land one at a time. “Look at the first one. It's a simple code test: is there still a number? And yes, the number's changed, but it's still a number. That's the limit of simple tests: it made the same mistake we did at a glance. But the ‘rule stays a rule’ judge reads it properly, and catches that four weeks became two.”
-3. “So it fails. It's the same answer we nearly shipped earlier, but now it's caught automatically, and we know why.”
+1. “Now let's zoom in on the HR policy we translated at the start.”
+2. The stamps land in the order you say them: the code test, nothing added, sounds like a PM, then the fail. “So we run our tests. First a code test: is the number still a number? It is, so that looks fine. Then our judges run: other AIs checking the first one's work, each on its own rule. Nothing added: pass. Sounds like a PM: pass. But ‘a rule stays a rule’ spots that four weeks became two, and that changes what the policy means.”
+3. “So it fails. It's the same mistake we saw at the start, but now it's caught automatically. Across thousands of translations, we'd never have caught that by hand.”
 
 ## 4 · Make it better
 
 ### 4.0 · Chapter: wrong answer, or wrong test?
 
-1. “So now the judges are marking every translation. And when something fails, there's one question: is it a wrong answer, or a wrong test? Wrong answer, fix the prompt. Wrong test, fix the judge. Always check the test first, because if the test is wrong, every score it gives us is wrong.”
+1. “And look: we've defined what good looks like, we've built it, and we're measuring every answer. That connects the whole loop, so now we can learn.” The loop from 2.1 closes, and Learn lights up.
+2. “And when something fails, there's one question: is it a wrong answer, or a wrong test? Wrong answer, fix the prompt. Wrong test, fix the judge. And always check the test first, because if the test is wrong, every score it gives us is wrong.”
 
 ### 4.1 · A judge that's wrong
 
-1. “Here's one from our engineering release notes: ‘The release is delayed so we can pay down tech debt.’ Not something you hear a PM say very often! But the translator's done a decent job: it's kept the facts, and it sounds like a PM. Yet one of our judges fails it: ‘nothing added’.”
-2. “And its reason? It ‘waves work away as tech debt’. Our bad examples were full of PMs dodging work, like this one from the golden wall: ‘Classic tech debt, we'll sort it in v2’. So the judge learned the words, not the idea. Here, paying it down is the actual reason for the delay. It might be the most honest thing our PM has said all day.”
-3. “So the judge is wrong, and that matters more than it looks. If we trusted it, we'd go and ‘fix’ the prompt just to please a broken judge. So we always check the judge first, and then fix the prompt.”
+1. “Here's one from our engineering release notes: ‘The release is delayed so we can pay down tech debt.’ Not something you hear a PM say very often! The translator's done a decent job: it's kept the facts, and it sounds like a PM. But one of our judges fails it: ‘nothing added’.”
+2. “So why did it fail? When we built this judge, we gave it our golden examples, and a lot of the bad ones were PMs waving work away as tech debt, like this one. So the judge learned the words, not the idea. But here, paying down tech debt is the actual reason for the delay. It might be the most honest thing our PM Translator has said all day.” The answer stays; the wall card and the judge's prompt appear under it.
+3. “So the judge is wrong, and that matters. If we'd trusted it, we'd have changed the prompt to please a broken judge, and been chasing our tail. So check the judge first, then fix the prompt.”
 
-### 4.2 · Reviews: a drop-down and a reason, then sort
+### 4.2 · Reviews: a category and a reason, then sort
 
-1. “So how do we fix things without guessing? Every time there's a fail, someone who knows the work reviews it. You don't need to review everything, just enough to keep the judges calibrated. Do they agree with the judge? They pick a drop-down, from the handful of ways things usually go wrong, and they write down the reason in their own words. And the more words, the better. After a few hundred of these, the drop-downs show us the patterns: evidence, not vibes.” Rows land with their drop-down and reason. (If you want the research terms: the reasons are open coding, the drop-downs axial coding.)
-2. “Then we sort them. Wrong test, fix the judge: that one goes first.” The blue box draws. “Wrong answer, fix the prompt.” The teal box draws.
+1. “So how do we fix things without guessing? We bring in people. The experts who know the work review a sample of the answers, passes and fails, but especially the fails. Do they agree with the judge? They pick a category, and write down why, in their own words. The more words, the better. The categories show us the patterns, like a judge that's too strict, and the reasons tell us how to fix them.” Rows land with their category and reason. (If you want the research terms: the reasons are open coding, the categories axial coding.)
+2. “Then we sort them. Where the judge was wrong, that's a wrong test: fix the judge first.” The blue box draws. “Where the judge was right, that's a wrong answer: fix the prompt.” The teal box draws.
 
 ### 4.3 · The reasons go to an AI
 
-1. “Then we take everything about the judge, the judge's own prompt and all the feedback on it, and give it to another AI. ‘Here's the judge, here's the feedback: improve it.’ And out comes a better judge. The blunt tech debt line is gone, replaced with what we actually meant: catch work being waved away, not the words.” Let the judge and its feedback fly into the AI.
-2. “Then the same for the prompt. Version 2 and all the reasons it failed go in, and out comes version 3, built from your feedback and reasoning. We didn't write it ourselves. We asked a separate AI to improve it, based on what people told us.”
+1. The old judge and prompt sit on the left; the judge's feedback appears under the AI. “Then we take the judge's own prompt, and everything people said about it, and give both to another AI: ‘Here's the judge, here's the feedback. Can you improve it?’”
+2. The judge and its feedback fly into the AI, and the new judge comes out on the right. “And out comes a better judge. The blunt ‘tech debt’ line is gone, replaced with what we actually meant: catch work being waved away, not the words.”
+3. The prompt's feedback appears under the AI. “Now we've got a calibrated judge, we fix the brief. We take version 2, the prompt we were still vibing over, and all the reasons it failed, and ask an AI to improve it.”
+4. Version 2 and its feedback fly in, and version 3 comes out. “And out comes version 3, built from what people told us. We didn't write it ourselves.”
 
 ### 4.4 · From vibes to measured
 
-1. “So, did it work? Look how far we've come. Version 1 was total vibes. Version 2, we checked by hand. And version 3 is judged automatically, on every answer, and it's improving itself from our feedback.”
-2. “And that's the pattern with most AI features. Getting to quite good happens quickly. Getting to extremely good, good enough to trust with an HR policy, takes a lot more time. The evals tell you whether that time is paying off.” “Extremely good” lands.
+1. “So, did it work? Version 1 was total vibes: we made up a prompt and went with it. Version 2, we checked by hand, but that didn't scale. Version 3 has judges: we've separated doing the work from checking it, and it's improving from our feedback.”
+2. “And it's getting quite good. But getting to extremely good, good enough to trust with every HR policy, takes a lot more time. The evals tell you whether you're heading in the right direction. You still decide when it's good enough to ship.” “Extremely good” lands.
 
 ## 5 · Ship it?
 
@@ -158,15 +162,22 @@ Each numbered line is one press of → (or the clicker). Quoted words are what t
 
 1. “So, back to the question from the start: should we ship it? Earlier we were reluctant, because we didn't know how reliable it was. Now we can measure it. But whether we ship really depends on what we're trying to achieve.”
 2. “If we were just writing a Friday drinks email, vibes are fine. We'd have shipped version 1: write the prompt, paste it into Slack or Teams, done.”
-3. “But if this is going to rewrite every HR policy, we want a really high bar: every rule passing, all the time, and a human still signs off. Most things sit somewhere in between. Our job is to decide where, and write those rules down before we build.”
+3. “But if we're automating HR policies or legal documents, we need a much higher bar: more rules, every rule passing every time, and a human signing off. Most AI products sit somewhere in between. Our job is to decide where the bar is, by deciding the rules and what good looks like, before we build.”
 
-### 5.2 · The leave policy ships, from vibes to evidence
+### 5.2 · The leave policy ships
 
 1. “And here's that same HR policy, through everything we've built today. Four weeks stays four weeks, and it's the same answer you'd have put on the good side of the golden wall. Every judge passes it, a human signs it off, and now we can ship it, with the evidence to back it up.”
-2. “Remember the needle at the start? We were firmly on vibes. We wrote the rules, marked the answers, captured our reasoning, and improved the judge and the prompt. That's how we moved from vibes to evidence.” The needle swings across.
 
-### 5.3 · Close
+### 5.3 · Recap: the whole loop, connected
 
-1. “A great demo doesn't mean a shippable product. So say what good looks like, and then prove it.”
+1. Each stage lights up as you say it. “So let's recap. We defined what good looks like: our rules, and golden examples with the reasons why. We built the PM Translator. We measured every answer, with code tests, AI judges and people. And we learned: fix the judge first, then the prompt. That's the whole loop, connected.”
+
+### 5.4 · From vibes to evidence
+
+1. “Remember the needle at the start? We were firmly on vibes. With that loop running, we've got the evidence. That's how we moved from vibes to evidence.” The needle swings across.
+
+### 5.5 · Close
+
+1. “So, your AI feature works in the demo. That's the easy part, and that's OK. Define what good looks like, measure every answer, learn from every fail, and you can get from demo to shippable, fast.”
 2. “Thank you.”
 
