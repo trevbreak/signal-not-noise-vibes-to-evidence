@@ -17,11 +17,11 @@ The two moving parts are always labelled the same way, in the same colour: the *
 | --- | --- | --- |
 | 1 · The demo | Build PM Translator v1, try it on company notices, ship it on vibes, the two-weeks reveal, introduce yourself at the title drop, five tries, v2 side by side with "no way to check" | 7 min |
 | 2 · Say what good is | The loop with a gap, the room writes the rules (Define), marks three answers (Measure), the soft-rule split on one press, the golden wall and why a reason matters | 12.5 min |
-| 3 · Check every answer | Recap, the prompt asks and the judge checks, rules become judges and run at scale, the zoom-in where the cheap code check passes "2 weeks" and the AI judge catches it | 16.5 min |
-| 4 · Make it better | Fix the judge first; a judge that's wrong about tech debt; reasons and drop-downs, with boxes for judge then prompt; the judge, then the prompt, fly through the AI; from no measurement to evidence | 21 min |
+| 3 · Check every answer | Recap, the prompt is the brief and the judge is the editor, rules become judges and run at scale, the zoom-in where the cheap code check passes "2 weeks" and the AI judge catches it | 16.5 min |
+| 4 · Make it better | Wrong answer → fix the prompt, wrong mark → fix the judge; a judge that's wrong about tech debt; reviews (drop-down + reason), sorted into judge then prompt; the judge, then the prompt, fly through the AI; from total vibes to judged automatically | 21 min |
 | 5 · Ship it? | Good enough depends on your goal (vibes vs 100%), the leave policy ships and the needle swings to evidence, the close | 23.5 min |
 
-The clock in the presenter window starts when you leave the title card and turns red when you're behind a checkpoint. The script comes to about 21¼ minutes at 150 words a minute (70 presses). In the 24 Oct practice run you spoke about 1.3× the script, mostly by expanding lines in your own words, so the lines are now written the way you said them. Read them close to the script and you'll land well inside 25 minutes, with room for the audience.
+The clock in the presenter window starts when you leave the title card and turns red when you're behind a checkpoint. The script comes to about 20¾ minutes at 150 words a minute (69 presses). In the 24 Oct practice run you spoke about 1.3× the script, mostly by expanding lines in your own words, so the lines are now written the way you said them. Read them close to the script and you'll land well inside 25 minutes, with room for the audience.
 
 ## Setting up
 
@@ -79,7 +79,7 @@ All of it lives in [`src/talk/content.ts`](../src/talk/content.ts).
 
 * **The prompts.** v1 is two lines plus a length limit, and it's what the room's notices run through live. v2 adds three lines. v3 is pm.ts's "what good looks like" prompt.
 * **The judges.** The first is deliberately cheap code: "still has a number", the shortcut version of rule 01. It passes the two-weeks answer (2 is a number), which is the point of 3.3. The room's own notices go through the same judges. In rehearsal, "due by 5pm" became "by 4:30pm": the number judge passed it and the AI rule judge failed it.
-* **Real numbers, from a rehearsal run on 11 Oct 2026** (Haiku 4.5 translating, Opus 5.5 judging): six notices × five tries, passing every judge. v1 got 0 of 30, v2 got 1 of 30 and v3 got 21 of 30, shown in 4.4 as none, barely any and 7 in 10. The montage's leave row is v2's real answer.
+* **Real numbers, from a rehearsal run on 11 Oct 2026** (Haiku 4.5 translating, Opus 5.5 judging): six notices × five tries, passing every judge. v1 got 0 of 30, v2 got 1 of 30 and v3 got 21 of 30. They're no longer on screen (4.4 shows the journey in words), but they're here if anyone asks. The montage's leave row is v2's real answer.
 * **Illustrative:** most montage rows (the number column is what the code judge would say), the lunch answer, and Version 2's standup answer.
 * **Recorded answers** elsewhere (the two-weeks reveal, the five Friday tries, the golden wall, the tech-debt release note) come from `src/variants/pm.ts`.
 
@@ -104,7 +104,7 @@ All of it lives in [`src/talk/content.ts`](../src/talk/content.ts).
 The 24 Oct cuts are already made: one introduction (at the title drop), v2 and "no way to check" on one slide, the split on one press, no "bad examples" hold, and no separate loop-closed chapter. If you're still long, cut in this order:
 
 1. **2.2's "not now" press** (about 20 seconds). Leave the chips on screen and press past it.
-2. **3.1's third press** (normal test vs a judge, about 20 seconds). The two cards carry the point.
+2. **3.1's third press** (normal test vs a judge, about 20 seconds). The brief-and-editor cards carry the point.
 3. **2.3's reasons for A and C** (about 15 seconds). Read the room's split and move on.
 
 Use the beat strip at the bottom of the presenter window to jump past a beat.

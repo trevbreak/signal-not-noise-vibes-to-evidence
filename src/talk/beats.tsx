@@ -423,13 +423,14 @@ function ChapterView({ beat, step }: P) {
     if (mode === "learn")
       return (
         <>
-          <div className="t-l a-rise" style={d(1.4)}>
-            Fix the <Tag kind="judge" /> first.
-            <br />
-            Then the <Tag kind="prompt" />.
+          <div className="t-m heur a-rise" style={d(1.4)}>
+            Wrong answer → fix the <Tag kind="prompt" />
           </div>
-          <div className="t-s a-rise" style={d(2)}>
-            If the judge is wrong, every score it gives is wrong.
+          <div className="t-m heur a-rise" style={d(2)}>
+            Wrong mark → fix the <Tag kind="judge" />
+          </div>
+          <div className="t-s t-accent a-rise" style={{ ...d(2.8), fontWeight: 700 }}>
+            Check the mark first. If the judge is wrong, every score is wrong.
           </div>
         </>
       );
@@ -545,56 +546,29 @@ function VoteView({ step, state }: P) {
   );
 }
 
-function SplitView({ step, state }: P) {
+function SplitView({ state }: P) {
   return (
-    <div className="split" data-box="split">
+    <div className="split2" data-box="split">
       <div className="card a-grow">
-        <div className="wm">Answer B · the one the room split on</div>
-        <div className="cmp">
-          <span className="who">The notice</span>
-          <span className="txt">
-            <Marked text={FRIDAY} marks={[{ phrase: "Never", kind: "ok", on: true }]} />
-          </span>
-          <span className="kind ok a-fade" style={d(0.5)}>
-            A hard rule
-          </span>
-          <span className="who">Answer B</span>
-          <span className="txt">
-            <Marked text={VOTE_ITEMS[1].out} marks={[{ phrase: "Let's avoid", kind: "mid", on: true }]} />
-          </span>
-          <span className="kind mid a-fade" style={d(0.9)}>
-            A suggestion
-          </span>
+        <div className="en">
+          <Marked text={FRIDAY} marks={[{ phrase: "Never", kind: "ok", on: true }]} />
+        </div>
+        <div className="out">
+          <Marked text={VOTE_ITEMS[1].out} marks={[{ phrase: "Let's avoid", kind: "mid", on: true }]} />
         </div>
       </div>
-      {step >= 0 && (
-        <div className="checks" data-box="checks">
-          <span className="chk ok a-rise" style={d(1.4)}>✓ No made-up date</span>
-          <span className="chk ok a-rise" style={d(1.8)}>
-            ✓ Nothing promised
-          </span>
-          <span className="chk mid a-rise" style={d(2.4)}>
-            ! “Never” became “try not to”
-          </span>
-        </div>
-      )}
-      {step >= 0 && (
-        <div className="decide a-rise" style={d(3.4)} data-box="decide">
-          <div>
-            <Bar split={splitOf(state, "B")} big />
-            <div className="bar-legend">
-              <span>Good</span>
-              <span>Bad</span>
-            </div>
-          </div>
-          <div>
-            <div className="t-m">Is a softer rule still the rule?</div>
-            <div className="t-s t-muted" style={{ marginTop: "0.6cqw" }}>
-              That's a product decision, not the model's. The people who know the work decide, and write down why.
-            </div>
+      <div className="decide2">
+        <div className="a-rise" style={d(0.6)}>
+          <Bar split={splitOf(state, "B")} big />
+          <div className="bar-legend">
+            <span>The room, on answer B</span>
           </div>
         </div>
-      )}
+        <div className="a-rise" style={d(1.4)}>
+          <div className="t-m">Which side does it land on?</div>
+          <div className="t-s t-accent human">That's a human call.</div>
+        </div>
+      </div>
     </div>
   );
 }
@@ -726,34 +700,46 @@ function PromptJudgeView({ step }: P) {
     <>
       <div className="question" data-box="question">
         <div className="label">Two different jobs</div>
-        <div className="t-m">The prompt asks. The judge checks.</div>
+        <div className="t-m">The prompt is the brief. The judge is the editor.</div>
       </div>
       <div className="pj" data-box="pj">
         <div className="note prompt pj-note a-rise">
           <div className="label">
             <span className="nt">
-              <Tag kind="prompt" /> what we tell the translator
+              <Tag kind="prompt" /> the brief
             </span>
           </div>
           <div className="pj-h">Tells it what to do.</div>
-          <div className="body old">“Rewrite this like a pushy PM. Keep every number. Keep it short.”</div>
-          <div className="pj-c">A request. The AI does its best, and we saw in version 2 that adding rules doesn't mean they're followed.</div>
+          <div className="pj-c">A request. It does its best.</div>
         </div>
         {step >= 1 && (
           <div className="note judge pj-note a-rise">
             <div className="label">
               <span className="nt">
-                <Tag kind="judge" /> a separate check, after
+                <Tag kind="judge" /> the editor
               </span>
             </div>
             <div className="pj-h">Checks what it actually did.</div>
-            <div className="body old">
-              “Is the notice period still 4 weeks?” → <span className="t-fail">✗ Fail: it became 2.</span>
-            </div>
-            <div className="pj-c">Runs on every answer, and gives a pass or fail with a reason. You don't mark your own homework.</div>
+            <div className="pj-c">A pass or fail on one rule, and why.</div>
           </div>
         )}
       </div>
+      {step >= 1 && (
+        <div className="pj-strip pj-why" data-box="why">
+          <div className="card a-rise" style={d(2.4)}>
+            <div className="label">Why keep them separate?</div>
+            <div className="t-s">
+              A writer can't edit their own work: <b>same blind spots.</b>
+            </div>
+          </div>
+          <div className="card a-rise" style={d(4)}>
+            <div className="label">And</div>
+            <div className="t-s">
+              Change the brief, and you'd <b>change the ruler too.</b>
+            </div>
+          </div>
+        </div>
+      )}
       {step >= 2 && (
         <div className="pj-strip a-rise" data-box="strip">
           <div className="card">
@@ -917,57 +903,50 @@ function ExposeView({ step }: P) {
 
 function ReasonsView({ step }: P) {
   const row = (r: (typeof REASONS)[number], i: number) => (
-    <div key={r.dropdown} className={`rrow a-rise ${r.agree ? "" : "dis"}`} style={d(i * 0.15)}>
+    <div key={r.dropdown} className={`rrow a-rise ${r.agree ? "" : "dis"}`} style={d(i * 0.35)}>
       <span className="ans">{r.out}</span>
-      <span className={`call ${r.agree ? "agree" : "dis"}`}>{r.agree ? "You agree" : "You disagree"}</span>
-      <span className="txt">
-        <Type text={r.text} speed={22} delay={600 + i * 700} />
-      </span>
+      <span className={`call ${r.agree ? "agree" : "dis"}`}>{r.agree ? "Agree" : "Disagree"}</span>
       <span className="dd-slot">
-        {step >= 1 && (
-          <span className={`dchip ${r.fix} a-stamp`} style={d(0.3 + i * 0.3)}>
-            {r.dropdown} ▾
-          </span>
-        )}
+        <span className={`dchip ${r.fix} a-stamp`} style={d(0.4 + i * 0.35)}>
+          {r.dropdown} ▾
+        </span>
+      </span>
+      <span className="txt">
+        <Type text={r.text} speed={18} delay={900 + i * 1200} />
       </span>
     </div>
   );
   const groups = [
-    { fix: "judge" as const, n: "1", rows: REASONS.filter((r) => r.fix === "judge") },
-    { fix: "prompt" as const, n: "2", rows: REASONS.filter((r) => r.fix === "prompt") },
+    { fix: "judge" as const, label: "1 · Wrong mark → fix the", rows: REASONS.filter((r) => r.fix === "judge") },
+    { fix: "prompt" as const, label: "2 · Wrong answer → fix the", rows: REASONS.filter((r) => r.fix === "prompt") },
   ];
   let i = 0;
   return (
     <>
       <div className="question" data-box="question">
-        <div className="label">Reasons · drop-downs</div>
-        <div className="t-m">{step >= 2 ? "Judge first, then the prompt." : "Say why. Then sort it."}</div>
+        <div className="label">{step >= 1 ? "Sort them" : "How people review a fail"}</div>
+        <div className="t-m">{step >= 1 ? "Wrong mark first. Then wrong answers." : "Pick a drop-down. Write the reason."}</div>
       </div>
       <div className="reasons" data-box="reasons">
-        <div className={`rhead ${step >= 2 ? "gone" : ""}`}>
+        <div className={`rhead ${step >= 1 ? "gone" : ""}`}>
           <span>The answer</span>
           <span>
             <Tag kind="judge" /> said ✗
           </span>
-          <span>Your reason</span>
           <span>Drop-down</span>
+          <span>Reason · more words is better</span>
         </div>
         {groups.map((g, k) => (
-          <div key={g.fix} className={`rgroup ${g.fix} ${step >= 2 ? "on" : ""}`} style={d(k * 1.4)}>
+          <div key={g.fix} className={`rgroup ${g.fix} ${step >= 1 ? "on" : ""}`} style={d(k * 1.4)}>
             {g.rows.map((r) => row(r, i++))}
-            {step >= 2 && (
+            {step >= 1 && (
               <span className={`rg-label ${g.fix} a-stamp`} style={d(0.3 + k * 1.4)}>
-                {g.n} · Fix the <Tag kind={g.fix} />
+                {g.label} <Tag kind={g.fix} />
               </span>
             )}
           </div>
         ))}
       </div>
-      {step === 1 && (
-        <div className="caption key-line a-fade" style={{ ...d(1.6), top: "47cqw" }} data-box="caption">
-          <span className="dchip judge">blue</span> fixes the judge · <span className="dchip prompt">teal</span> fixes the prompt
-        </div>
-      )}
     </>
   );
 }
@@ -991,7 +970,7 @@ function DiffsView({ step }: P) {
             </div>
             {judgeIn.map((r) => (
               <span key={r.dropdown} className={`dchip ${r.fix} fly`} style={fly(21, -3, 1.1)}>
-                {r.dropdown}: {r.text}
+                {r.dropdown}
               </span>
             ))}
           </>
@@ -1041,29 +1020,22 @@ function ResultsView({ step }: P) {
   return (
     <>
       <div className="question" data-box="question">
-        <div className="label">Did it work? · same notices, all the way through</div>
-        <div className="t-m">From no measurement to evidence on every answer.</div>
+        <div className="label">Look how far we've come</div>
+        <div className="t-m">From vibes to judged, automatically.</div>
       </div>
       <div className="journey2" data-box="journey">
         <div className="j-track a-grow" />
         {JOURNEY.map((j, i) =>
           j.far && step < 1 ? null : (
-            <div key={j.label} className={`j-stop ${j.far ? "far" : ""} ${j.result ? "best" : ""} a-rise`} style={d(j.far ? 0.2 : 0.4 + i * 0.9)}>
+            <div key={j.label} className={`j-stop ${j.far ? "far" : ""} ${j.best ? "best" : ""} a-rise`} style={d(j.far ? 0.2 : 0.4 + i * 0.8)}>
               <i className="j-dot" />
-              <div className="j-label">{j.label}</div>
-              <div className="j-when">{j.when}</div>
-              <div className="j-how">{j.how}</div>
-              {j.result && <div className="j-result">{j.result}</div>}
-              {j.later && <div className="j-later">{j.later}</div>}
+              <div className="j-when">{j.label}</div>
+              <div className="j-big">{j.line}</div>
+              {j.sub && <div className="j-how">{j.sub}</div>}
             </div>
           ),
         )}
       </div>
-      {step >= 1 && (
-        <div className="caption a-rise" style={{ ...d(0.8), top: "45cqw", color: "var(--muted)", fontSize: "1.9cqw" }} data-box="caption">
-          The evals tell you whether that work is paying off.
-        </div>
-      )}
     </>
   );
 }
@@ -1074,8 +1046,8 @@ function EndsView({ step }: P) {
   return (
     <>
       <div className="question" data-box="question">
-        <div className="label">Good enough depends on</div>
-        <div className="t-m">your goal, and the quality you need.</div>
+        <div className="label">Should we ship it?</div>
+        <div className="t-m">It depends on your goal, and the quality you need.</div>
       </div>
       <div className="spectrum a-grow" data-box="spectrum" />
       <div className="spectrum-l">

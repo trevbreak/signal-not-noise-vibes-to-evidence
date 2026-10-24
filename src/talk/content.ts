@@ -117,7 +117,7 @@ export const JUDGES: { id: string; kind: JudgeKind; check: string }[] = [
   { id: "rule", kind: "ai", check: "An AI reads our rule and our golden examples" },
   { id: "scope", kind: "ai", check: "An AI reads our rule and our golden examples" },
   { id: "voice", kind: "ai", check: "An AI reads our rule and our golden examples" },
-  { id: "room", kind: "people", check: "For the borderline ones, like “let's avoid”" },
+  { id: "room", kind: "people", check: "For the borderline ones, like “let's avoid” vs “never”" },
 ];
 export const KIND_LABEL: Record<JudgeKind, string> = { rule: "Judge · code", ai: "Judge · AI", people: "Judge · people" };
 export const JUDGE_SHORT: Record<string, string> = { numbers: "Still has a number", rule: "A rule stays a rule", scope: "Nothing added", voice: "Sounds like a PM", room: "The room" };
@@ -185,20 +185,19 @@ export const JUDGE_LINE_NEW = "Catch work being waved away (“later”, “v2�
 
 /** 4.2: every fail gets a reason in the reviewer's own words, then a drop-down. `agree`: did they agree with the judge's fail? */
 export const REASONS: { out: string; agree: boolean; text: string; dropdown: string; fix: "prompt" | "judge" }[] = [
-  { out: "…so we can pay down tech debt.", agree: false, text: "Paying it down IS the reason.", dropdown: "Judge too strict", fix: "judge" },
-  { out: "We're cutting that to 2 weeks.", agree: true, text: "4 weeks became 2.", dropdown: "Changed a number", fix: "prompt" },
-  { out: "I already told them we'd demo it.", agree: true, text: "Promised a demo nobody agreed to.", dropdown: "Promised something", fix: "prompt" },
-  { out: "Let's avoid deploying on Fridays.", agree: true, text: "“Never” went soft.", dropdown: "Softened a rule", fix: "prompt" },
-]
+  { out: "…so we can pay down tech debt.", agree: false, text: "Paying it down IS the reason for the delay. It's honest, not an excuse.", dropdown: "Judge too strict", fix: "judge" },
+  { out: "We're cutting that to 2 weeks.", agree: true, text: "4 weeks became 2. On an HR policy, that changes people's plans.", dropdown: "Changed a number", fix: "prompt" },
+  { out: "I already told them we'd demo it.", agree: true, text: "Promised the CEO a demo nobody agreed to.", dropdown: "Promised something", fix: "prompt" },
+  { out: "Let's avoid deploying on Fridays.", agree: true, text: "“Never” went soft. Now it reads like a suggestion.", dropdown: "Softened a rule", fix: "prompt" },
+];
 
-/** 4.4: how far we've come, from no measurement to judges on every answer. The pass rates are the
- *  rehearsal run (Oct 2026): six notices × five tries, every judge — v1 0 of 30, v2 1 of 30, v3 21 of 30. */
+/** 4.4: how far we've come. Kept to one line a stop (the rehearsal pass rates are in docs/presenting.md). */
 export const JOURNEY = [
-  { label: vName(1), when: "Minutes · an MVP", how: "Measured by: nobody. Vibes.", later: "measured later: none passed" },
-  { label: vName(2), when: "More rules, by gut feel", how: "Measured by: us, by hand. Three answers.", later: "measured later: barely any" },
-  { label: vName(3), when: "An afternoon · quite good", how: "Measured by: judges, on every answer", result: "7 in 10 pass" },
-  { label: "Extremely good", when: "Months, and a lot more data", how: "Good enough to trust with an HR policy", far: true },
-]
+  { label: "Version 1", line: "Total vibes" },
+  { label: "Version 2", line: "Checked by hand" },
+  { label: "Version 3", line: "Judged automatically, and improving", best: true },
+  { label: "Next", line: "Extremely good", sub: "takes a lot more time", far: true },
+];
 
 /** The answer that ships at the end: Version 3 on the leave notice. */
 export const FINAL = {
@@ -331,7 +330,7 @@ export const BEATS: Beat[] = [
     steps: [
       { say: "“So was that just bad luck? This is the thing that catches people out all the time: AI isn't like normal software. It's not deterministic. Ask it the same thing twice and you'll get two different answers. So here's a rule off our engineering wiki, run through the PM Translator five times, with the same prompt.”", needle: 12 },
       { say: "Point at the outlined words as they appear. “Only one of these kept the rule. Everything else has changed it in some way, softened it or adapted it: ‘not this Friday’, ‘fine if you're organised’, ‘let's avoid’.”" },
-      { say: "“So, five tries, five different answers, and only one out of five kept the rule. If we'd tested it once, we might have got the one that worked, and shipped it. Something that passes five times might only fail at five thousand. So we still don't know how reliable it is.”" },
+      { say: "“So, five tries, five different answers, and only one out of five kept the rule. If we'd tested it once, we might have got the good one and shipped it. Some failures show up in five tries; some take hundreds, or thousands. So we still don't know how reliable it is.”" },
     ],
   },
   {
@@ -357,25 +356,25 @@ export const BEATS: Beat[] = [
       { say: "“What else? Has anyone got another rule we should add?” E to retype the card in their words; Enter to keep it.", field: "rule:1", keys: "E retype · Enter keep" },
       { say: "“Good. What else?”", field: "rule:2", keys: "E retype · Enter keep" },
       { say: "“And it still has to sound like a PM, or nobody reads it. That's the whole point of the product.”", field: "rule:3", keys: "E retype · Enter keep" },
-      { say: "“Now, two of these are a bit different. They're hard rules: break the number or the rule, and it doesn't matter how funny the rest is, it's an instant fail. In eval-speak these are invariants, and that's the only time you'll hear that word today.”", needle: 22 },
-      { say: "“And some things we'll just capture as ‘not now’: emoji, length, whether it's actually funny. We're scoping what our translator does. Writing that down is a decision too, and it saves us the same debate week on week.”" },
+      { say: "“Now, two of these are a bit different. They're hard rules, what we call invariants: break the number or the rule, and it doesn't matter how funny the rest is, it's an instant fail.”", needle: 22 },
+      { say: "“And there are things we've thought about, but decided are out of scope for now: emoji, length, whether it's actually funny. Writing those down matters too. Every time we say what's in and what's out, we get clearer on what's important, and we don't have the same debate next week.”" },
     ],
   },
   {
     id: "vote", num: "2.3", title: "Be the judge", movement: 2, kind: "vote", needle: "corner", loop: "measure",
     steps: [
       { say: "“So now, let's measure. By hand, for now. Here are three real answers the PM Translator gave to the Friday notice. Let's mark them against our rules. Where would you put A: good, or bad?” Press 1 (mostly good) to 5 (mostly bad), or → for the usual.", vote: "A", advance: true, keys: "1–5 the room's split" },
-      { say: "Read the reason. “That's looking pretty good. It's still a never, with a quip on top.”", vote: "A", needle: 26, keys: "1–5 adjust" },
+      { say: "Read the reason. “That's looking pretty good. It's still a never, and it sounds like a PM who's seen this movie before.”", vote: "A", needle: 26, keys: "1–5 adjust" },
       { say: "“What about B?” Hands. Expect a split.", vote: "B", advance: true, keys: "1–5 the room's split" },
-      { say: "Let the split sit. “It's getting a bit softer.” Don't resolve it yet: that's the next slide.", vote: "B", keys: "1–5 adjust" },
+      { say: "Let the split sit. “It's getting softer. ‘Let's avoid’ isn't ‘never’. Not wrong, exactly, but not right either.” Don't resolve it yet: that's the next slide.", vote: "B", keys: "1–5 adjust" },
       { say: "“And C?”", vote: "C", advance: true, keys: "1–5 the room's split" },
-      { say: "“It's funny, and probably like some PMs we've worked with, but it's flipped the rule. That one's bad.”", vote: "C", needle: 30, keys: "1–5 adjust" },
+      { say: "“‘Friday deploys are totally fine.’ It's funny, and probably true of some PMs, but it's changed the rule. That one's clearly bad.”", vote: "C", needle: 30, keys: "1–5 adjust" },
     ],
   },
   {
-    id: "split", num: "2.4", title: "The split: a softer rule", movement: 2, kind: "split", needle: "corner", loop: "measure",
+    id: "split", num: "2.4", title: "The split: a human call", movement: 2, kind: "split", needle: "hidden",
     steps: [
-      { say: "“So let's look at B again, because we didn't agree on it. We've gone from a never to ‘let's avoid’: a much softer suggestion. It didn't make up a date, it didn't promise anything, and it hasn't broken an instant fail. But it's added just enough wiggle room that the rule means something different. So is that OK? The model can't answer that for us. It's a product decision, and the people who know the work should make that call, and write down why.” Everything lands on one press: point at each piece as you say it." },
+      { say: "“So let's look at B again, because we split right down the middle. It's gone from a never to ‘let's avoid’. It hasn't broken any of our rules, but it's added just enough wiggle room to change what it means. So which side does it land on? The model can't answer that. That's a human call: the people who know the work decide, and write down why.”" },
     ],
   },
   {
@@ -383,29 +382,29 @@ export const BEATS: Beat[] = [
     steps: [
       { say: "“And what we've just done has a name: golden examples. Real answers, marked by the people who know the work, with the reason why. Your three go up first.”", needle: 34 },
       { say: "“And we keep doing this, working with the people who know the work, across all the notices we've collected.” The rest arrive. “And notice which column's biggest. We spend a lot more time defining what's bad than what's good, because with non-deterministic systems we can't write everything down. We have to go and find the edges.” Don't point out the tech-debt card: 4.1 comes back to it.", needle: 38 },
-      { say: "“Good examples show the PM Translator what to copy, but the bad ones, with the reason why, show it what to avoid. We've got twelve here; in a real product you'd want hundreds. And the reason matters: ‘bad’ just tells someone it's bad. The reason tells them, or an AI, what to actually fix.”" },
+      { say: "“Good examples show the PM Translator what to copy, but the bad ones, with the reason why, show it what to avoid. We've got twelve here; in a real product you'd want hundreds. And the reason matters. ‘Bad’ just tells someone it's bad. ‘Four weeks became two’ tells them, or an AI, exactly what to fix.”" },
     ],
   },
   {
     id: "ch-measure", num: "3.0", title: "Recap: we can't vote on ten thousand a day", movement: 3, kind: "chapter", needle: "corner",
     props: { mode: "recap" },
     steps: [
-      { say: "“So let's take stock. We've built a PM Translator. We've defined what good looks like. And we've started measuring, by hand.”", needle: 40 },
+      { say: "“So let's take stock. We've built a PM Translator, and it's a bit vibey. We've defined what good looks like. And we've started measuring, by hand.”", needle: 40 },
       { say: "“But it took this whole room a few minutes to mark three answers. If we ship this, we'll get thousands of notices a day, maybe millions, and we can't vote on all of those. We need something that checks every answer for us.”" },
     ],
   },
   {
-    id: "prompt-judge", num: "3.1", title: "The prompt and the judge", movement: 3, kind: "promptJudge", needle: "corner",
+    id: "prompt-judge", num: "3.1", title: "The prompt is the brief, the judge is the editor", movement: 3, kind: "promptJudge", needle: "corner",
     steps: [
-      { say: "“And this is where judges come in. It's worth being clear on what a judge is, and how it's different to a prompt. A prompt is what we tell the PM Translator to do. It's a request: go do these things. And the AI does its best.”", needle: 42 },
-      { say: "“A judge is separate: its own prompt, often its own model, that checks what was produced against one of our rules, and gives a reason. So why not just put more rules in the prompt? We should put some in there too. But version 2 showed us that adding rules doesn't mean they get followed. You don't get to mark your own homework.”" },
-      { say: "“And a judge isn't quite like a normal software test either. In a normal test, we say: put this in, and you'll get exactly this out. But we saw five tries give five different answers. So a judge doesn't look for exact words. It checks whether our rules still hold.”" },
+      { say: "“And this is where judges come in. The easiest way to think about it: the prompt is the brief. It's what we tell the PM Translator to do, and it does its best.”", needle: 42 },
+      { say: "“The judge is the editor. It's separate, often its own model, and it checks what was actually written against one of our rules, and tells us why. So why not just put the rules in the prompt? Two reasons. A writer can't edit their own work: same blind spots. And if the rules only live in the brief, every time you change the brief, you change the ruler too.”" },
+      { say: "“And an editor isn't like a normal software test. A test says: this in, exactly this out. But we saw five tries give five different answers. So the judge doesn't look for exact words. It checks whether our rules still hold.”" },
     ],
   },
   {
     id: "judges", num: "3.2", title: "Rules become judges, run at scale", movement: 3, kind: "judges", needle: "corner",
     steps: [
-      { say: "“So each of our rules becomes a judge, and they're not all the same. Some are just code: is there still a number? If you can write a normal test, do that first. Others need judgement, like ‘is let's avoid still a never?’, so a second AI reads our rule and our golden examples. And the borderline ones go to people. Cheapest first.”", needle: 44 },
+      { say: "“So each of our rules becomes a judge, and they're not all the same. Some are just code: is there still a number? If you can write a normal test, do that first; it's cheaper. Others need judgement: does ‘let's avoid’ still mean ‘never’? For those, a second AI reads our rule and our golden examples. And the borderline ones go to people. Cheapest first.”", needle: 44 },
       { say: "“And now we can test much further. Here's version 2 running on every notice we've collected, with every judge checking every translation: faster, broader feedback than we could ever get by hand. And that's what an eval is: our rules, written down so we can check every answer, every time, and get objective data back.” The montage runs under the judges. Let it play.", needle: 48 },
     ],
   },
@@ -418,53 +417,52 @@ export const BEATS: Beat[] = [
     ],
   },
   {
-    id: "ch-learn", num: "4.0", title: "Chapter: fix the judge first", movement: 4, kind: "chapter", needle: "hidden",
+    id: "ch-learn", num: "4.0", title: "Chapter: wrong answer, or wrong mark?", movement: 4, kind: "chapter", needle: "hidden",
     props: { mode: "learn" },
-    steps: [{ say: "“So now the judges are marking every translation, or a sample if that gets expensive, and they tell us how to make it better. But there's an order. Before we fix the translator, we check the checker: if the judge is wrong, every score it gives us is wrong.”" }],
+    steps: [{ say: "“So now the judges are marking every translation, or a sample if that gets expensive. And when something fails, there's one question to ask: is it a wrong answer, or a wrong mark? Wrong answer, fix the prompt. Wrong mark, fix the judge. And we always check the mark first, because if the judge is wrong, every score it gives us is wrong.”" }],
   },
   {
     id: "expose", num: "4.1", title: "A judge that's wrong", movement: 4, kind: "expose", needle: "corner",
     steps: [
-      { say: "“Here's one from our release notes: ‘The release is delayed so we can pay down tech debt.’ Now, no PM I know pays down tech debt, but the PM Translator's done a decent job: it's kept the facts, and it sounds like a PM. But one of our judges fails it: ‘nothing added’.”", needle: 56 },
+      { say: "“Here's one from our engineering release notes: ‘The release is delayed so we can pay down tech debt.’ Not something you hear a PM say very often! But the translator's done a decent job: it's kept the facts, and it sounds like a PM. Yet one of our judges fails it: ‘nothing added’.”", needle: 56 },
       { say: "“And its reason? It ‘waves work away as tech debt’. Our bad examples were full of PMs dodging work, like this one from the golden wall: ‘Classic tech debt, we'll sort it in v2’. So the judge learned the words, not the idea. Here, paying it down is the actual reason for the delay. It might be the most honest thing our PM has said all day.”" },
       { say: "“So the judge is wrong, and that matters more than it looks. If we trusted it, we'd go and ‘fix’ the prompt just to please a broken judge. So we always check the judge first, and then fix the prompt.”", needle: 60 },
     ],
   },
   {
-    id: "reasons", num: "4.2", title: "Reasons, then drop-downs", movement: 4, kind: "reasons", needle: "corner",
+    id: "reasons", num: "4.2", title: "Reviews: a drop-down and a reason, then sort", movement: 4, kind: "reasons", needle: "corner",
     steps: [
-      { say: "“So how do we fix things without guessing? It starts with something you've already done today. Every time we see a failure, someone who knows the work says whether they agree with the judge, and writes down why, in their own words. That's the reasoning. In research-speak, it's called open coding.” The reasons type in." },
-      { say: "“Then we tag each one with a drop-down, so we can group them together. That's axial coding. After a few hundred reviews, those drop-downs tell us which problems we have and how often. That's evidence, not vibes.”", needle: 64 },
-      { say: "“And those drop-downs tell us where to fix. Where we disagreed with the judge, the judge needs fixing, and that comes first.” The blue box draws. “Where we agreed, the answer really is bad, so the prompt needs fixing.” The teal box draws." },
+      { say: "“So how do we fix things without guessing? Every time there's a fail, someone who knows the work reviews it. Do they agree with the judge? They pick a drop-down, from the handful of ways things usually go wrong, and they write down the reason in their own words. And the more words, the better. After a few hundred of these, the drop-downs show us the patterns: evidence, not vibes.” Rows land with their drop-down and reason. (If you want the research terms: the reasons are open coding, the drop-downs axial coding.)", needle: 64 },
+      { say: "“Then we sort them. Wrong mark, fix the judge: that one goes first.” The blue box draws. “Wrong answer, fix the prompt.” The teal box draws." },
     ],
   },
   {
     id: "diffs", num: "4.3", title: "The reasons go to an AI", movement: 4, kind: "diffs", needle: "corner",
     steps: [
-      { say: "“So rather than guessing at fixes by hand, we give it to another AI. Judge first: the judge and our feedback on it go in, and a better judge comes out. The blunt tech debt line is gone, and it's replaced with what we actually meant: catch work being waved away, not the words.” Let the judge and its feedback fly into the AI.", needle: 68 },
-      { say: "“Then we do the same with the prompt. Version 2 and the reasons it failed go in, and version 3 comes out. It stops listing a PM's bad habits, and starts describing what a good translation looks like, straight from your reasoning. We never told it how to fix anything, just what went wrong, and why.”", needle: 72 },
+      { say: "“Then we take everything about the judge, the judge's own prompt and all the feedback on it, and give it to another AI. ‘Here's the judge, here's the feedback: improve it.’ And out comes a better judge. The blunt tech debt line is gone, replaced with what we actually meant: catch work being waved away, not the words.” Let the judge and its feedback fly into the AI.", needle: 68 },
+      { say: "“Then the same for the prompt. Version 2 and all the reasons it failed go in, and out comes version 3, built from your feedback and reasoning. We didn't write it ourselves. We asked a separate AI to improve it, based on what people told us.”", needle: 72 },
     ],
   },
   {
     id: "results", num: "4.4", title: "From vibes to measured", movement: 4, kind: "results", needle: "corner",
     steps: [
-      { say: "“So, did it work? Look how far we've come. Version 1, built in minutes, with no way of telling how good it was: pure vibes. Version 2, measured by hand, with this whole room. Version 3, measured by judges on every answer, and seven in ten now pass. That's no longer gut feel.”", needle: 80 },
-      { say: "“And that's the pattern with most AI features. Getting something quite good happens really quickly. Getting it extremely good, good enough to trust with HR policies, takes a lot more time and a lot more data. The evals tell you whether that work is paying off.”" },
+      { say: "“So, did it work? Look how far we've come. Version 1 was total vibes. Version 2, we checked by hand. And version 3 is judged automatically, on every answer, and it's improving itself from our feedback.”", needle: 80 },
+      { say: "“And that's the pattern with most AI features. Getting to quite good happens quickly. Getting to extremely good, good enough to trust with an HR policy, takes a lot more time. The evals tell you whether that time is paying off.” “Extremely good” lands." },
     ],
   },
   {
     id: "ends", num: "5.1", title: "How good is good enough?", movement: 5, kind: "ends", needle: "corner",
     steps: [
-      { say: "“So, back to the question from the start: should we ship it? Earlier we were reluctant, because we didn't know how reliable it was. Now we can measure that. But it depends on what you're trying to achieve, and the quality you need.”", needle: 84 },
-      { say: "“If you're sending a Friday drinks email, just write a prompt and fire it off. Vibes are fine, and if it's a bit off, nobody gets hurt.”" },
-      { say: "“But if you're PM-translating HR policies, you want strict rules, instant fails, and a human still signs off. Most things sit somewhere in between. Our job is to decide where, and write those rules down before we build, so we know what we're measuring against.”", needle: 88 },
+      { say: "“So, back to the question from the start: should we ship it? Earlier we were reluctant, because we didn't know how reliable it was. Now we can measure it. But whether we ship really depends on what we're trying to achieve.”", needle: 84 },
+      { say: "“If we were just writing a Friday drinks email, vibes are fine. We'd have shipped version 1: write the prompt, paste it into Slack or Teams, done.”" },
+      { say: "“But if this is going to rewrite every HR policy, we want a really high bar: every rule passing, all the time, and a human still signs off. Most things sit somewhere in between. Our job is to decide where, and write those rules down before we build.”", needle: 88 },
     ],
   },
   {
     id: "home", num: "5.2", title: "The leave policy ships, from vibes to evidence", movement: 5, kind: "home", needle: "big",
     steps: [
       { needleMode: "corner", say: "“And here's that same HR policy, through everything we've built today. Four weeks stays four weeks, and it's the same answer you'd have put on the good side of the golden wall. Every judge passes it, a human signs it off, and now we can ship it, with the evidence to back it up.”", needle: 92 },
-      { say: "“Remember the needle at the start? We were firmly on vibes. You wrote the rules, you marked the answers, and the reasons behind them improved the judge and the prompt. That's how we moved from vibes to evidence.” The needle swings across.", needle: 100 },
+      { say: "“Remember the needle at the start? We were firmly on vibes. We wrote the rules, marked the answers, captured our reasoning, and improved the judge and the prompt. That's how we moved from vibes to evidence.” The needle swings across.", needle: 100 },
     ],
   },
   {

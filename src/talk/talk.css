@@ -534,3 +534,19 @@ button, input, textarea { font: inherit; color: inherit; }
 .rhead { transition: opacity 0.4s; }
 .rhead.gone { opacity: 0; }
 .no-check { position: absolute; left: 4cqw; width: 34cqw; top: 43.5cqw; font-size: 2.3cqw; font-weight: 800; letter-spacing: -0.015em; line-height: 1.15; color: var(--accent); text-wrap: balance; }
+
+/* ── Practice run 3 ───────────────────────────────────────────────────────── */
+.split2 { position: absolute; left: 8cqw; right: 8cqw; top: 7cqw; display: grid; gap: 3cqw; }
+.split2 .card .en { font-size: 2.4cqw; }
+.split2 .card .out { font-size: 3.2cqw; }
+.decide2 { display: grid; grid-template-columns: 1fr 36cqw; gap: 3cqw; align-items: center; }
+.decide2 .human { margin-top: 0.6cqw; font-weight: 700; font-size: 2.4cqw; }
+.pj-note { min-height: 15cqw; }
+.pj-why { top: 30.5cqw; }
+.pj-strip:not(.pj-why) { top: 42.5cqw; }
+.reasons .rhead, .reasons .rrow { grid-template-columns: 22cqw 9cqw 17cqw 1fr; }
+.reasons .txt { font-size: 1.25cqw; }
+.chapter .t-m.heur { font-size: 2.35cqw; white-space: nowrap; }
+.chapter .t-m.heur .ptag { font-size: 0.75em; }
+.j-big { font-size: 2.5cqw; font-weight: 800; letter-spacing: -0.015em; line-height: 1.15; }
+.j-stop.best .j-big { color: var(--pass); }
