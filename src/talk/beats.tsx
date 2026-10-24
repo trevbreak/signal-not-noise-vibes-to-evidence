@@ -427,10 +427,10 @@ function ChapterView({ beat, step }: P) {
             Wrong answer → fix the <Tag kind="prompt" />
           </div>
           <div className="t-m heur a-rise" style={d(2)}>
-            Wrong mark → fix the <Tag kind="judge" />
+            Wrong test → fix the <Tag kind="judge" />
           </div>
           <div className="t-s t-accent a-rise" style={{ ...d(2.8), fontWeight: 700 }}>
-            Check the mark first. If the judge is wrong, every score is wrong.
+            Check the test first. If the test is wrong, every score is wrong.
           </div>
         </>
       );
@@ -696,11 +696,18 @@ function Montage({ notices }: { notices: Notice[] }) {
 }
 
 function PromptJudgeView({ step }: P) {
+  const reasons: [string, ReactNode][] = [
+    ["Why keep them separate?", <>A writer <b>shouldn't edit their own work.</b></>],
+    ["And", <>It's not one judge, it's many, <b>each an expert on one rule.</b> Far more than a prompt can hold.</>],
+    ["And", <>Change the prompt, and <b>the judges stay the same,</b> so you know if it helped.</>],
+  ];
   return (
     <>
       <div className="question" data-box="question">
         <div className="label">Two different jobs</div>
-        <div className="t-m">The prompt is the brief. The judge is the editor.</div>
+        <div className="t-m">
+          The prompt is the brief.{step >= 1 && <span className="a-fade"> The judge is the editor.</span>}
+        </div>
       </div>
       <div className="pj" data-box="pj">
         <div className="note prompt pj-note a-rise">
@@ -720,40 +727,18 @@ function PromptJudgeView({ step }: P) {
               </span>
             </div>
             <div className="pj-h">Checks what it actually did.</div>
-            <div className="pj-c">A pass or fail on one rule, and why.</div>
+            <div className="pj-c">A pass or fail on our rules, and why.</div>
           </div>
         )}
       </div>
       {step >= 1 && (
-        <div className="pj-strip pj-why" data-box="why">
-          <div className="card a-rise" style={d(2.4)}>
-            <div className="label">Why keep them separate?</div>
-            <div className="t-s">
-              A writer can't edit their own work: <b>same blind spots.</b>
+        <div className="pj-three" data-box="why">
+          {reasons.map(([k, v], i) => (
+            <div key={i} className="card a-rise" style={d(2.2 + i * 1.6)}>
+              <div className="label">{k}</div>
+              <div className="t-s">{v}</div>
             </div>
-          </div>
-          <div className="card a-rise" style={d(4)}>
-            <div className="label">And</div>
-            <div className="t-s">
-              Change the brief, and you'd <b>change the ruler too.</b>
-            </div>
-          </div>
-        </div>
-      )}
-      {step >= 2 && (
-        <div className="pj-strip a-rise" data-box="strip">
-          <div className="card">
-            <div className="label">A normal software test</div>
-            <div className="t-s">
-              Same input → <b>exactly</b> this output.
-            </div>
-          </div>
-          <div className="card judge-edge">
-            <div className="label">A judge</div>
-            <div className="t-s">
-              Five different answers → <b>do the rules still hold?</b>
-            </div>
-          </div>
+          ))}
         </div>
       )}
     </>
@@ -766,7 +751,7 @@ function JudgesView({ step, state }: P) {
     <>
       {step === 0 && (
         <div className="judge-head" data-box="question">
-          <div className="label">Our rules, as judges · cheapest first</div>
+          <div className="label">Our rules, as tests · cheapest first</div>
         </div>
       )}
       <div className={`judge-cards ${step >= 1 ? "small" : ""}`} data-box="stamps">
@@ -917,7 +902,7 @@ function ReasonsView({ step }: P) {
     </div>
   );
   const groups = [
-    { fix: "judge" as const, label: "1 · Wrong mark → fix the", rows: REASONS.filter((r) => r.fix === "judge") },
+    { fix: "judge" as const, label: "1 · Wrong test → fix the", rows: REASONS.filter((r) => r.fix === "judge") },
     { fix: "prompt" as const, label: "2 · Wrong answer → fix the", rows: REASONS.filter((r) => r.fix === "prompt") },
   ];
   let i = 0;
@@ -925,7 +910,7 @@ function ReasonsView({ step }: P) {
     <>
       <div className="question" data-box="question">
         <div className="label">{step >= 1 ? "Sort them" : "How people review a fail"}</div>
-        <div className="t-m">{step >= 1 ? "Wrong mark first. Then wrong answers." : "Pick a drop-down. Write the reason."}</div>
+        <div className="t-m">{step >= 1 ? "Check the tests first. Then the answers." : "Pick a drop-down. Write the reason."}</div>
       </div>
       <div className="reasons" data-box="reasons">
         <div className={`rhead ${step >= 1 ? "gone" : ""}`}>

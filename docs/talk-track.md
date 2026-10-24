@@ -8,7 +8,7 @@ Each numbered line is one press of → (or the clicker). Quoted words are what t
 | --- | --- | --- |
 | 1 · The demo | 7 min | 8 beats, 22 presses |
 | 2 · Say what good is | 12.5 min | 5 beats, 19 presses |
-| 3 · Check every answer | 16.5 min | 4 beats, 10 presses |
+| 3 · Check every answer | 16.5 min | 4 beats, 9 presses |
 | 4 · Make it better | 21 min | 5 beats, 10 presses |
 | 5 · Ship it? | 23.5 min | 3 beats, 7 presses |
 
@@ -111,26 +111,25 @@ Each numbered line is one press of → (or the clicker). Quoted words are what t
 
 ### 3.1 · The prompt is the brief, the judge is the editor
 
-1. “And this is where judges come in. The easiest way to think about it: the prompt is the brief. It's what we tell the PM Translator to do, and it does its best.”
-2. “The judge is the editor. It's separate, often its own model, and it checks what was actually written against one of our rules, and tells us why. So why not just put the rules in the prompt? Two reasons. A writer can't edit their own work: same blind spots. And if the rules only live in the brief, every time you change the brief, you change the ruler too.”
-3. “And an editor isn't like a normal software test. A test says: this in, exactly this out. But we saw five tries give five different answers. So the judge doesn't look for exact words. It checks whether our rules still hold.”
+1. “So we need something that checks every answer for us. Let's be clear on two things first. The prompt is the brief: it tells the PM Translator what to do, and it does its best.”
+2. “The judge is the editor. It's separate, and it checks what was actually written against our rules, and tells us why. So why not just put all the rules in the prompt? Three reasons. A writer shouldn't edit their own work. It's not one judge, it's many, each an expert on one rule, far more than you could fit in a prompt. And when you change the prompt, the judges stay the same, so you know whether the change actually helped.” The judge card, then the three reasons.
 
 ### 3.2 · Rules become judges, run at scale
 
-1. “So each of our rules becomes a judge, and they're not all the same. Some are just code: is there still a number? If you can write a normal test, do that first; it's cheaper. Others need judgement: does ‘let's avoid’ still mean ‘never’? For those, a second AI reads our rule and our golden examples. And the borderline ones go to people. Cheapest first.”
-2. “And now we can test much further. Here's version 2 running on every notice we've collected, with every judge checking every translation: faster, broader feedback than we could ever get by hand. And that's what an eval is: our rules, written down so we can check every answer, every time, and get objective data back.” The montage runs under the judges. Let it play.
+1. “So each of our rules becomes a test, and there are different kinds. Some are just code tests, like we've always written: is there still a number? Some are AI tests, our judges, for the ones that need interpretation: does ‘let's avoid’ still mean ‘never’? They don't look for exact words; they check whether the rule still holds. And some still need people. Cheapest first.”
+2. “With those tests automated, we can rerun version 2 against every notice we've collected, far faster than marking by hand, and it gives us a baseline. That's what an eval is: our rules written down as tests, giving us objective data back.” The montage runs under the tests. Let it play.
 
 ### 3.3 · Zoom in: why you need different judges
 
 1. “Now let's zoom in on one from the start: that HR policy we nearly shipped.”
-2. Stamps land one at a time. “Look at the first judge. It's a simple code check: is there still a number? And yes, the number's changed, but it's still a number. That's the limit of simple tests: it made the same mistake we did at a glance. But the ‘rule stays a rule’ judge reads it properly, and catches that four weeks became two.”
+2. Stamps land one at a time. “Look at the first one. It's a simple code test: is there still a number? And yes, the number's changed, but it's still a number. That's the limit of simple tests: it made the same mistake we did at a glance. But the ‘rule stays a rule’ judge reads it properly, and catches that four weeks became two.”
 3. “So it fails. It's the same answer we nearly shipped earlier, but now it's caught automatically, and we know why.”
 
 ## 4 · Make it better
 
-### 4.0 · Chapter: wrong answer, or wrong mark?
+### 4.0 · Chapter: wrong answer, or wrong test?
 
-1. “So now the judges are marking every translation, or a sample if that gets expensive. And when something fails, there's one question to ask: is it a wrong answer, or a wrong mark? Wrong answer, fix the prompt. Wrong mark, fix the judge. And we always check the mark first, because if the judge is wrong, every score it gives us is wrong.”
+1. “So now the judges are marking every translation. And when something fails, there's one question: is it a wrong answer, or a wrong test? Wrong answer, fix the prompt. Wrong test, fix the judge. Always check the test first, because if the test is wrong, every score it gives us is wrong.”
 
 ### 4.1 · A judge that's wrong
 
@@ -140,8 +139,8 @@ Each numbered line is one press of → (or the clicker). Quoted words are what t
 
 ### 4.2 · Reviews: a drop-down and a reason, then sort
 
-1. “So how do we fix things without guessing? Every time there's a fail, someone who knows the work reviews it. Do they agree with the judge? They pick a drop-down, from the handful of ways things usually go wrong, and they write down the reason in their own words. And the more words, the better. After a few hundred of these, the drop-downs show us the patterns: evidence, not vibes.” Rows land with their drop-down and reason. (If you want the research terms: the reasons are open coding, the drop-downs axial coding.)
-2. “Then we sort them. Wrong mark, fix the judge: that one goes first.” The blue box draws. “Wrong answer, fix the prompt.” The teal box draws.
+1. “So how do we fix things without guessing? Every time there's a fail, someone who knows the work reviews it. You don't need to review everything, just enough to keep the judges calibrated. Do they agree with the judge? They pick a drop-down, from the handful of ways things usually go wrong, and they write down the reason in their own words. And the more words, the better. After a few hundred of these, the drop-downs show us the patterns: evidence, not vibes.” Rows land with their drop-down and reason. (If you want the research terms: the reasons are open coding, the drop-downs axial coding.)
+2. “Then we sort them. Wrong test, fix the judge: that one goes first.” The blue box draws. “Wrong answer, fix the prompt.” The teal box draws.
 
 ### 4.3 · The reasons go to an AI
 

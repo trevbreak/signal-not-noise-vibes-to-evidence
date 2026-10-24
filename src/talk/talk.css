@@ -550,3 +550,7 @@ button, input, textarea { font: inherit; color: inherit; }
 .chapter .t-m.heur .ptag { font-size: 0.75em; }
 .j-big { font-size: 2.5cqw; font-weight: 800; letter-spacing: -0.015em; line-height: 1.15; }
 .j-stop.best .j-big { color: var(--pass); }
+.pj-three { position: absolute; left: 6cqw; right: 6cqw; top: 31cqw; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.6cqw; }
+.pj-three .card { padding: 1.3cqw 1.5cqw; display: grid; gap: 0.5cqw; align-content: start; }
+.pj-three .label { font-size: 0.95cqw; }
+.pj-three .t-s { font-size: 1.55cqw; line-height: 1.3; }

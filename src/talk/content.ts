@@ -119,7 +119,7 @@ export const JUDGES: { id: string; kind: JudgeKind; check: string }[] = [
   { id: "voice", kind: "ai", check: "An AI reads our rule and our golden examples" },
   { id: "room", kind: "people", check: "For the borderline ones, like “let's avoid” vs “never”" },
 ];
-export const KIND_LABEL: Record<JudgeKind, string> = { rule: "Judge · code", ai: "Judge · AI", people: "Judge · people" };
+export const KIND_LABEL: Record<JudgeKind, string> = { rule: "Code test", ai: "AI judge", people: "People" };
 export const JUDGE_SHORT: Record<string, string> = { numbers: "Still has a number", rule: "A rule stays a rule", scope: "Nothing added", voice: "Sounds like a PM", room: "The room" };
 
 /** The code judge: if the notice has a number, the answer must still have one. Deliberately cheap. */
@@ -396,30 +396,29 @@ export const BEATS: Beat[] = [
   {
     id: "prompt-judge", num: "3.1", title: "The prompt is the brief, the judge is the editor", movement: 3, kind: "promptJudge", needle: "corner",
     steps: [
-      { say: "“And this is where judges come in. The easiest way to think about it: the prompt is the brief. It's what we tell the PM Translator to do, and it does its best.”", needle: 42 },
-      { say: "“The judge is the editor. It's separate, often its own model, and it checks what was actually written against one of our rules, and tells us why. So why not just put the rules in the prompt? Two reasons. A writer can't edit their own work: same blind spots. And if the rules only live in the brief, every time you change the brief, you change the ruler too.”" },
-      { say: "“And an editor isn't like a normal software test. A test says: this in, exactly this out. But we saw five tries give five different answers. So the judge doesn't look for exact words. It checks whether our rules still hold.”" },
+      { say: "“So we need something that checks every answer for us. Let's be clear on two things first. The prompt is the brief: it tells the PM Translator what to do, and it does its best.”", needle: 42 },
+      { say: "“The judge is the editor. It's separate, and it checks what was actually written against our rules, and tells us why. So why not just put all the rules in the prompt? Three reasons. A writer shouldn't edit their own work. It's not one judge, it's many, each an expert on one rule, far more than you could fit in a prompt. And when you change the prompt, the judges stay the same, so you know whether the change actually helped.” The judge card, then the three reasons." },
     ],
   },
   {
     id: "judges", num: "3.2", title: "Rules become judges, run at scale", movement: 3, kind: "judges", needle: "corner",
     steps: [
-      { say: "“So each of our rules becomes a judge, and they're not all the same. Some are just code: is there still a number? If you can write a normal test, do that first; it's cheaper. Others need judgement: does ‘let's avoid’ still mean ‘never’? For those, a second AI reads our rule and our golden examples. And the borderline ones go to people. Cheapest first.”", needle: 44 },
-      { say: "“And now we can test much further. Here's version 2 running on every notice we've collected, with every judge checking every translation: faster, broader feedback than we could ever get by hand. And that's what an eval is: our rules, written down so we can check every answer, every time, and get objective data back.” The montage runs under the judges. Let it play.", needle: 48 },
+      { say: "“So each of our rules becomes a test, and there are different kinds. Some are just code tests, like we've always written: is there still a number? Some are AI tests, our judges, for the ones that need interpretation: does ‘let's avoid’ still mean ‘never’? They don't look for exact words; they check whether the rule still holds. And some still need people. Cheapest first.”", needle: 44 },
+      { say: "“With those tests automated, we can rerun version 2 against every notice we've collected, far faster than marking by hand, and it gives us a baseline. That's what an eval is: our rules written down as tests, giving us objective data back.” The montage runs under the tests. Let it play.", needle: 48 },
     ],
   },
   {
     id: "stamped", num: "3.3", title: "Zoom in: why you need different judges", movement: 3, kind: "stamped", needle: "corner",
     steps: [
       { say: "“Now let's zoom in on one from the start: that HR policy we nearly shipped.”" },
-      { say: "Stamps land one at a time. “Look at the first judge. It's a simple code check: is there still a number? And yes, the number's changed, but it's still a number. That's the limit of simple tests: it made the same mistake we did at a glance. But the ‘rule stays a rule’ judge reads it properly, and catches that four weeks became two.”", needle: 52 },
+      { say: "Stamps land one at a time. “Look at the first one. It's a simple code test: is there still a number? And yes, the number's changed, but it's still a number. That's the limit of simple tests: it made the same mistake we did at a glance. But the ‘rule stays a rule’ judge reads it properly, and catches that four weeks became two.”", needle: 52 },
       { say: "“So it fails. It's the same answer we nearly shipped earlier, but now it's caught automatically, and we know why.”", needle: 54 },
     ],
   },
   {
-    id: "ch-learn", num: "4.0", title: "Chapter: wrong answer, or wrong mark?", movement: 4, kind: "chapter", needle: "hidden",
+    id: "ch-learn", num: "4.0", title: "Chapter: wrong answer, or wrong test?", movement: 4, kind: "chapter", needle: "hidden",
     props: { mode: "learn" },
-    steps: [{ say: "“So now the judges are marking every translation, or a sample if that gets expensive. And when something fails, there's one question to ask: is it a wrong answer, or a wrong mark? Wrong answer, fix the prompt. Wrong mark, fix the judge. And we always check the mark first, because if the judge is wrong, every score it gives us is wrong.”" }],
+    steps: [{ say: "“So now the judges are marking every translation. And when something fails, there's one question: is it a wrong answer, or a wrong test? Wrong answer, fix the prompt. Wrong test, fix the judge. Always check the test first, because if the test is wrong, every score it gives us is wrong.”" }],
   },
   {
     id: "expose", num: "4.1", title: "A judge that's wrong", movement: 4, kind: "expose", needle: "corner",
@@ -432,8 +431,8 @@ export const BEATS: Beat[] = [
   {
     id: "reasons", num: "4.2", title: "Reviews: a drop-down and a reason, then sort", movement: 4, kind: "reasons", needle: "corner",
     steps: [
-      { say: "“So how do we fix things without guessing? Every time there's a fail, someone who knows the work reviews it. Do they agree with the judge? They pick a drop-down, from the handful of ways things usually go wrong, and they write down the reason in their own words. And the more words, the better. After a few hundred of these, the drop-downs show us the patterns: evidence, not vibes.” Rows land with their drop-down and reason. (If you want the research terms: the reasons are open coding, the drop-downs axial coding.)", needle: 64 },
-      { say: "“Then we sort them. Wrong mark, fix the judge: that one goes first.” The blue box draws. “Wrong answer, fix the prompt.” The teal box draws." },
+      { say: "“So how do we fix things without guessing? Every time there's a fail, someone who knows the work reviews it. You don't need to review everything, just enough to keep the judges calibrated. Do they agree with the judge? They pick a drop-down, from the handful of ways things usually go wrong, and they write down the reason in their own words. And the more words, the better. After a few hundred of these, the drop-downs show us the patterns: evidence, not vibes.” Rows land with their drop-down and reason. (If you want the research terms: the reasons are open coding, the drop-downs axial coding.)", needle: 64 },
+      { say: "“Then we sort them. Wrong test, fix the judge: that one goes first.” The blue box draws. “Wrong answer, fix the prompt.” The teal box draws." },
     ],
   },
   {
