@@ -1,0 +1,285 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Practice run 3 proposals</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ground: #f3eee3; --card: #fff; --card-2: #faf7f0; --edge: #e2d9c6; --ink: #1d1b17; --muted: #6b6354; --faint: #a69e8d;
+    --accent: #d9480f; --pass: #1f7a45; --pass-soft: rgba(31,122,69,.1); --fail: #c2362b; --fail-soft: rgba(194,54,43,.12);
+    --mid: #b7791f; --mid-soft: rgba(183,121,31,.12); --prompt: #0b7a6e; --prompt-soft: rgba(11,122,110,.1);
+    --judge: #2f5fd0; --judge-soft: rgba(47,95,208,.1); --vibes: #e2669a; --hold: #1d1b17;
+    --display: "Bricolage Grotesque", "Helvetica Neue", Arial, sans-serif; --mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+    --shadow: 0 .25cqw 1.1cqw rgba(70,50,10,.1), 0 0 0 .08cqw var(--edge);
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #ebe5d8; color: var(--ink); font-family: var(--display); line-height: 1.45; }
+  .page { max-width: 1320px; margin: 0 auto; padding: 40px 24px 80px; }
+  h1 { font-size: 40px; letter-spacing: -.02em; margin: 0 0 8px; line-height: 1.1; }
+  .lede { font-size: 18px; color: var(--muted); max-width: 820px; margin: 0 0 28px; }
+  h2.sec { font-size: 26px; margin: 56px 0 6px; letter-spacing: -.01em; }
+  .sec-sub { color: var(--muted); margin: 0 0 18px; max-width: 860px; }
+  .box { background: var(--card); border-radius: 14px; padding: 20px 24px; box-shadow: 0 1px 0 var(--edge), 0 6px 18px rgba(70,50,10,.06); }
+  table { border-collapse: collapse; width: 100%; font-size: 15px; }
+  th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--edge); vertical-align: top; }
+  th { font-family: var(--mono); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); font-weight: 500; }
+  td.cut { color: var(--faint); text-decoration: line-through; }
+  .pill { display: inline-block; font-family: var(--mono); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; padding: 2px 8px; border-radius: 99px; font-weight: 600; }
+  .pill.new { background: var(--accent); color: #fff; } .pill.chg { background: var(--mid-soft); color: var(--mid); } .pill.cut { background: var(--fail-soft); color: var(--fail); } .pill.keep { background: var(--pass-soft); color: var(--pass); }
+  ul.tight { margin: 8px 0 0; padding-left: 20px; } ul.tight li { margin: 4px 0; }
+
+  .prop { margin: 34px 0 0; }
+  .prop-head { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; margin-bottom: 12px; }
+  .prop-head .n { font-family: var(--mono); color: var(--accent); font-weight: 600; }
+  .prop-head h3 { margin: 0; font-size: 22px; letter-spacing: -.01em; }
+  .prop-head .rep { color: var(--muted); font-size: 14px; }
+  .grid { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 22px; align-items: start; }
+  @media (max-width: 900px) { .grid { grid-template-columns: 1fr; } }
+  .states { display: grid; gap: 10px; }
+  .state-lbl { font-family: var(--mono); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
+  .track ol { margin: 0; padding-left: 0; list-style: none; counter-reset: s; }
+  .track li { counter-increment: s; position: relative; padding: 0 0 12px 34px; font-size: 15.5px; }
+  .track li::before { content: "→" counter(s); position: absolute; left: 0; top: 1px; font-family: var(--mono); font-size: 12px; color: var(--accent); font-weight: 600; }
+  .track .stage { color: var(--muted); font-style: italic; font-size: 14px; }
+  .why { margin-top: 6px; padding: 12px 14px; border-left: 3px solid var(--accent); background: rgba(217,72,15,.05); border-radius: 0 8px 8px 0; font-size: 14.5px; }
+  .why b { color: var(--accent); }
+
+  /* ── The mock slide: same cqw system as the real stage ── */
+  .slide { container-type: inline-size; position: relative; aspect-ratio: 16/9; background: var(--ground); border-radius: 8px; overflow: hidden; box-shadow: 0 0 0 1px var(--edge), 0 8px 24px rgba(70,50,10,.12); font-family: var(--display); line-height: 1.2; }
+  .slide.dark { background: var(--hold); color: #f3eee3; }
+  .slide * { box-sizing: border-box; }
+  .lab { font-family: var(--mono); font-size: 1.15cqw; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); font-weight: 500; }
+  .tm { font-size: 2.9cqw; font-weight: 700; letter-spacing: -.015em; line-height: 1.15; }
+  .tl { font-size: 4cqw; font-weight: 800; letter-spacing: -.03em; line-height: 1.05; }
+  .ts { font-size: 2cqw; font-weight: 500; line-height: 1.25; }
+  .q { position: absolute; left: 6cqw; right: 18cqw; top: 4cqw; }
+  .ptag { display: inline-block; font-family: var(--mono); font-size: .82em; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; line-height: 1; padding: .3em .6em; border-radius: .35em; color: #fff; vertical-align: .12em; }
+  .ptag.prompt { background: var(--prompt); } .ptag.judge { background: var(--judge); }
+  .needle { position: absolute; top: 2cqw; right: 3cqw; width: 11cqw; }
+  .needle .sc { display: flex; justify-content: space-between; font-family: var(--mono); font-size: .8cqw; letter-spacing: .1em; text-transform: uppercase; }
+  .needle .sc span:first-child { color: var(--vibes); } .needle .sc span:last-child { color: var(--pass); }
+  .card { background: var(--card); border-radius: 1.1cqw; box-shadow: var(--shadow); padding: 1.8cqw 2.2cqw; }
+  .card .en { font-size: 1.6cqw; color: var(--muted); margin-bottom: .7cqw; }
+  .card .out { font-size: 2.5cqw; font-weight: 700; line-height: 1.18; }
+  .mark { border-radius: .3cqw; padding: 0 .1em; }
+  .mark.bad { background: var(--fail-soft); box-shadow: 0 0 0 .2cqw var(--fail); }
+  .mark.ok { background: var(--pass-soft); box-shadow: 0 0 0 .2cqw var(--pass); }
+  .mark.mid { background: var(--mid-soft); box-shadow: 0 0 0 .2cqw var(--mid); }
+  .stamps { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0,1fr); gap: 1cqw; }
+  .stamp { background: var(--card); border-radius: .9cqw; border: .22cqw solid var(--edge); padding: .9cqw .7cqw; text-align: center; display: grid; gap: .2cqw; align-content: start; }
+  .stamp .g { font-size: 2cqw; font-weight: 800; line-height: 1; }
+  .stamp .who { font-family: var(--mono); font-size: .8cqw; letter-spacing: .1em; text-transform: uppercase; color: var(--judge); }
+  .stamp .nm { font-size: 1.3cqw; font-weight: 700; line-height: 1.15; }
+  .stamp .why { font-size: 1.05cqw; color: var(--muted); line-height: 1.25; font-weight: 500; margin: 0; padding: 0; border: 0; background: none; }
+  .stamp.ok { border-color: var(--pass); color: var(--pass); } .stamp.no { border-color: var(--fail); color: var(--fail); }
+  .stamp.hl { box-shadow: 0 0 0 .5cqw var(--mid-soft); border-color: var(--mid); color: var(--mid); }
+  .note { background: var(--card-2); border-radius: 1cqw; padding: 1.4cqw 1.6cqw; box-shadow: 0 0 0 .08cqw var(--edge); }
+  .note.prompt { border-left: .55cqw solid var(--prompt); } .note.judge { border-left: .55cqw solid var(--judge); }
+  .note .nh { display: flex; align-items: center; gap: .8cqw; font-family: var(--mono); font-size: 1.05cqw; letter-spacing: .1em; text-transform: uppercase; margin-bottom: .8cqw; }
+  .note .nh .as { margin-left: auto; color: var(--muted); }
+  .note .bd { font-family: var(--mono); font-size: 1.15cqw; line-height: 1.5; }
+  .note .old { color: var(--muted); } .note .add { color: var(--pass); } .note .del { color: var(--fail); text-decoration: line-through; }
+  .chip { font-size: 1.2cqw; font-weight: 600; border-radius: 99cqw; padding: .3cqw .9cqw; display: inline-block; }
+  .chip.prompt { color: var(--prompt); background: var(--prompt-soft); box-shadow: 0 0 0 .12cqw var(--prompt); }
+  .chip.judge { color: var(--judge); background: var(--judge-soft); box-shadow: 0 0 0 .12cqw var(--judge); }
+  .cap { position: absolute; left: 6cqw; right: 6cqw; text-align: center; }
+</style>
+<style>
+.tbl td:first-child{font-family:var(--mono);color:var(--accent);white-space:nowrap}
+.tbl .was{color:var(--faint);font-size:13.5px}
+.tbl .now{background:rgba(31,122,69,.07);border-radius:4px;padding:2px 4px}
+.heur{display:inline-grid;grid-template-columns:auto auto;gap:6px 14px;align-items:center;font-weight:700}
+</style>
+</head>
+<body><div class="page">
+<h1>Practice run 3: proposed updates</h1>
+<p class="lede">From your notes in the transcript, plus the places you stumbled. Slide numbers are the presenter's step count (70 in total). The six slides that change on screen are mocked below; the rest are line changes, in the table at the bottom. Nothing is built yet.</p>
+
+<div class="box"><b>The big idea: one heuristic, used three times.</b> You asked for a simple, memorable reason why the judge is separate from the prompt, and when to fix which. I'd make it this:
+<div style="margin:12px 0 4px;font-size:20px" class="heur">
+<span><span class="ptag prompt">Prompt</span> is the brief.</span><span><span class="ptag judge">Judge</span> is the editor.</span>
+<span>Wrong answer → fix the <span class="ptag prompt">Prompt</span>.</span><span>Wrong mark → fix the <span class="ptag judge">Judge</span>.</span>
+</div>
+<p style="margin:10px 0 0">It's <b>introduced</b> on 46 (why they're separate: a writer can't edit their own work, and if the rules only live in the brief, changing the brief changes the ruler). It's <b>stated</b> on 53 (check the mark first). And it <b>labels</b> the two boxes on 59. So by the AI rewrite, the room already knows which pile goes where, and why the judge goes first.</p></div>
+
+<h2 class="sec">Slides that change on screen</h2>
+
+<!-- 39 -->
+<div class="prop">
+  <div class="prop-head"><span class="n">39</span><h3>The split: get to "human judgement" fast</h3><span class="pill chg">Simplified</span><span class="rep">your note: too much on screen, layout weird, land "this needs human judgement" quicker</span></div>
+  <div class="grid">
+    <div class="slide">
+      <div style="position:absolute;left:8cqw;right:8cqw;top:6cqw;display:grid;gap:2.2cqw">
+        <div class="card"><div class="en"><span class="mark ok">Never</span> deploy to production on a Friday.</div><div class="out"><span class="mark mid">Let's avoid</span> deploying to production on Fridays, obviously.</div></div>
+        <div style="display:grid;grid-template-columns:1fr 34cqw;gap:3cqw;align-items:center">
+          <div><div style="height:5cqw;border-radius:99cqw;overflow:hidden;display:flex;font-family:var(--mono);font-size:1.9cqw;font-weight:600;color:#fff"><span style="width:48%;background:var(--pass);display:flex;align-items:center;padding-left:1.6cqw">48% good</span><span style="width:4%;background:#fff"></span><span style="width:48%;background:var(--fail);display:flex;align-items:center;justify-content:flex-end;padding-right:1.6cqw">48% bad</span></div><div class="lab" style="margin-top:.6cqw;font-size:1cqw">The room, on answer B</div></div>
+          <div><div class="tm">Which side does it land on?</div><div class="ts" style="color:var(--accent);font-weight:700;margin-top:.6cqw">That's a human call.</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="track">
+      <ol>
+        <li>"So let's look at B again, because we split right down the middle. It's gone from a never to 'let's avoid'. It hasn't broken any of our rules, but it's added just enough wiggle room to change what it means. So which side does it land on? The model can't answer that. That's a human call: the people who know the work decide, and write down why."</li>
+      </ol>
+      <div class="why"><b>What changes:</b> just the two lines and the room's split, with one question. The tick-and-cross chips and the long "product decision" paragraph go. <b>The needle and the loop badge are hidden on this slide</b> (they were the clutter you noticed), and the stage note at the bottom is gone. The line is about 60 words, down from about 85.</div>
+    </div>
+  </div>
+</div>
+
+<!-- 45-47 -->
+<div class="prop">
+  <div class="prop-head"><span class="n">45–47</span><h3>The prompt and the judge: the brief and the editor</h3><span class="pill chg">Changed</span><span class="rep">your note on 46: a really simple story for why they're separate</span></div>
+  <div class="grid">
+    <div class="slide">
+      <div class="q"><div class="lab">Two different jobs</div><div class="tm">The prompt is the brief. The judge is the editor.</div></div>
+      <div style="position:absolute;left:6cqw;right:6cqw;top:12.5cqw;display:grid;grid-template-columns:1fr 1fr;gap:2cqw">
+        <div class="note prompt" style="min-height:17cqw;display:grid;gap:.9cqw;align-content:start"><div class="nh"><span class="ptag prompt">Prompt</span> the brief</div><div class="tm" style="font-size:2.2cqw">Tells it what to do.</div><div class="ts" style="font-size:1.5cqw;color:var(--muted)">A request. It does its best.</div></div>
+        <div class="note judge" style="min-height:17cqw;display:grid;gap:.9cqw;align-content:start"><div class="nh"><span class="ptag judge">Judge</span> the editor</div><div class="tm" style="font-size:2.2cqw">Checks what it actually did.</div><div class="ts" style="font-size:1.5cqw;color:var(--muted)">A pass or fail on one rule, and why.</div></div>
+      </div>
+      <div style="position:absolute;left:6cqw;right:6cqw;top:32cqw;display:grid;grid-template-columns:1fr 1fr;gap:2cqw">
+        <div class="card" style="padding:1.2cqw 1.6cqw"><div class="lab" style="font-size:.95cqw">Why keep them separate?</div><div class="ts" style="font-size:1.55cqw">A writer can't edit their own work: <b>same blind spots.</b></div></div>
+        <div class="card" style="padding:1.2cqw 1.6cqw"><div class="lab" style="font-size:.95cqw">And</div><div class="ts" style="font-size:1.55cqw">Change the brief, and you'd <b>change the ruler too.</b></div></div>
+      </div>
+      <div style="position:absolute;left:6cqw;right:6cqw;top:44cqw;display:grid;grid-template-columns:1fr 1fr;gap:2cqw">
+        <div class="card" style="padding:1.1cqw 1.6cqw"><div class="lab" style="font-size:.95cqw">A normal software test</div><div class="ts" style="font-size:1.5cqw">Same input → <b>exactly</b> this output.</div></div>
+        <div class="card" style="padding:1.1cqw 1.6cqw;box-shadow:0 0 0 .2cqw var(--judge)"><div class="lab" style="font-size:.95cqw;color:var(--judge)">A judge</div><div class="ts" style="font-size:1.5cqw">Five different answers → <b>do the rules still hold?</b></div></div>
+      </div>
+    </div>
+    <div class="track">
+      <ol>
+        <li>"And this is where judges come in. The easiest way to think about it: the prompt is the brief. It's what we tell the PM Translator to do, and it does its best." <span class="stage">Prompt card.</span></li>
+        <li>"The judge is the editor. It's separate, often its own model, and it checks what was actually written against one of our rules, and tells us why. So why not just put the rules in the prompt? Two reasons. A writer can't edit their own work: same blind spots. And if the rules only live in the brief, every time you change the brief, you change the ruler too." <span class="stage">Judge card, then the two reasons.</span></li>
+        <li>"And an editor isn't like a normal software test. A test says: this in, exactly this out. But we saw five tries give five different answers. So the judge doesn't look for exact words. It checks whether our rules still hold." <span class="stage">The bottom strip.</span></li>
+      </ol>
+      <div class="why"><b>Why:</b> "brief and editor" is a picture everyone already has. It gives two plain reasons for keeping the judge separate (blind spots, and a stable ruler) instead of the cost and scale answer you found yourself reaching for. It also sets up the heuristic on 53 and 59. "You don't mark your own homework" becomes the writer/editor line.</div>
+    </div>
+  </div>
+</div>
+
+<!-- 48 -->
+<div class="prop">
+  <div class="prop-head"><span class="n">48</span><h3>Rules become judges: no tongue-twister</h3><span class="pill keep">Line + card</span><span class="rep">your note: "is let's avoid still a never" doesn't land</span></div>
+  <div class="track box"><ol><li>"So each of our rules becomes a judge, and they're not all the same. Some are just code: is there still a number? If you can write a normal test, do that first; it's cheaper. Others need judgement: does 'let's avoid' still mean 'never'? For those, a second AI reads our rule and our golden examples. And the borderline ones go to people. Cheapest first."</li></ol>
+  <div class="why" style="margin-top:10px"><b>Also on screen:</b> the room's card reads <i>For the borderline ones, like “let's avoid” vs “never”</i>, with both phrases in quotes so it reads cleanly.</div></div>
+</div>
+
+<!-- 53 -->
+<div class="prop">
+  <div class="prop-head"><span class="n">53</span><h3>Chapter: wrong answer, or wrong mark?</h3><span class="pill chg">Changed</span><span class="rep">states the heuristic</span></div>
+  <div class="grid">
+    <div class="slide">
+      <svg viewBox="0 0 440 360" style="position:absolute;left:5cqw;top:6cqw;width:38cqw"><ellipse cx="220" cy="180" rx="160" ry="125" fill="none" stroke="#a69e8d" stroke-width="3"/><circle cx="220" cy="55" r="46" fill="#1d1b17"/><text x="220" y="62" text-anchor="middle" font-size="20" fill="#fff" font-weight="700" font-family="Bricolage Grotesque">Define</text><circle cx="380" cy="180" r="46" fill="#1d1b17"/><text x="380" y="187" text-anchor="middle" font-size="20" fill="#fff" font-weight="700" font-family="Bricolage Grotesque">Build</text><circle cx="220" cy="305" r="46" fill="#1d1b17"/><text x="220" y="312" text-anchor="middle" font-size="20" fill="#fff" font-weight="700" font-family="Bricolage Grotesque">Measure</text><circle cx="60" cy="180" r="46" fill="#d9480f"/><text x="60" y="187" text-anchor="middle" font-size="20" fill="#fff" font-weight="700" font-family="Bricolage Grotesque">Learn</text></svg>
+      <div style="position:absolute;left:50cqw;right:5cqw;top:14cqw;display:grid;gap:1.8cqw">
+        <div class="tm" style="font-size:2.6cqw">Wrong answer → fix the <span class="ptag prompt">Prompt</span></div>
+        <div class="tm" style="font-size:2.6cqw">Wrong mark → fix the <span class="ptag judge">Judge</span></div>
+        <div class="ts" style="color:var(--accent);font-weight:700">Check the mark first. If the judge is wrong, every score is wrong.</div>
+      </div>
+    </div>
+    <div class="track"><ol><li>"So now the judges are marking every translation, or a sample if that gets expensive. And when something fails, there's one question to ask: is it a wrong answer, or a wrong mark? Wrong answer, fix the prompt. Wrong mark, fix the judge. And we always check the mark first, because if the judge is wrong, every score it gives us is wrong."</li></ol>
+    <div class="why"><b>Why:</b> you asked for a heuristic people will remember. This is it, in one line, just before the tech-debt example shows a wrong mark.</div></div>
+  </div>
+</div>
+
+<!-- 57-59 -->
+<div class="prop">
+  <div class="prop-head"><span class="n">57–59</span><h3>Reviews: a drop-down and a reason, then sort</h3><span class="pill chg">3 presses → 2</span><span class="rep">your note on 58–59: keep the story simpler</span></div>
+  <div class="grid">
+    <div class="states">
+      <div><div class="state-lbl">→1 · each review: agree or not, a drop-down, and a reason</div>
+      <div class="slide">
+        <div class="q"><div class="lab">How people review a fail</div><div class="tm">Pick a drop-down. Write the reason.</div></div>
+        <div style="position:absolute;left:5cqw;right:5cqw;top:12.5cqw;display:grid;gap:.9cqw">
+          <div class="lab" style="display:grid;grid-template-columns:24cqw 12cqw 18cqw 1fr;gap:1.4cqw;padding:0 1.4cqw;font-size:.95cqw"><span>The answer</span><span><span class="ptag judge" style="font-size:.8cqw">Judge</span> said ✗</span><span>Drop-down</span><span>Reason · more words is better</span></div>
+          <script>
+          const R=[["…so we can pay down tech debt.",0,"Judge too strict","judge","Paying it down IS the reason for the delay. It's honest, not an excuse."],["We're cutting that to 2 weeks.",1,"Changed a number","prompt","4 weeks became 2. On an HR policy that changes people's plans."],["I already told them we'd demo it.",1,"Promised something","prompt","Promised the CEO a demo nobody agreed to."],["Let's avoid deploying on Fridays.",1,"Softened a rule","prompt","“Never” went soft. Now it reads like a suggestion."]];
+          document.write(R.map(([a,ag,dd,k,r])=>`<div class="card" style="display:grid;grid-template-columns:24cqw 12cqw 18cqw 1fr;gap:1.4cqw;align-items:center;padding:1cqw 1.4cqw;${ag?'':'box-shadow:0 0 0 .2cqw var(--judge)'}"><span style="font-size:1.35cqw;font-weight:600;color:var(--muted)">${a}</span><span style="font-family:var(--mono);font-size:1cqw;font-weight:600;text-transform:uppercase;color:${ag?'var(--fail)':'var(--judge)'}">${ag?'Agree':'Disagree'}</span><span class="chip ${k}" style="font-size:1.1cqw;justify-self:start">${dd} ▾</span><span style="font-family:var(--mono);font-size:1.15cqw;line-height:1.35">${r}</span></div>`).join(""));
+          </script>
+        </div>
+      </div></div>
+      <div><div class="state-lbl">→2 · wrong mark → judge, wrong answer → prompt</div>
+      <div class="slide">
+        <div class="q"><div class="lab">Sort them</div><div class="tm">Wrong mark first. Then wrong answers.</div></div>
+        <div style="position:absolute;left:5cqw;right:5cqw;top:13cqw;display:grid;gap:1.8cqw">
+          <div style="position:relative;border-radius:1.2cqw;box-shadow:0 0 0 .25cqw var(--judge);background:var(--judge-soft);padding:1cqw"><span style="position:absolute;right:1.2cqw;top:-1.5cqw;background:var(--ground);box-shadow:0 0 0 .18cqw var(--judge);color:var(--judge);font-weight:800;font-size:1.35cqw;padding:.3cqw .9cqw;border-radius:.5cqw">1 · Wrong mark → fix the <span class="ptag judge">Judge</span></span><div class="card" style="padding:1cqw 1.4cqw;font-size:1.35cqw"><b>…pay down tech debt.</b> &nbsp;<span class="chip judge" style="font-size:1.05cqw">Judge too strict</span></div></div>
+          <div style="position:relative;border-radius:1.2cqw;box-shadow:0 0 0 .25cqw var(--prompt);background:var(--prompt-soft);padding:1cqw;display:grid;gap:.8cqw"><span style="position:absolute;right:1.2cqw;top:-1.5cqw;background:var(--ground);box-shadow:0 0 0 .18cqw var(--prompt);color:var(--prompt);font-weight:800;font-size:1.35cqw;padding:.3cqw .9cqw;border-radius:.5cqw">2 · Wrong answer → fix the <span class="ptag prompt">Prompt</span></span><div class="card" style="padding:1cqw 1.4cqw;font-size:1.35cqw"><b>Cutting that to 2 weeks.</b> &nbsp;<span class="chip prompt" style="font-size:1.05cqw">Changed a number</span></div><div class="card" style="padding:1cqw 1.4cqw;font-size:1.35cqw"><b>I already told them we'd demo it.</b> &nbsp;<span class="chip prompt" style="font-size:1.05cqw">Promised something</span></div><div class="card" style="padding:1cqw 1.4cqw;font-size:1.35cqw"><b>Let's avoid deploying on Fridays.</b> &nbsp;<span class="chip prompt" style="font-size:1.05cqw">Softened a rule</span></div></div>
+        </div>
+      </div></div>
+    </div>
+    <div class="track">
+      <ol>
+        <li>"So how do we fix things without guessing? Every time there's a fail, someone who knows the work reviews it. Do they agree with the judge? They pick a drop-down, from the handful of ways things usually go wrong, and they write down the reason in their own words. And the more words, the better. After a few hundred of these, the drop-downs show us the patterns: evidence, not vibes." <span class="stage">Rows land with their drop-down and reason together.</span></li>
+        <li>"Then we sort them. Wrong mark, fix the judge: that one goes first. Wrong answer, fix the prompt." <span class="stage">The blue box, then the teal box.</span></li>
+      </ol>
+      <div class="why"><b>Why:</b> your simpler story, in your order: review, drop-down, reason ("more words is better"), then sort. The drop-down and reason land together instead of on separate presses. The open and axial coding terms come out of the spoken line, because you stumbled there. If you want to name them, they're in the stage note. The box labels reuse the heuristic from 46 and 53.</div>
+    </div>
+  </div>
+</div>
+
+<!-- 60-61 -->
+<div class="prop">
+  <div class="prop-head"><span class="n">60–61</span><h3>The AI rewrite: your wording</h3><span class="pill keep">Line only</span><span class="rep">the slide stays; the lines follow how you told it</span></div>
+  <div class="track box"><ol>
+    <li>"Then we take everything about the judge, the judge's own prompt and all the feedback on it, and give it to another AI. 'Here's the judge, here's the feedback: improve it.' And out comes a better judge. The blunt tech debt line is gone, replaced with what we actually meant: catch work being waved away, not the words."</li>
+    <li>"Then the same for the prompt. Version 2 and all the reasons it failed go in, and out comes version 3, built from your feedback and reasoning. We didn't write it ourselves. We asked a separate AI to improve it, based on what people told us."</li>
+  </ol></div>
+</div>
+
+<!-- 62-63 -->
+<div class="prop">
+  <div class="prop-head"><span class="n">62–63</span><h3>Did it work? Fewer words, no "7 in 10"</h3><span class="pill chg">Simplified</span><span class="rep">your note: too many words, "7 in 10" doesn't resonate</span></div>
+  <div class="grid">
+    <div class="slide">
+      <div class="q"><div class="lab">Look how far we've come</div><div class="tm">From vibes to judged, automatically.</div></div>
+      <div style="position:absolute;left:6cqw;right:6cqw;top:17cqw;display:grid;grid-template-columns:repeat(4,1fr);gap:2cqw">
+        <div style="position:absolute;left:1.5cqw;right:1.5cqw;top:1.4cqw;height:.9cqw;border-radius:9cqw;background:linear-gradient(90deg,var(--vibes),#e9b44c 45%,var(--pass) 75%,var(--ink));opacity:.45"></div>
+        <div style="position:relative;display:grid;gap:.8cqw"><i style="width:3.4cqw;height:3.4cqw;border-radius:50%;background:#fff;box-shadow:0 0 0 .25cqw var(--faint),0 0 0 .6cqw var(--ground)"></i><div class="lab" style="font-size:1.05cqw;color:var(--accent)">Version 1</div><div class="tm" style="font-size:2.6cqw">Total vibes</div></div>
+        <div style="position:relative;display:grid;gap:.8cqw"><i style="width:3.4cqw;height:3.4cqw;border-radius:50%;background:#fff;box-shadow:0 0 0 .25cqw var(--faint),0 0 0 .6cqw var(--ground)"></i><div class="lab" style="font-size:1.05cqw;color:var(--accent)">Version 2</div><div class="tm" style="font-size:2.6cqw">Checked by hand</div></div>
+        <div style="position:relative;display:grid;gap:.8cqw"><i style="width:3.4cqw;height:3.4cqw;border-radius:50%;background:var(--pass);box-shadow:0 0 0 .6cqw var(--ground)"></i><div class="lab" style="font-size:1.05cqw;color:var(--accent)">Version 3</div><div class="tm" style="font-size:2.6cqw;color:var(--pass)">Judged automatically, and improving</div></div>
+        <div style="position:relative;display:grid;gap:.8cqw"><i style="width:3.4cqw;height:3.4cqw;border-radius:50%;background:#fff;box-shadow:0 0 0 .3cqw var(--ink),0 0 0 .7cqw var(--ground)"></i><div class="lab" style="font-size:1.05cqw;color:var(--accent)">Next</div><div class="tm" style="font-size:2.6cqw">Extremely good</div><div class="ts" style="font-size:1.5cqw;color:var(--muted)">takes a lot more time</div></div>
+      </div>
+    </div>
+    <div class="track"><ol>
+      <li>"So, did it work? Look how far we've come. Version 1 was total vibes. Version 2, we checked by hand. And version 3 is judged automatically, on every answer, and it's improving itself from our feedback."</li>
+      <li>"And that's the pattern with most AI features. Getting to quite good happens quickly. Getting to extremely good, good enough to trust with an HR policy, takes a lot more time. The evals tell you whether that time is paying off." <span class="stage">"Extremely good" lands.</span></li>
+    </ol>
+    <div class="why"><b>Why:</b> one short line per stop and no numbers. You're right that "7 in 10" means nothing to someone who hasn't seen the 10. The rehearsal numbers stay in <code>presenting.md</code> if anyone asks.</div></div>
+  </div>
+</div>
+
+<!-- 64 -->
+<div class="prop">
+  <div class="prop-head"><span class="n">64–66</span><h3>Ship it? A proper headline, and your wording</h3><span class="pill keep">Heading + lines</span><span class="rep">your note: "your goal" lowercase reads oddly</span></div>
+  <div class="track box">
+    <p style="margin:0 0 10px"><b>Heading:</b> small label "Should we ship it?" with the headline <b>"It depends on your goal, and the quality you need."</b>, a full sentence instead of the continuation.</p>
+    <ol>
+      <li>"So, back to the question from the start: should we ship it? Earlier we were reluctant, because we didn't know how reliable it was. Now we can measure it. But whether we ship really depends on what we're trying to achieve."</li>
+      <li>"If we were just writing a Friday drinks email, vibes are fine. We'd have shipped version 1: write the prompt, paste it into Slack or Teams, done."</li>
+      <li>"But if this is going to rewrite every HR policy, we want a really high bar: every rule passing, all the time, and a human still signs off. Most things sit somewhere in between. Our job is to decide where, and write those rules down before we build."</li>
+    </ol>
+  </div>
+</div>
+
+<h2 class="sec">Line changes only</h2>
+<div class="box">
+<table class="tbl">
+<tr><th>Slide</th><th>Proposed (and why)</th></tr>
+<tr><td>21</td><td><span class="now">"…If we'd tested it once, we might have got the good one and shipped it. Some failures show up in five tries; some take hundreds, or thousands. So we still don't know how reliable it is."</span><div class="was">Your phrasing ("hundreds or thousands of tries") replaces "might only fail at five thousand".</div></td></tr>
+<tr><td>31</td><td><span class="now">"Now, two of these are a bit different. They're hard rules, what we call invariants: break the number or the rule, and it doesn't matter how funny the rest is, it's an instant fail."</span><div class="was">Your note: drop "in eval-speak" and "the only time you'll hear that word".</div></td></tr>
+<tr><td>32</td><td><span class="now">"And there are things we've thought about, but decided are out of scope for now: emoji, length, whether it's actually funny. Writing those down matters too. Every time we say what's in and what's out, we get clearer on what's important, and we don't have the same debate next week."</span><div class="was">Your note: the story is "we considered these, we decided they're out of scope, and that makes us clearer".</div></td></tr>
+<tr><td>34</td><td><span class="now">"That's looking pretty good. It's still a never, and it sounds like a PM who's seen this movie before."</span><div class="was">Your ad-lib, which landed.</div></td></tr>
+<tr><td>36</td><td><span class="now">"It's getting softer. 'Let's avoid' isn't 'never'. Not wrong, exactly, but not right either."</span><div class="was">You stumbled here ("it's not totally false, but it's kind of…"). This is the line you were reaching for.</div></td></tr>
+<tr><td>38</td><td><span class="now">"'Friday deploys are totally fine.' It's funny, and probably true of some PMs, but it's changed the rule. That one's clearly bad."</span></td></tr>
+<tr><td>42</td><td><span class="now">"…And the reason matters. 'Bad' just tells someone it's bad. 'Four weeks became two' tells them, or an AI, exactly what to fix."</span><div class="was">Uses your concrete example instead of the abstract version.</div></td></tr>
+<tr><td>43</td><td><span class="now">"So let's take stock. We've built a PM Translator, and it's a bit vibey. We've defined what good looks like. And we've started measuring, by hand."</span><div class="was">"It's a bit vibey" is yours.</div></td></tr>
+<tr><td>54</td><td><span class="now">"Here's one from our engineering release notes: 'The release is delayed so we can pay down tech debt.' Not something you hear a PM say very often! But the translator's done a decent job: it's kept the facts, and it sounds like a PM. Yet one of our judges fails it: 'nothing added'."</span><div class="was">You tripped on "no PM I know pays down tech debt". This version is easier to say.</div></td></tr>
+<tr><td>67–68</td><td><span class="now">Unchanged, apart from "we wrote the rules, marked the answers, captured our reasoning, and improved the judge and the prompt": your wording.</span></td></tr>
+</table>
+</div>
+
+<h2 class="sec">Effect on timing</h2>
+<div class="box"><p style="margin:0">Net about 1 press fewer (4.2 goes from 3 to 2), and about 90 fewer spoken words: 39, 57–59 and 62–63 get shorter, and 46 gets slightly longer. The script goes from about 21¼ to about 20¾ minutes.</p></div>
+
+</div></body></html>
