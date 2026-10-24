@@ -1,10 +1,70 @@
 # Your AI feature works in the demo. Now prove it.
 
-The talk for **Signal not Noise**, Brisbane: a visual story that teaches the room what evals are by fooling them with a demo, then getting them to write the rules, mark the answers and overrule a judge. It runs live in the browser, with a presenter window on the laptop.
+The talk for **Signal not Noise**, Brisbane: a 25-minute visual story that teaches a non-technical room what evals are. It fools them with a demo, gets them to say what good looks like, then shows how you check every answer automatically and make the product better. It runs live in the browser, with a presenter window on the laptop.
 
-- **How the talk runs** (setup, keys, the room's moments and their fallbacks, the checklist for the day): [docs/presenting.md](docs/presenting.md)
+![Title card](docs/screenshots/01-title.png)
+
+## The talk
+
+One product runs through the whole talk: the **PM Translator**. It rewrites notices from around the company in the voice of a pushy, know-it-all product manager. Its prompt grows in public, from two lines (**v1**), to rules added by gut feel (**v2**), to a version rewritten by an AI from the reasons people gave (**v3**). One notice, *“Annual leave needs 4 weeks' notice”*, is followed from applause to evidence.
+
+The two moving parts always look the same. The **Prompt** (teal) is the brief: it tells the PM Translator what to do. The **Judge** (blue) is the editor: it checks what was actually written against our rules, and says why. A needle from VIBES to EVIDENCE stays on screen and moves as the talk earns it.
+
+### 1 · The demo
+
+We build PM Translator v1 in two lines, try it on a few notices, and the room ships it on vibes. Then the reveal: it quietly turned four weeks' notice into two. One small change, a totally different policy.
+
+![The reveal: four weeks became two](docs/screenshots/02-reveal.png)
+
+The same notice, same prompt, five tries gives five different answers. So passing once tells you nothing about how reliable it is. Version 2 adds more rules by gut feel, but we still have no way to check we got it.
+
+![Five tries, five answers](docs/screenshots/03-five-tries.png)
+
+### 2 · Say what good is
+
+The room writes the rules (Define), then becomes the judge and marks three answers (Measure). The soft ones split the room: does “let's avoid” still mean “never”? That's a human call, and it's why a reason matters. The marked answers become the golden examples.
+
+| | |
+| --- | --- |
+| ![Be the judge](docs/screenshots/04-be-the-judge.png) | ![The golden wall](docs/screenshots/05-golden-wall.png) |
+
+### 3 · Check every answer
+
+We can't vote on ten thousand answers a day. The prompt is the brief and the judge is the editor, kept separate for three reasons: a writer shouldn't edit their own work; it's many judges, each an expert on one rule; and when the prompt changes the judges stay the same, so you know whether the change helped.
+
+![The prompt is the brief, the judge is the editor](docs/screenshots/06-brief-and-editor.png)
+
+Each rule becomes a test, cheapest first: code tests, AI judges, then people for the borderline calls. Run against every notice, they give a baseline. That's an eval. Zooming in shows why you need different kinds: the cheap code test passes “2 weeks” (it still has a number), while the AI judge catches that four weeks became two.
+
+| | |
+| --- | --- |
+| ![Judges run on every answer](docs/screenshots/07-judges-at-scale.png) | ![Zoom in: the code test passes, the AI judge fails it](docs/screenshots/08-zoom-in.png) |
+
+### 4 · Make it better
+
+Every failure asks one question: is it a wrong answer or a wrong test? A wrong answer means fixing the prompt, and a wrong test means fixing the judge. Always check the test first: if the test is wrong, every score is wrong. Reviews are a drop-down and a reason, then they're sorted, judges first. The reasons go to an AI, which rewrites the judge and then the prompt.
+
+| | |
+| --- | --- |
+| ![Sort the reviews: tests first, then answers](docs/screenshots/09-sort-the-reviews.png) | ![The reasons go to an AI, which rewrites the judge and the prompt](docs/screenshots/10-ai-rewrite.png) |
+
+From v1 (total vibes) to v2 (checked by hand) to v3 (judged automatically, and improving). In rehearsal (six notices, five tries each), v3 passed every judge 21 times in 30, against 0 for v1 and 1 for v2.
+
+![From vibes to judged, automatically](docs/screenshots/11-vibes-to-judged.png)
+
+### 5 · Ship it?
+
+Should we ship it? It depends on your goal, and the quality you need. A Friday drinks email can ship on vibes, but the HR leave policy needs every rule, 100% on the instant fails, and a human signing off. The leave policy ships, and the needle swings to evidence.
+
+![How good is good enough?](docs/screenshots/12-good-enough.png)
+
+## The docs
+
+- **How the talk runs** (setup, keys, the room's moments and their fallbacks, what's planted, the checklist for the day): [docs/presenting.md](docs/presenting.md)
 - **Talk track** (every press of the clicker, with what to say): [docs/talk-track.md](docs/talk-track.md), generated from the app by `npm run talk-track`
-- **How it was designed:** the [storyboard](docs/storyboard-v2.html), the [motion treatment](docs/motion-treatment.html), the [palettes](docs/palettes.html) and the [implementation plan](docs/implementation-plan.md)
+- **How it was designed:** the [storyboard](docs/storyboard-v2.html), the [motion treatment](docs/motion-treatment.html), the [palettes](docs/palettes.html), the [implementation plan](docs/implementation-plan.md) and the [rehearsal rework](docs/implementation-plan-v2.md)
+
+The screenshots in [docs/screenshots/](docs/screenshots/) were taken at 1600×900 by jumping to each slide (`#beat.step`) with `?mock`.
 
 ## Run it
 
@@ -26,7 +86,7 @@ The talk keeps its place and everything the room typed or voted across a refresh
 | [src/talk/beats.tsx](src/talk/beats.tsx) | One view per kind of beat, each a pure function of (beat, step, the room's input), so ← and → always land on the right picture |
 | [src/talk/Stage.tsx](src/talk/Stage.tsx) | The 16:9 canvas (everything in `cqw`, so it's identical on any projector), the needle, and the moves: type, deal, stamp, expose, fly, hold |
 | [src/talk/talk.css](src/talk/talk.css) | The palette (warm paper, ink, burnt orange; yellow on black for the title and close) and every stage style |
-| [src/talk/store.ts](src/talk/store.ts), [sync.ts](src/talk/sync.ts) | The state, saving, and the two windows: the projector owns the state, the presenter sends actions |
+| [src/talk/store.ts](src/talk/store.ts), [sync.ts](src/talk/sync.ts) | The state, saving, and the windows: one projector window owns the state (a Web Lock picks it), mirrors and the presenter follow it, and the presenter sends actions |
 | [src/talk/live.ts](src/talk/live.ts) | The only live calls: the room's notices, translated with Version 1 and judged |
 | [src/talk/Presenter.tsx](src/talk/Presenter.tsx) | The presenter window |
 
