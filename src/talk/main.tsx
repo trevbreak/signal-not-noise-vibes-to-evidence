@@ -7,11 +7,12 @@ import { createRoot } from "react-dom/client";
 import { Talk } from "./Talk";
 import { Presenter } from "./Presenter";
 import { persist, restore } from "./store";
-import { isPresenter, startSync } from "./sync";
+import { claimOwnership, isPresenter, startSync } from "./sync";
 import { startLiveWorker } from "./live";
 
-export function start() {
-  if (!isPresenter) {
+export async function start() {
+  // Only the owner restores, saves and runs live calls; the presenter and any extra projector window mirror it.
+  if (await claimOwnership()) {
     restore();
     persist();
     startLiveWorker();
