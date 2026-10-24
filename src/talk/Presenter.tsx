@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import "./presenter.css";
 import { BEATS, DEFAULT_RULES, DEFAULT_VOTES, MOVEMENTS, movementEnds, type Field } from "./content";
 import { Stage } from "./Stage";
@@ -18,6 +18,9 @@ const FIELD_LABEL: Record<Field, string> = {
   "rule:2": "Card 3, in the room's words",
   "rule:3": "Card 4, in the room's words",
 };
+
+const FIT_MAX = 36;
+const FIT_MIN = 18;
 
 const clock = (n: number) => `${Math.floor(Math.max(0, n) / 60)}:${String(Math.floor(Math.max(0, n)) % 60).padStart(2, "0")}`;
 
@@ -64,6 +67,27 @@ export function Presenter() {
   useEffect(() => {
     document.querySelector(".pv-beats button.on")?.scrollIntoView({ inline: "center", block: "nearest" });
   }, [state.beat]);
+
+  // The script panel uses the biggest text that fits without scrolling: start large, step down until it fits.
+  const scriptRef = useRef<HTMLElement>(null);
+  const [fit, setFit] = useState(FIT_MAX);
+  useLayoutEffect(() => {
+    const el = scriptRef.current;
+    if (!el) return;
+    const refit = () => {
+      let size = FIT_MAX;
+      el.style.setProperty("--fit", `${size}px`);
+      while (size > FIT_MIN && el.scrollHeight > el.clientHeight + 1) {
+        size -= 1;
+        el.style.setProperty("--fit", `${size}px`);
+      }
+      setFit(size);
+    };
+    refit();
+    const ro = new ResizeObserver(refit);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [step, nextStep, state.room.notices, state.editing]);
 
   const total = BEATS.reduce((n, b) => n + b.steps.length, 0);
   const done = BEATS.slice(0, state.beat).reduce((n, b) => n + b.steps.length, 0) + state.step + 1;
@@ -119,9 +143,23 @@ export function Presenter() {
           <div className="pv-stage now">
             <Stage state={state} />
           </div>
+          <div className="pv-under">
+            <div className="pv-upnext">
+              <div className="pv-label">Next screen</div>
+              <div className="pv-stage next">{next ? <Stage state={next} instant /> : <div className="pv-end">The end</div>}</div>
+            </div>
+            <div className="pv-nav">
+              <button className="pv-btn big" onClick={() => dispatch("prev")}>
+                ← Back
+              </button>
+              <button className="pv-btn big primary" onClick={() => dispatch("next")}>
+                Next →
+              </button>
+            </div>
+          </div>
         </section>
 
-        <section className="pv-script">
+        <section className="pv-script" ref={scriptRef} style={{ "--fit": `${fit}px` } as React.CSSProperties}>
           <div className="pv-label">Say</div>
           <div className="pv-say">
             <Bold text={step.say} />
@@ -140,18 +178,6 @@ export function Presenter() {
           </div>
 
           <Controls state={state} />
-
-          <div className="pv-nav">
-            <button className="pv-btn big" onClick={() => dispatch("prev")}>
-              ← Back
-            </button>
-            <button className="pv-btn big primary" onClick={() => dispatch("next")}>
-              Next →
-            </button>
-          </div>
-
-          <div className="pv-label">Next screen</div>
-          <div className="pv-stage next">{next ? <Stage state={next} instant /> : <div className="pv-end">The end</div>}</div>
         </section>
       </main>
 
