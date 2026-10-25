@@ -491,7 +491,7 @@ function ChapterView({ beat, step }: P) {
       );
     // lap: the end-of-talk recap, one station per press, the loop closing on the last.
     const rows: [string, ReactNode][] = [
-      ["Define", "Our rules, and golden examples with the reasons why"],
+      ["Define", "Our rules, and golden samples with the reasons why"],
       ["Build", <>The PM Translator: the <Tag kind="prompt" />, v1 → v3</>],
       ["Measure", "Every answer: code tests, AI judges, human feedback"],
       [
@@ -604,6 +604,16 @@ function VoteView({ step, state }: P) {
             ),
         )}
       </div>
+      {/* The room's rules from 2.2, kept on screen so the marking has something to mark against. */}
+      <div className="vote-rules a-fade" style={d(0.4)} data-box="rules">
+        <span className="vr-label">Our rules</span>
+        {[0, 1, 2, 3].map((i) => (
+          <span key={i} className={`vr-rule ${i < 2 ? "hard" : ""}`}>
+            <b>{String(i + 1).padStart(2, "0")}</b> {ruleText(state, i)}
+            {i < 2 && <i>Instant fail</i>}
+          </span>
+        ))}
+      </div>
     </>
   );
 }
@@ -667,7 +677,7 @@ function WallView({ step, state }: P) {
   return (
     <>
       <div className="counter" data-box="counter">
-        Golden examples · {step >= 1 ? <Count from={3} to={total} over={2.8} delay={0.2} /> : 3} marked
+        Golden samples · {step >= 1 ? <Count from={3} to={total} over={2.8} delay={0.2} /> : 3} marked
       </div>
       {step >= 2 && (
         <div className="wall-caption t-s t-accent a-rise" data-box="caption">

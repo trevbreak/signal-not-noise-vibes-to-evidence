@@ -162,10 +162,10 @@ export function Presenter() {
         <section className="pv-script" ref={scriptRef} style={{ "--fit": `${fit}px` } as React.CSSProperties}>
           <div className="pv-label">Say</div>
           <div className="pv-say">
-            <Bold text={step.say} />
+            <Line text={step.say} />
           </div>
           <div className="pv-label">Then</div>
-          <div className="pv-next">{nextStep ? <Bold text={nextStep.say} /> : "That's the talk."}</div>
+          <div className="pv-next">{nextStep ? <Line text={nextStep.say} /> : "That's the talk."}</div>
 
           <div className="pv-keys">
             <kbd>→</kbd> next <kbd>←</kbd> back
@@ -313,6 +313,28 @@ function FieldBox({ field, state }: { field: Field; state: TalkState }) {
         onBlur={() => !text && dispatch("cancelEdit")}
       />
     </div>
+  );
+}
+
+/** A presenter line: the words to say (inside “…”) in one colour, the stage directions around them in another. */
+function Line({ text }: { text: string }) {
+  return (
+    <>
+      {text
+        .split(/(“[^”]*”)/g)
+        .filter(Boolean)
+        .map((part, i) =>
+          part.startsWith("“") ? (
+            <span key={i} className="pv-spoken">
+              <Bold text={part} />
+            </span>
+          ) : (
+            <span key={i} className="pv-direction">
+              <Bold text={part} />
+            </span>
+          ),
+        )}
+    </>
   );
 }
 

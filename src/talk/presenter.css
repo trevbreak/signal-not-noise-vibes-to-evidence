@@ -68,3 +68,9 @@
 .pv-beats button.past { color: var(--p-text); }
 .pv-beats button.on { background: var(--p-accent); color: #1a0e05; border-color: transparent; }
 @media (max-width: 1000px) { .pv-main { grid-template-columns: 1fr; } .pv-stage.now { width: 100%; } .pv-script { overflow: visible; } }
+
+/* The words to say stand out; the stage directions around them recede. */
+.pv-say .pv-spoken { color: var(--p-text); }
+.pv-say .pv-direction { color: var(--p-accent); font-weight: 500; font-style: italic; }
+.pv-next .pv-spoken { color: var(--p-text); }
+.pv-next .pv-direction { color: var(--p-accent); font-weight: 500; font-style: italic; }

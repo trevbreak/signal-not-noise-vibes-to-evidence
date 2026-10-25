@@ -22,7 +22,7 @@ The same notice, same prompt, five tries gives five different answers. So passin
 
 ### 2 · Say what good is
 
-The room writes the rules (Define), then becomes the judge and marks three answers (Measure). The soft ones split the room: does “let's avoid” still mean “never”? That's a human call, and it's why a reason matters. The marked answers become the golden examples.
+The room writes the rules (Define), then becomes the judge and marks three answers (Measure). The soft ones split the room: does “let's avoid” still mean “never”? That's a human call, and it's why a reason matters. The marked answers become the golden samples.
 
 | | |
 | --- | --- |
