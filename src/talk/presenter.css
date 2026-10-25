@@ -72,5 +72,5 @@
 /* The words to say stand out; the stage directions around them recede. */
 .pv-say .pv-spoken { color: var(--p-text); }
 .pv-say .pv-direction { color: var(--p-accent); font-weight: 500; font-style: italic; }
-.pv-next .pv-spoken { color: #c9c3b4; }
-.pv-next .pv-direction { color: color-mix(in srgb, var(--p-accent) 70%, var(--p-muted)); font-style: italic; }
+.pv-next .pv-spoken { color: var(--p-text); }
+.pv-next .pv-direction { color: var(--p-accent); font-weight: 500; font-style: italic; }
