@@ -148,7 +148,7 @@ export const useTalk = create<Talk>((set, get) => {
 
 // ── Saving: the projector keeps its place and the room's input across a refresh ──
 
-const KEY = "talk-state-v3";
+const KEY = "talk-state-v4";
 
 export function restore() {
   // A hash like #12.3 (beat 12, step 3) jumps there: handy for rehearsing one beat.

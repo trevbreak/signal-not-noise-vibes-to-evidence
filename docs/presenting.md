@@ -17,11 +17,11 @@ The two moving parts are always labelled the same way, in the same colour: the *
 | --- | --- | --- |
 | 1 · The demo | Build PM Translator v1, try it on company notices, ship it on vibes, the two-weeks reveal, introduce yourself at the title drop, five tries, v2 side by side with "no way to check" | 7 min |
 | 2 · Say what good is | The loop with a gap, the room writes the rules (Define), marks three answers (Measure), the soft-rule split on one press, the golden wall and why a reason matters | 12.5 min |
-| 3 · Check every answer | Recap, the prompt is the brief and the judge is the editor, rules become judges and run at scale, the zoom-in where the cheap code check passes "2 weeks" and the AI judge catches it | 16.5 min |
-| 4 · Make it better | Wrong answer → fix the prompt, wrong test → fix the judge; a judge that's wrong about tech debt; reviews (drop-down + reason), sorted into judge then prompt; the judge, then the prompt, fly through the AI; from total vibes to judged automatically | 21 min |
-| 5 · Ship it? | Good enough depends on your goal (vibes vs 100%), the leave policy ships and the needle swings to evidence, the close | 23.5 min |
+| 3 · Check every answer | A one-press recap; how do we test an AI? The prompt is the brief and the judge is the editor (just another AI with its own prompt), then the two cards move into place: prompt → answer → judges, with two reasons to keep them separate; three kinds of test (code, AI judges, human feedback) run at scale; the zoom-in where the code test passes "2 weeks" and the AI judge catches it, landing last | 16.5 min |
+| 4 · Make it better | The loop closes; wrong answer → fix the prompt, wrong test → fix the judge; a judge that's wrong about tech debt, with the answer, the wall card and its prompt on one slide; reviews (category + reason), sorted into judge then prompt; the judge, then the prompt, go through the AI on your press, old on the left and new on the right; from total vibes to judged automatically | 21 min |
+| 5 · Ship it? | Good enough depends on your goal (vibes vs 100%), the leave policy ships, the whole loop recapped, the needle swings to evidence, and the close: "Now you can prove it." | 24 min |
 
-The clock in the presenter window starts when you leave the title card and turns red when you're behind a checkpoint. The script comes to about 20¾ minutes at 150 words a minute (68 presses). The latest practice run came in at about 23 minutes, including pauses and the room. In the 24 Oct practice run you spoke about 1.3× the script, mostly by expanding lines in your own words, so the lines are now written the way you said them. Read them close to the script and you'll land well inside 25 minutes, with room for the audience.
+The clock in the presenter window starts when you leave the title card and turns red when you're behind a checkpoint. The script comes to about 22 minutes at 150 words a minute (77 presses). The 24 Oct practice run came in at about 23 minutes with pauses and the room, and the run 4 changes add about a minute of script, so expect about 24. In the 24 Oct practice run you spoke about 1.3× the script, mostly by expanding lines in your own words, so the lines are now written the way you said them. Read them close to the script and you'll land well inside 25 minutes, with room for the audience.
 
 ## Setting up
 
@@ -86,7 +86,7 @@ All of it lives in [`src/talk/content.ts`](../src/talk/content.ts).
 ## Rehearsal
 
 1. **Run it once end to end with the presenter clock**, out loud, and note where you're behind a checkpoint.
-2. **Try the room's moments for real:** type two notices in 1.2 with the API key set, and watch them arrive in the montage in 3.1.
+2. **Try the room's moments for real:** type two notices in 1.2 with the API key set, and watch them arrive in the montage in 3.2.
 3. **Practise the needle in 1.3.** Push it a little and a lot before you lock it, so the line works either way.
 4. **Practise one vote with each key** (1 to 5) in 2.3, so the keys are in your fingers.
 5. **Press Reset talk** in the presenter window before the real thing. It clears everything the room typed and voted.
@@ -104,7 +104,7 @@ All of it lives in [`src/talk/content.ts`](../src/talk/content.ts).
 The 24 Oct cuts are already made: one introduction (at the title drop), v2 and "no way to check" on one slide, the split on one press, no "bad examples" hold, and no separate loop-closed chapter. If you're still long, cut in this order:
 
 1. **2.2's "not now" press** (about 20 seconds). Leave the chips on screen and press past it.
-2. **3.1's three reasons** (about 20 seconds). Give just the first one, "a writer shouldn't edit their own work", and move on.
+2. **3.1's two reasons** (about 15 seconds). Give just the first one, "a writer shouldn't edit their own work", and press past the second.
 3. **2.3's reasons for A and C** (about 15 seconds). Read the room's split and move on.
 
 Use the beat strip at the bottom of the presenter window to jump past a beat.
