@@ -549,6 +549,7 @@ button, input, textarea { font: inherit; color: inherit; }
 .pj-mark.ok { color: var(--pass); }
 .pj-mark.no { color: var(--fail); }
 .pj-two { position: absolute; left: 5cqw; right: 5cqw; top: 39cqw; display: grid; grid-template-columns: 1fr 1fr; gap: 2cqw; }
+.pj-two .pj-wait { visibility: hidden; }
 .pj-two .card { display: flex; gap: 1.6cqw; align-items: center; padding: 1.4cqw 1.8cqw; }
 .pj-two .n { font-size: 3.4cqw; font-weight: 800; color: var(--accent); line-height: 1; }
 .pj-two .t-s { font-size: 1.8cqw; line-height: 1.3; }

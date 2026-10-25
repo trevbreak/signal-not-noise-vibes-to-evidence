@@ -791,16 +791,13 @@ function PromptJudgeView({ step }: P) {
         </div>
       )}
       <div className="pj-two" data-box="why">
-        {reasons.map((r, i) =>
-          step >= i + 3 ? (
-            <div key={i} className="card a-rise">
-              <span className="n">{i + 1}</span>
-              <span className="t-s">{r}</span>
-            </div>
-          ) : (
-            <div key={i} />
-          ),
-        )}
+        {/* Both cards are always laid out (a waiting one is just hidden), so the first is already its final size. */}
+        {reasons.map((r, i) => (
+          <div key={i} className={`card ${step >= i + 3 ? "a-rise" : "pj-wait"}`}>
+            <span className="n">{i + 1}</span>
+            <span className="t-s">{r}</span>
+          </div>
+        ))}
       </div>
     </>
   );
