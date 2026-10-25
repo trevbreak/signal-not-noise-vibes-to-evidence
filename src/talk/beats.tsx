@@ -349,7 +349,8 @@ const STATIONS = [
   { id: "learn", label: "Learn", x: 60, y: 180 },
 ] as const;
 
-function Loop({ st, lap = false, quick = false }: { st: Record<StationId, StationState>; lap?: boolean; quick?: boolean }) {
+/** `upTo` (the end-of-talk recap): how many stations are lit so far, one per press, each with the link into it. */
+function Loop({ st, lap = false, quick = false, upTo }: { st: Record<StationId, StationState>; lap?: boolean; quick?: boolean; upTo?: number }) {
   const cx = 220, cy = 180, rx = 160, ry = 125;
   const arrows = [-45, 45, 135, 225].map((deg) => {
     const t = (deg * Math.PI) / 180;
@@ -357,6 +358,46 @@ function Loop({ st, lap = false, quick = false }: { st: Record<StationId, Statio
     const a = (Math.atan2(ry * Math.cos(t), -rx * Math.sin(t)) * 180) / Math.PI;
     return { x, y, a };
   });
+  if (upTo !== undefined) {
+    // The links between stations, clockwise from Define. Link k joins station k to the next; the last closes the loop.
+    const at = (deg: number) => [cx + rx * Math.cos((deg * Math.PI) / 180), cy + ry * Math.sin((deg * Math.PI) / 180)];
+    const shown = (k: number) => (k < 3 ? upTo >= k + 2 : upTo >= 4);
+    return (
+      <svg viewBox="0 0 440 360" role="img" aria-label="The loop: define, build, measure, learn" data-box="loop">
+        <ellipse cx={cx} cy={cy} rx={rx} ry={ry} fill="none" stroke="var(--edge)" strokeWidth={3} />
+        {[0, 1, 2, 3].map((k) => {
+          if (!shown(k)) return null;
+          const [x1, y1] = at(-90 + 90 * k), [x2, y2] = at(90 * k);
+          const delay = k === 3 ? 1.2 : 0.2;
+          return (
+            <g key={k}>
+              <path className="loop-path" pathLength={1} d={`M ${x1} ${y1} A ${rx} ${ry} 0 0 1 ${x2} ${y2}`} fill="none" stroke="var(--accent)" strokeWidth={5} style={{ ...d(delay), animationDuration: "0.8s" }} />
+              <path d="M -7 -8 L 9 0 L -7 8 Z" fill="var(--accent)" transform={`translate(${arrows[k].x} ${arrows[k].y}) rotate(${arrows[k].a})`} className="a-fade" style={d(delay + 0.5)} />
+            </g>
+          );
+        })}
+        {STATIONS.map((s, i) => {
+          const lit = i < upTo;
+          return (
+            <g key={s.id} className="station">
+              <circle cx={s.x} cy={s.y} r={46} fill="var(--card)" stroke="var(--edge)" strokeWidth={3} />
+              <text x={s.x} y={s.y + 7} textAnchor="middle" fontSize={20} fill="var(--muted)">
+                {s.label}
+              </text>
+              {lit && (
+                <g className="a-fade" style={d(i === 0 ? 0.3 : 0.6)}>
+                  <circle cx={s.x} cy={s.y} r={46} fill="var(--accent)" />
+                  <text x={s.x} y={s.y + 7} textAnchor="middle" fontSize={20} fill="#fff">
+                    {s.label}
+                  </text>
+                </g>
+              )}
+            </g>
+          );
+        })}
+      </svg>
+    );
+  }
   return (
     <svg viewBox="0 0 440 360" role="img" aria-label="The loop: define, build, measure, learn" data-box="loop">
       <path
@@ -448,12 +489,18 @@ function ChapterView({ beat, step }: P) {
           </div>
         </>
       );
-    // lap: the end-of-talk recap, the loop connected, each station spelled out as you name it.
+    // lap: the end-of-talk recap, one station per press, the loop closing on the last.
     const rows: [string, ReactNode][] = [
       ["Define", "Our rules, and golden examples with the reasons why"],
       ["Build", <>The PM Translator: the <Tag kind="prompt" />, v1 → v3</>],
-      ["Measure", "Every answer: code tests, AI judges, people"],
-      ["Learn", <>Wrong test → fix the <Tag kind="judge" />. Wrong answer → fix the <Tag kind="prompt" />.</>],
+      ["Measure", "Every answer: code tests, AI judges, human feedback"],
+      [
+        "Learn",
+        <>
+          <span className="nowrap">Wrong test → fix the <Tag kind="judge" />.</span>
+          <span className="nowrap">Wrong answer → fix the <Tag kind="prompt" />.</span>
+        </>,
+      ],
     ];
     return (
       <>
@@ -463,8 +510,9 @@ function ChapterView({ beat, step }: P) {
         <div className="t-m a-rise" style={d(0.3)}>
           The whole loop, connected.
         </div>
+        {/* Every row is laid out from the start (a waiting one is hidden), so the block never shifts as rows land. */}
         {rows.map(([k, v], i) => (
-          <div key={k} className="recap-row lap a-rise" style={d(0.8 + i * 3.2)}>
+          <div key={k} className={`recap-row lap ${step >= i ? "a-rise" : "waiting"}`} style={d(i === 0 ? 0.5 : 0.2)}>
             <b>{k}</b>
             <span>{v}</span>
           </div>
@@ -473,8 +521,8 @@ function ChapterView({ beat, step }: P) {
     );
   })();
   return (
-    <div className="chapter" data-box="chapter">
-      <Loop st={LOOP_MODES[mode]} lap={mode === "lap"} quick={mode === "recap"} />
+    <div className={`chapter ${mode === "lap" ? "lap" : ""}`} data-box="chapter">
+      <Loop st={LOOP_MODES[mode]} lap={mode === "lap"} quick={mode === "recap"} upTo={mode === "lap" ? step + 1 : undefined} />
       <div className={`text ${mode === "recap" || mode === "lap" ? "recap" : ""}`}>{text}</div>
     </div>
   );

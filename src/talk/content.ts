@@ -474,7 +474,10 @@ export const BEATS: Beat[] = [
     id: "recap", num: "5.3", title: "Recap: the whole loop, connected", movement: 5, kind: "chapter", needle: "hidden",
     props: { mode: "lap" },
     steps: [
-      { say: "Each stage lights up as you say it. “So let's recap. We defined what good looks like: our rules, and golden examples with the reasons why. We built the PM Translator. We measured every answer, with code tests, AI judges and people. And we learned: fix the judge first, then the prompt. That's the whole loop, connected.”" },
+      { say: "“So let's recap. We defined what good looks like: our rules, and golden examples with the reasons why.”" },
+      { say: "“We built the PM Translator.”" },
+      { say: "“We measured every answer, with code tests, AI judges and human feedback.”" },
+      { say: "“And we learned: fix the judge first, then the prompt. That's the whole loop, connected.” The last arrow closes the loop." },
     ],
   },
   {

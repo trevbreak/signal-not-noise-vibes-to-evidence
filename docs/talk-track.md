@@ -10,7 +10,7 @@ Each numbered line is one press of → (or the clicker). Quoted words are what t
 | 2 · Say what good is | 12.5 min | 5 beats, 19 presses |
 | 3 · Check every answer | 16.5 min | 4 beats, 11 presses |
 | 4 · Make it better | 21 min | 5 beats, 13 presses |
-| 5 · Ship it? | 24 min | 5 beats, 8 presses |
+| 5 · Ship it? | 24 min | 5 beats, 11 presses |
 
 ## Before the talk
 
@@ -171,7 +171,10 @@ Each numbered line is one press of → (or the clicker). Quoted words are what t
 
 ### 5.3 · Recap: the whole loop, connected
 
-1. Each stage lights up as you say it. “So let's recap. We defined what good looks like: our rules, and golden examples with the reasons why. We built the PM Translator. We measured every answer, with code tests, AI judges and people. And we learned: fix the judge first, then the prompt. That's the whole loop, connected.”
+1. “So let's recap. We defined what good looks like: our rules, and golden examples with the reasons why.”
+2. “We built the PM Translator.”
+3. “We measured every answer, with code tests, AI judges and human feedback.”
+4. “And we learned: fix the judge first, then the prompt. That's the whole loop, connected.” The last arrow closes the loop.
 
 ### 5.4 · From vibes to evidence
 

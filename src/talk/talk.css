@@ -599,3 +599,11 @@ button, input, textarea { font: inherit; color: inherit; }
 .stamp.kind-only.kind-ai { background: color-mix(in srgb, var(--judge) 6%, var(--card)); }
 .stamp.kind-only.kind-people { border-color: var(--mid); background: color-mix(in srgb, var(--mid) 9%, var(--card)); }
 .stamp.kind-only.kind-people .who { color: var(--mid); }
+
+/* 5.3: the recap. A smaller loop, so each stage's line fits on one line (Learn on two). */
+.chapter.lap { grid-template-columns: 27cqw 1fr; gap: 3.5cqw; padding: 0 3cqw 0 5cqw; }
+.chapter.lap .recap-row.waiting { visibility: hidden; }
+.chapter.lap .text.recap { gap: 2.4cqw; align-content: center; }
+.chapter.lap .recap-row { grid-template-columns: 9.5cqw 1fr; font-size: 1.85cqw; }
+.chapter.lap .recap-row .nowrap { display: block; white-space: nowrap; }
+.chapter.lap .recap-row .nowrap + .nowrap { margin-top: 0.5cqw; }
