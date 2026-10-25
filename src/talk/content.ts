@@ -119,8 +119,8 @@ export const JUDGES: { id: string; kind: JudgeKind; check: string }[] = [
   { id: "voice", kind: "ai", check: "An AI reads our rule and our golden examples" },
   { id: "room", kind: "people", check: "For the borderline ones, like “let's avoid” vs “never”" },
 ];
-export const KIND_LABEL: Record<JudgeKind, string> = { rule: "Code test", ai: "AI judge", people: "People" };
-export const JUDGE_SHORT: Record<string, string> = { numbers: "Still has a number", rule: "A rule stays a rule", scope: "Nothing added", voice: "Sounds like a PM", room: "The room" };
+export const KIND_LABEL: Record<JudgeKind, string> = { rule: "Code test", ai: "AI judge", people: "Human feedback" };
+export const JUDGE_SHORT: Record<string, string> = { numbers: "Still has a number", rule: "A rule stays a rule", scope: "Nothing added", voice: "Sounds like a PM", room: "Human feedback" };
 
 /** The code judge: if the notice has a number, the answer must still have one. Deliberately cheap. */
 export const stillHasNumber = (source: string, output: string) => !/\d/.test(source) || /\d/.test(output);
@@ -393,10 +393,11 @@ export const BEATS: Beat[] = [
     ],
   },
   {
-    id: "prompt-judge", num: "3.1", title: "The prompt is the brief, the judges are the editors", movement: 3, kind: "promptJudge", needle: "corner",
+    id: "prompt-judge", num: "3.1", title: "Testing the AI: the prompt is the brief, the judge is the editor", movement: 3, kind: "promptJudge", needle: "corner",
     steps: [
-      { say: "“Let's be clear on two things first. The prompt is the brief: it tells the PM Translator what to do, the AI does its best, and out comes an answer.” The brief goes through an AI, and the leave policy answer comes out.", needle: 42 },
-      { say: "“And the judges are the editors. Each judge is just another AI, with its own prompt, checking that answer against one of our rules, and telling us why. We keep them separate for two reasons.” The answer flows into three judges, and their verdicts land." },
+      { say: "“So how do we test an AI? We split it into two different jobs. The prompt is the brief: it tells the PM Translator what to do, and it does its best.”", needle: 42 },
+      { say: "“And the judge is the editor. It's just another AI, with its own prompt, and it checks what was actually written against our rules, and tells us why.”" },
+      { say: "The two cards move into place. “So here's how they fit together. The prompt produces the answer. Then we put the judges after it, each one checking that answer against one of our rules. And we keep them separate, for two reasons.”" },
       { say: "“One: a writer shouldn't edit their own work.”" },
       { say: "“And two: when we change the prompt, the judges stay the same, so we can tell whether the change made the answers better or worse.”" },
     ],
@@ -404,7 +405,7 @@ export const BEATS: Beat[] = [
   {
     id: "judges", num: "3.2", title: "Rules become judges, run at scale", movement: 3, kind: "judges", needle: "corner",
     steps: [
-      { say: "“So each of our rules becomes a test, and there are different kinds. Some are just code tests, like we've always written: is there still a number? Some are AI tests, our judges, for the ones that need interpretation: does ‘let's avoid’ still mean ‘never’? They don't look for exact words; they check whether the rule still holds. And some still need people. Cheapest first.”", needle: 44 },
+      { say: "“Now, not every rule needs an AI judge. Each of our rules becomes a test, and there are three kinds. Some are just code, like the tests we've always written: is there still a number? Cheap and instant. The ones that need interpretation get an AI judge: does ‘let's avoid’ still mean ‘never’? And the borderline calls still need human feedback. Cheapest first.”", needle: 44 },
       { say: "“Now with our tests automated, we can rerun version 2 against every notice we've collected. It's far faster than marking by hand, and it gives us a baseline. That's what evals are: our rules and behaviours written down as tests, giving us objective data back.” The montage runs under the tests. Let it play.", needle: 48 },
     ],
   },

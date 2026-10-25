@@ -680,7 +680,7 @@ function Montage({ notices }: { notices: Notice[] }) {
       <div className="mhead" data-box="mhead">
         <span>Notice → translation</span>
         <span className="mj">
-          <Tag kind="judge" />
+          <span>Tests</span>
           <span className="cols">
             {MONTAGE_JUDGES.map((j) => (
               <i key={j}>{j}</i>
@@ -715,7 +715,9 @@ const PJ_JUDGES = [
   { id: "voice", pass: true, why: "every word of it" },
 ];
 
+/** 3.1: the brief and the editor side by side, then they move into place: prompt → answer → judges. */
 function PromptJudgeView({ step }: P) {
+  const flow = step >= 2;
   const reasons: ReactNode[] = [
     <>A writer shouldn't edit <b>their own work.</b></>,
     <>Change the prompt, and the judges <b>stay the same</b>: did the answers get better or worse?</>,
@@ -723,55 +725,74 @@ function PromptJudgeView({ step }: P) {
   return (
     <>
       <div className="question" data-box="question">
-        <div className="label">Two different jobs</div>
+        <div className="label">Testing the AI · two different jobs</div>
         <div className="t-m">
-          The prompt is the brief.{step >= 1 && <span className="a-fade"> The judges are the editors.</span>}
+          {flow ? (
+            <span className="a-fade" key="flow">The prompt makes the answer. The judges check it.</span>
+          ) : (
+            <>
+              The prompt is the brief.{step >= 1 && <span className="a-fade"> The judge is the editor.</span>}
+            </>
+          )}
         </div>
       </div>
-      <div className="pj-flow" data-box="pj">
-        <div className="note prompt a-rise">
+      <div className={`pj-card prompt note ${flow ? "flow" : ""} a-rise`} data-box="pj">
+        <div className="label">
+          <span className="nt">
+            <Tag kind="prompt" /> the brief
+          </span>
+        </div>
+        {flow ? (
+          <div className="body a-fade" key="flow">Rewrite this the way a pushy, know-it-all product manager would say it…</div>
+        ) : (
+          <>
+            <div className="pj-h">Tells it what to do.</div>
+            <div className="pj-c">A request. It does its best.</div>
+          </>
+        )}
+      </div>
+      {flow && (
+        <>
+          <span className="pj-arrow a-fade" style={{ left: "28.4cqw", ...d(0.7) }}>→</span>
+          <div className="card pj-answer a-rise" style={d(0.8)}>
+            <div className="en">{LEAVE}</div>
+            <div className="out">{OPENERS[2].out}</div>
+          </div>
+          <span className="pj-arrow judge a-fade" style={{ left: "58.6cqw", ...d(1.4) }}>→</span>
+        </>
+      )}
+      {step >= 1 && (
+        <div className={`pj-card judge note ${flow ? "flow" : ""} a-rise`} data-box="pj">
           <div className="label">
             <span className="nt">
-              <Tag kind="prompt" /> the brief
+              <Tag kind="judge" /> {flow ? "the editors" : "the editor"}
             </span>
           </div>
-          <div className="body">Rewrite this the way a pushy, know-it-all product manager would say it…</div>
-        </div>
-        <span className="pj-arrow a-fade" style={d(0.6)}>→</span>
-        <div className="ai-chip a-stamp" style={d(0.8)}>AI</div>
-        <span className="pj-arrow a-fade" style={d(1.2)}>→</span>
-        <div className="card pj-answer a-rise" style={d(1.4)}>
-          <div className="en">{LEAVE}</div>
-          <div className="out">{OPENERS[2].out}</div>
-        </div>
-        {step >= 1 && (
-          <>
-            <span className="pj-arrow judge a-fade" style={d(0.3)}>→</span>
-            <div className="pj-judges">
+          {flow ? (
+            <div className="pj-judges" key="flow">
               {PJ_JUDGES.map((j, i) => (
-                <div key={j.id} className="pj-judge a-rise" style={d(0.6 + i * 0.4)}>
-                  <span className="ai-chip small">AI</span>
+                <div key={j.id} className="pj-judge a-rise" style={d(1 + i * 0.35)}>
                   <span>
-                    <Tag kind="judge" /> <b>{JUDGE_SHORT[j.id]}</b>
+                    <b>{JUDGE_SHORT[j.id]}</b>
                     <small>{j.why}</small>
                   </span>
-                  <span className={`pj-mark ${j.pass ? "ok" : "no"} a-stamp`} style={d(2 + i * 0.5)}>
+                  <span className={`pj-mark ${j.pass ? "ok" : "no"} a-stamp`} style={d(2.2 + i * 0.45)}>
                     {j.pass ? "✓" : "✗"}
                   </span>
                 </div>
               ))}
             </div>
-          </>
-        )}
-      </div>
-      {step >= 1 && (
-        <div className="pj-each a-fade" style={d(3.4)} data-box="caption">
-          Each judge is just another AI, with its own prompt, checking one rule
+          ) : (
+            <>
+              <div className="pj-h">Checks what it actually did.</div>
+              <div className="pj-c">Just another AI, with its own prompt: a pass or fail on our rules, and why.</div>
+            </>
+          )}
         </div>
       )}
       <div className="pj-two" data-box="why">
         {reasons.map((r, i) =>
-          step >= i + 2 ? (
+          step >= i + 3 ? (
             <div key={i} className="card a-rise">
               <span className="n">{i + 1}</span>
               <span className="t-s">{r}</span>
@@ -798,9 +819,9 @@ function JudgesView({ step, state }: P) {
         <div className="stamps">
           {JUDGES.map((j, i) => (
             <div key={j.id} className="a-stamp" style={d(0.3 + i * 0.15)}>
-              <div className="stamp kind-only" data-box="stamp">
+              <div className={`stamp kind-only kind-${j.kind}`} data-box="stamp">
                 <span className="who">{KIND_LABEL[j.kind]}</span>
-                <span className="name">{i === 0 ? JUDGE_SHORT.numbers : i < 4 ? ruleText(state, i) : "The room"}</span>
+                <span className="name">{i === 0 ? JUDGE_SHORT.numbers : i < 4 ? ruleText(state, i) : "Expert review"}</span>
                 <span className="why">{j.check}</span>
               </div>
             </div>

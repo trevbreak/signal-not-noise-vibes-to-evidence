@@ -30,11 +30,11 @@ The room writes the rules (Define), then becomes the judge and marks three answe
 
 ### 3 · Check every answer
 
-We can't vote on ten thousand answers a day. The prompt is the brief: it goes through an AI, and out comes an answer. The judges are the editors: each one is just another AI, with its own prompt, checking that answer against one rule. They're kept separate for two reasons. A writer shouldn't edit their own work. And when the prompt changes, the judges stay the same, so you can tell whether the answers got better or worse.
+We can't vote on ten thousand answers a day. So how do we test an AI? Split it into two jobs. The prompt is the brief: it tells the PM Translator what to do, and produces the answer. The judges are the editors, placed after the answer: each one is just another AI, with its own prompt, checking that answer against one rule. They're kept separate for two reasons. A writer shouldn't edit their own work. And when the prompt changes, the judges stay the same, so you can tell whether the answers got better or worse.
 
 ![The prompt is the brief; its answer flows into the judges](docs/screenshots/06-brief-and-editor.png)
 
-Each rule becomes a test, cheapest first: code tests, AI judges, then people for the borderline calls. Run against every notice, they give a baseline. That's an eval. Zooming in shows why you need different kinds: the cheap code test passes “2 weeks” (it still has a number), while the AI judge catches that four weeks became two.
+Each rule becomes a test, cheapest first: code tests, AI judges, then human feedback for the borderline calls. Run against every notice, they give a baseline. That's an eval. Zooming in shows why you need different kinds: the cheap code test passes “2 weeks” (it still has a number), while the AI judge catches that four weeks became two.
 
 | | |
 | --- | --- |

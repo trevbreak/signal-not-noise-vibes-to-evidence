@@ -8,7 +8,7 @@ Each numbered line is one press of → (or the clicker). Quoted words are what t
 | --- | --- | --- |
 | 1 · The demo | 7 min | 8 beats, 22 presses |
 | 2 · Say what good is | 12.5 min | 5 beats, 19 presses |
-| 3 · Check every answer | 16.5 min | 4 beats, 10 presses |
+| 3 · Check every answer | 16.5 min | 4 beats, 11 presses |
 | 4 · Make it better | 21 min | 5 beats, 13 presses |
 | 5 · Ship it? | 24 min | 5 beats, 8 presses |
 
@@ -108,16 +108,17 @@ Each numbered line is one press of → (or the clicker). Quoted words are what t
 
 1. “So let's take stock. We've built a PM Translator, we've defined what good looks like, and we've started measuring, by hand. But it took this whole room a few minutes to mark three answers, and if we ship this, we'll get thousands of notices a day. We need something that checks every answer for us.”
 
-### 3.1 · The prompt is the brief, the judges are the editors
+### 3.1 · Testing the AI: the prompt is the brief, the judge is the editor
 
-1. “Let's be clear on two things first. The prompt is the brief: it tells the PM Translator what to do, the AI does its best, and out comes an answer.” The brief goes through an AI, and the leave policy answer comes out.
-2. “And the judges are the editors. Each judge is just another AI, with its own prompt, checking that answer against one of our rules, and telling us why. We keep them separate for two reasons.” The answer flows into three judges, and their verdicts land.
-3. “One: a writer shouldn't edit their own work.”
-4. “And two: when we change the prompt, the judges stay the same, so we can tell whether the change made the answers better or worse.”
+1. “So how do we test an AI? We split it into two different jobs. The prompt is the brief: it tells the PM Translator what to do, and it does its best.”
+2. “And the judge is the editor. It's just another AI, with its own prompt, and it checks what was actually written against our rules, and tells us why.”
+3. The two cards move into place. “So here's how they fit together. The prompt produces the answer. Then we put the judges after it, each one checking that answer against one of our rules. And we keep them separate, for two reasons.”
+4. “One: a writer shouldn't edit their own work.”
+5. “And two: when we change the prompt, the judges stay the same, so we can tell whether the change made the answers better or worse.”
 
 ### 3.2 · Rules become judges, run at scale
 
-1. “So each of our rules becomes a test, and there are different kinds. Some are just code tests, like we've always written: is there still a number? Some are AI tests, our judges, for the ones that need interpretation: does ‘let's avoid’ still mean ‘never’? They don't look for exact words; they check whether the rule still holds. And some still need people. Cheapest first.”
+1. “Now, not every rule needs an AI judge. Each of our rules becomes a test, and there are three kinds. Some are just code, like the tests we've always written: is there still a number? Cheap and instant. The ones that need interpretation get an AI judge: does ‘let's avoid’ still mean ‘never’? And the borderline calls still need human feedback. Cheapest first.”
 2. “Now with our tests automated, we can rerun version 2 against every notice we've collected. It's far faster than marking by hand, and it gives us a baseline. That's what evals are: our rules and behaviours written down as tests, giving us objective data back.” The montage runs under the tests. Let it play.
 
 ### 3.3 · Zoom in: why you need different judges
