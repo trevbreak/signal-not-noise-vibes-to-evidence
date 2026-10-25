@@ -607,3 +607,13 @@ button, input, textarea { font: inherit; color: inherit; }
 .chapter.lap .recap-row { grid-template-columns: 9.5cqw 1fr; font-size: 1.85cqw; }
 .chapter.lap .recap-row .nowrap { display: block; white-space: nowrap; }
 .chapter.lap .recap-row .nowrap + .nowrap { margin-top: 0.5cqw; }
+
+/* 2.3: the room's rules, kept along the bottom while we mark. */
+.vote-rules { position: absolute; left: 8cqw; right: 14cqw; bottom: 1.8cqw; display: grid; grid-template-columns: auto minmax(0, max-content) minmax(0, max-content); justify-content: start; align-items: center; gap: 0.6cqw 0.8cqw; white-space: nowrap; }
+.vote-rules .vr-label { grid-row: span 2; align-self: center; }
+.vr-rule { max-width: 100%; overflow: hidden; text-overflow: ellipsis; }
+.vr-label { font-family: var(--mono); font-size: 0.9cqw; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-right: 0.4cqw; }
+.vr-rule { display: inline-flex; justify-self: start; align-items: center; gap: 0.6cqw; background: var(--card); border-radius: 99cqw; box-shadow: 0 0 0 0.1cqw var(--edge); padding: 0.4cqw 1cqw; font-size: 1.25cqw; font-weight: 600; }
+.vr-rule b { font-family: var(--mono); font-size: 0.9cqw; font-weight: 500; color: var(--faint); }
+.vr-rule.hard { box-shadow: 0 0 0 0.15cqw var(--fail); }
+.vr-rule i { font-style: normal; font-family: var(--mono); font-size: 0.72cqw; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--fail); }

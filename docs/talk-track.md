@@ -98,7 +98,7 @@ Each numbered line is one press of → (or the clicker). Quoted words are what t
 
 ### 2.5 · The golden wall
 
-1. “So what we've just done has a name: golden examples. Real answers, marked by people who know the work, with their reasoning. Your three go up first.”
+1. “So what we've just done has a name: golden samples. Real answers, marked by people who know the work, with their reasoning. Your three go up first.”
 2. “And we keep doing this with experts across the business.” The rest arrive. “And notice which column's biggest. Defining bad matters more than defining good: we can't write every rule down for a non-deterministic system. We'd be describing the whole universe. We're looking for the clear edges, where it tips into things we don't accept.” Don't point out the tech-debt card: 4.1 comes back to it.
 3. “Good examples show the PM Translator what to copy. The bad ones, and especially their reasons, show it what to avoid. And the reason is the important bit. ‘Four weeks became two’ tells us why it's bad. That human judgement, from the people who know the work, is what we want to build into the system over time. We've got twelve here; in your real products, you'll want hundreds, or thousands. The more, the better.”
 
@@ -137,7 +137,7 @@ Each numbered line is one press of → (or the clicker). Quoted words are what t
 ### 4.1 · A judge that's wrong
 
 1. “So let's take some of our engineering release notes, and run them through our judges. ‘The release is delayed so we can pay down tech debt.’ Not something you hear a PM say very often! It's passed most of our judges, but it's failed ‘nothing added’, for waving work away as tech debt.”
-2. “So why did it fail? When we built this judge, we gave it golden examples, and some of them, like this one down the bottom, were PMs waving work away as tech debt. So the judge learned the words, not the idea; we baked it in. But here, paying down tech debt is the real reason for the delay. Maybe the most honest thing our PM Translator has said all day.” The answer stays; the wall card and the judge's prompt appear under it.
+2. “So why did it fail? When we built this judge, we gave it golden samples, and some of them, like this one down the bottom, were PMs waving work away as tech debt. So the judge learned the words, not the idea; we baked it in. But here, paying down tech debt is the real reason for the delay. Maybe the most honest thing our PM Translator has said all day.” The answer stays; the wall card and the judge's prompt appear under it.
 3. “So the judge here is actually wrong, and that matters. If we'd trusted it, we'd have changed the prompt just to please a broken judge, and been chasing our tail. So check the judge first, then fix the prompt.”
 
 ### 4.2 · Reviews: a category and a reason, then sort
@@ -171,7 +171,7 @@ Each numbered line is one press of → (or the clicker). Quoted words are what t
 
 ### 5.3 · Recap: the whole loop, connected
 
-1. “So now we've got the whole loop connected. We defined what good looks like: our rules, and golden examples with the reasons why.”
+1. “So now we've got the whole loop connected. We defined what good looks like: our rules, and golden samples with the reasons why.”
 2. “We built the PM Translator, through a few iterations.”
 3. “We measured every answer, with code tests, AI judges and human feedback.”
 4. “And we learned: fix the judge first, then the prompt. Define, build, measure, learn: the whole loop, connected.” The last arrow closes the loop.
