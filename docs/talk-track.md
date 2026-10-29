@@ -8,9 +8,9 @@ Each numbered line is one press of → (or the clicker). Quoted words are what t
 | --- | --- | --- |
 | 1 · The demo | 7 min | 8 beats, 22 presses |
 | 2 · Say what good is | 12.5 min | 5 beats, 19 presses |
-| 3 · Check every answer | 16.5 min | 4 beats, 11 presses |
+| 3 · Check every answer | 16.5 min | 4 beats, 10 presses |
 | 4 · Make it better | 21 min | 5 beats, 13 presses |
-| 5 · Ship it? | 24 min | 5 beats, 11 presses |
+| 5 · Ship it? | 24 min | 6 beats, 12 presses |
 
 ## Before the talk
 
@@ -112,9 +112,8 @@ Each numbered line is one press of → (or the clicker). Quoted words are what t
 
 1. “So how do we do that with AI? We split it into two jobs. The prompt is the brief: it tells the PM Translator what to do. Here's how to do a PM translation.”
 2. “And then we build in a judge: the editor. It's just another AI, with its own prompt, checking what was written against one of our rules, and telling us pass or fail, and why.”
-3. The two cards move into place. “So here's how they fit together. The prompt produces the answer. Then we send it to our judges, who each check it against their own area of expertise: pass or fail, and why. And we keep them separate, for two good reasons.”
-4. “One: you don't want writers judging their own work. The translator's job is to translate, not to judge.”
-5. “And two: when we change the prompt, the judges stay the same. So we can ask: did I regress? Is it getting better or worse? If it was all one prompt, we'd be changing everything, every time.”
+3. The two cards move into place. “So here's how they fit together. The prompt produces the answer. Then we send it to our judges, who each check it against their own area of expertise: pass or fail, and why. And we keep them separate, for one good reason.”
+4. “When we change the prompt, the judges stay the same. So we can ask: did the answers get better or worse? If it was all one prompt, we'd be changing everything, every time, and we'd never know.”
 
 ### 3.2 · Rules become judges, run at scale
 
@@ -184,4 +183,8 @@ Each numbered line is one press of → (or the clicker). Quoted words are what t
 
 1. “So, your AI feature works in the demo. That's the easy part, and that's OK. Define what good looks like, measure every answer, learn from every fail, and you can get from demo to a shippable product, fast.”
 2. “Thank you.”
+
+### 5.6 · Feedback and sponsors
+
+1. “If you've got thirty seconds, the middle code is feedback on this session. I'd love to hear how it went.” Leave it up while people head out.
 

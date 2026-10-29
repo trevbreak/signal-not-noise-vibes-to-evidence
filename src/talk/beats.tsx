@@ -776,10 +776,6 @@ const PJ_JUDGES = [
 /** 3.1: the brief and the editor side by side, then they move into place: prompt → answer → judges. */
 function PromptJudgeView({ step }: P) {
   const flow = step >= 2;
-  const reasons: ReactNode[] = [
-    <>A writer shouldn't edit <b>their own work.</b></>,
-    <>Change the prompt, and the judges <b>stay the same</b>: did the answers get better or worse?</>,
-  ];
   return (
     <>
       <div className="question" data-box="question">
@@ -849,13 +845,12 @@ function PromptJudgeView({ step }: P) {
         </div>
       )}
       <div className="pj-two" data-box="why">
-        {/* Both cards are always laid out (a waiting one is just hidden), so the first is already its final size. */}
-        {reasons.map((r, i) => (
-          <div key={i} className={`card ${step >= i + 3 ? "a-rise" : "pj-wait"}`}>
-            <span className="n">{i + 1}</span>
-            <span className="t-s">{r}</span>
-          </div>
-        ))}
+        {/* Always laid out (just hidden while it waits), so nothing shifts when it lands. */}
+        <div className={`card ${step >= 3 ? "a-rise" : "pj-wait"}`}>
+          <span className="t-s">
+            Change the prompt, and the judges <b>stay the same</b>: did the answers get better or worse?
+          </span>
+        </div>
       </div>
     </>
   );
@@ -1262,6 +1257,55 @@ function CloseView({ step }: P) {
   );
 }
 
+/** After the close: the event's QR codes and sponsors (artwork from the organisers), in the close's colours. */
+const QRS = [
+  { src: "/images/event/qr-schedule.png", name: "Schedule" },
+  { src: "/images/event/qr-session.png", name: "Session feedback", hero: true },
+  { src: "/images/event/qr-event.png", name: "Event feedback" },
+];
+
+function FeedbackView() {
+  return (
+    <div className="title-card fbk" data-box="title">
+      <div className="rule-line" />
+      <div className="t-l">
+        Got feedback? <span style={{ color: "var(--hold-ink)" }}>Tell us.</span>
+      </div>
+      <div className="meta">Signal not Noise · Brisbane 2026 · signal-not-noise.com/brisbane</div>
+      <div className="fbk-qrs a-rise" style={d(0.2)}>
+        {QRS.map((q) => (
+          <div key={q.name} className={`fbk-qr ${q.hero ? "hero" : ""}`}>
+            {q.hero && <span className="fbk-tag">This session</span>}
+            <div className="fbk-card">
+              <img src={q.src} alt={`${q.name} QR code`} />
+              <span>{q.name}</span>
+            </div>
+          </div>
+        ))}
+      </div>
+      <div className="fbk-sponsors a-fade" style={d(0.5)}>
+        <div className="grp">
+          <span className="k">Supported by</span>
+          <img src="/images/event/logo-elabor8.png" alt="elabor8" />
+          <img className="wide" src="/images/event/logo-atlassian.png" alt="Atlassian Community" />
+          <img className="round" src="/images/event/logo-jdp.png" alt="jdp" />
+          <img src="/images/event/logo-spendlove.png" alt="Spendlove and Lamb" />
+        </div>
+        <div className="sep" />
+        <div className="grp">
+          <span className="k">Founded by</span>
+          <img src="/images/event/logo-tabar.png" alt="Tabar" />
+        </div>
+        <div className="sep" />
+        <div className="grp">
+          <img src="/images/event/logo-diversity.png" alt="Supporting Diversity" />
+          <img className="tile" src="/images/event/logo-snn-bne.png" alt="Signal not Noise BNE" />
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export const BEAT_VIEWS: Record<BeatKind, ComponentType<P>> = {
   title: TitleView,
   hold: HoldView,
@@ -1285,4 +1329,5 @@ export const BEAT_VIEWS: Record<BeatKind, ComponentType<P>> = {
   ends: EndsView,
   home: HomeView,
   close: CloseView,
+  feedback: FeedbackView,
 };

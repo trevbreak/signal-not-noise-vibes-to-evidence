@@ -244,7 +244,7 @@ export type Step = {
 export type BeatKind =
   | "title" | "hold" | "build" | "needle" | "reveal" | "tries" | "pairs" | "chapter"
   | "rules" | "vote" | "split" | "wall" | "promptJudge" | "judges" | "stamped" | "expose"
-  | "reasons" | "diffs" | "results" | "ends" | "home" | "close";
+  | "reasons" | "diffs" | "results" | "ends" | "home" | "close" | "feedback";
 
 export type Beat = {
   id: string;
@@ -397,9 +397,8 @@ export const BEATS: Beat[] = [
     steps: [
       { say: "“So how do we do that with AI? We split it into two jobs. The prompt is the brief: it tells the PM Translator what to do. Here's how to do a PM translation.”", needle: 42 },
       { say: "“And then we build in a judge: the editor. It's just another AI, with its own prompt, checking what was written against one of our rules, and telling us pass or fail, and why.”" },
-      { say: "The two cards move into place. “So here's how they fit together. The prompt produces the answer. Then we send it to our judges, who each check it against their own area of expertise: pass or fail, and why. And we keep them separate, for two good reasons.”" },
-      { say: "“One: you don't want writers judging their own work. The translator's job is to translate, not to judge.”" },
-      { say: "“And two: when we change the prompt, the judges stay the same. So we can ask: did I regress? Is it getting better or worse? If it was all one prompt, we'd be changing everything, every time.”" },
+      { say: "The two cards move into place. “So here's how they fit together. The prompt produces the answer. Then we send it to our judges, who each check it against their own area of expertise: pass or fail, and why. And we keep them separate, for one good reason.”" },
+      { say: "“When we change the prompt, the judges stay the same. So we can ask: did the answers get better or worse? If it was all one prompt, we'd be changing everything, every time, and we'd never know.”" },
     ],
   },
   {
@@ -492,6 +491,12 @@ export const BEATS: Beat[] = [
     steps: [
       { say: "“So, your AI feature works in the demo. That's the easy part, and that's OK. Define what good looks like, measure every answer, learn from every fail, and you can get from demo to a shippable product, fast.”" },
       { say: "“Thank you.”" },
+    ],
+  },
+  {
+    id: "feedback", num: "5.6", title: "Feedback and sponsors", movement: 5, kind: "feedback", needle: "hidden", dark: true,
+    steps: [
+      { say: "“If you've got thirty seconds, the middle code is feedback on this session. I'd love to hear how it went.” Leave it up while people head out." },
     ],
   },
 ];
