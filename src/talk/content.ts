@@ -77,7 +77,7 @@ export const NOT_NOW = ["Emoji", "How long it is", "Whether it's actually funny"
 
 export type VoteKey = "A" | "B" | "C";
 /** Keys 1 to 5: from "mostly good" to "mostly bad". */
-export const VOTE_SPLITS: Record<number, [number, number]> = { 1: [93, 4], 2: [72, 24], 3: [48, 48], 4: [24, 72], 5: [4, 93] };
+export const VOTE_SPLITS: Record<number, [number, number]> = { 1: [95, 5], 2: [75, 25], 3: [50, 50], 4: [25, 75], 5: [5, 95] };
 export const DEFAULT_VOTES: Record<VoteKey, number> = { A: 1, B: 3, C: 5 };
 
 /** Be the judge: three recorded answers to the Friday rule, chosen so B splits a room. */
