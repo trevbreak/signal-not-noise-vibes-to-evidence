@@ -17,11 +17,11 @@ The two moving parts are always labelled the same way, in the same colour: the *
 | --- | --- | --- |
 | 1 · The demo | Build PM Translator v1, try it on company notices, ship it on vibes, the two-weeks reveal, introduce yourself at the title drop, five tries, v2 side by side with "no way to check" | 7 min |
 | 2 · Say what good is | The loop with a gap, the room writes the rules (Define), marks three answers (Measure), the soft-rule split on one press, the golden wall and why a reason matters | 12.5 min |
-| 3 · Check every answer | A one-press recap; how do we test an AI? The prompt is the brief and the judge is the editor (just another AI with its own prompt), then the two cards move into place: prompt → answer → judges, with two reasons to keep them separate; three kinds of test (code, AI judges, human feedback) run at scale; the zoom-in where the code test passes "2 weeks" and the AI judge catches it, landing last | 16.5 min |
+| 3 · Check every answer | A one-press recap; how do we test an AI? The prompt is the brief and the judge is the editor (just another AI with its own prompt), then the two cards move into place: prompt → answer → judges, and why we keep them separate (change the prompt, and the judges stay the same); three kinds of test (code, AI judges, human feedback) run at scale; the zoom-in where the code test passes "2 weeks" and the AI judge catches it, landing last | 16.5 min |
 | 4 · Make it better | The loop closes; wrong answer → fix the prompt, wrong test → fix the judge; a judge that's wrong about tech debt, with the answer, the wall card and its prompt on one slide; reviews (category + reason), sorted into judge then prompt; the judge, then the prompt, go through the AI on your press, old on the left and new on the right; from total vibes to judged automatically | 21 min |
-| 5 · Ship it? | Good enough depends on your goal (vibes vs 100%), the leave policy ships, the whole loop recapped, the needle swings to evidence, and the close: "Now you can prove it." | 24 min |
+| 5 · Ship it? | Good enough depends on your goal (vibes vs 100%), the leave policy ships, the whole loop recapped, the needle swings to evidence, and the close: "Now you can prove it.", then the feedback QR codes and sponsors | 24 min |
 
-The clock in the presenter window starts when you leave the title card and turns red when you're behind a checkpoint. The script comes to about 22½ minutes at 150 words a minute (77 presses), with the lines now in your own phrasing from the run 5 transcript. The 24 Oct practice run came in at about 23 minutes with pauses and the room, and the run 4 changes add about a minute of script, so expect about 24. In the 24 Oct practice run you spoke about 1.3× the script, mostly by expanding lines in your own words, so the lines are now written the way you said them. Read them close to the script and you'll land well inside 25 minutes, with room for the audience.
+The clock in the presenter window starts when you leave the title card and turns red when you're behind a checkpoint. The script comes to about 22½ minutes at 150 words a minute (77 presses, the last one the feedback slide), with the lines now in your own phrasing from the run 5 transcript. The 24 Oct practice run came in at about 23 minutes with pauses and the room, and the run 4 changes add about a minute of script, so expect about 24. In the 24 Oct practice run you spoke about 1.3× the script, mostly by expanding lines in your own words, so the lines are now written the way you said them. Read them close to the script and you'll land well inside 25 minutes, with room for the audience.
 
 ## Setting up
 
@@ -104,7 +104,6 @@ All of it lives in [`src/talk/content.ts`](../src/talk/content.ts).
 The 24 Oct cuts are already made: one introduction (at the title drop), v2 and "no way to check" on one slide, the split on one press, no "bad examples" hold, and no separate loop-closed chapter. If you're still long, cut in this order:
 
 1. **2.2's "not now" press** (about 20 seconds). Leave the chips on screen and press past it.
-2. **3.1's two reasons** (about 15 seconds). Give just the first one, "a writer shouldn't edit their own work", and press past the second.
-3. **2.3's reasons for A and C** (about 15 seconds). Read the room's split and move on.
+2. **2.3's reasons for A and C** (about 15 seconds). Read the room's split and move on.
 
 Use the beat strip at the bottom of the presenter window to jump past a beat.
