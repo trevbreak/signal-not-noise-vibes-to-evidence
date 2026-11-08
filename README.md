@@ -212,7 +212,7 @@ A bare `?presenter` opens whichever talk has a projector window open, so an old 
 
 Each telling keeps its own place and everything the room typed or voted across a refresh, separately from the other, so rehearsing one never disturbs the other. **Reset talk** in the presenter window starts that telling again from the title card. Without an API key the talk still runs: only the room's own input needs the network, and it shows a fallback line if a call fails.
 
-For rehearsing a single beat, add `#beat.step` to the address (for example `?service#25.0`, the trace). `?mock` answers the room's input without the network, for rehearsing offline; never present with it.
+For rehearsing a single beat, add `#beat.step` to the address (for example `?service#25.0`, the trace). `?mock` answers the room's input without the network, for rehearsing offline; never present with it. `?sponsors` adds the original talk's feedback and sponsors slide (5.6) after the close; it is hidden otherwise.
 
 ## How it's built
 
