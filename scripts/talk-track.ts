@@ -1,14 +1,18 @@
 // Prints the talk track as Markdown, straight from src/talk/content.ts, so the printed script and
 // the presenter window can never disagree.   npm run talk-track   (writes docs/talk-track.md)
+// The service-agent telling:   npm run talk-track:service   (from src/service/content.ts, writes docs/talk-track-service.md)
 
-import { BEATS, MOVEMENTS } from "../src/talk/content.ts";
+const service = process.argv[2] === "service";
+const { BEATS, MOVEMENTS } = service ? await import("../src/service/content.ts") : await import("../src/talk/content.ts");
 
 const out: string[] = [];
 const p = (s = "") => out.push(s);
 
-p("# Talk track: “Your AI feature works in the demo. Now prove it.”");
+p(service ? "# Talk track (service agent): “Your AI agent works in the demo. Now prove it.”" : "# Talk track: “Your AI feature works in the demo. Now prove it.”");
 p();
-p("Generated from `src/talk/content.ts` by `npm run talk-track`. Edit the lines there, not here: the presenter window shows the same text.");
+p(service
+  ? "Generated from `src/service/content.ts` by `npm run talk-track:service`. Edit the lines there, not here: the presenter window shows the same text. Open the talk at `http://localhost:5173/?service`."
+  : "Generated from `src/talk/content.ts` by `npm run talk-track`. Edit the lines there, not here: the presenter window shows the same text.");
 p();
 p("Each numbered line is one press of → (or the clicker). Quoted words are what to say; the rest is what to do. Make the words your own: the beats matter more than the phrasing.");
 p();

@@ -97,6 +97,10 @@ Fonts are bundled locally, so the talk doesn't need the venue's Wi-Fi to look ri
 | The translator (the room's notices) | `claude-haiku-4-5` | `TRANSLATOR_MODEL` |
 | The judge for the room's notices | `claude-opus-5-5` | `JUDGE_MODEL` |
 
+## The service-agent telling
+
+The same talk, retold with a customer service chat agent (tools, traces, guardrails, testing before and after go-live) for a customer-experience team: `http://localhost:5173/?service`. See [docs/service-telling.md](docs/service-telling.md) and its [talk track](docs/talk-track-service.md).
+
 ## The earlier lab version
 
 The first version of the talk was a working eval lab: three tellings (Aussie, Gen Z, PM), live judges, pictures and voice. It's still here, unchanged, at `http://localhost:5173/?legacy` (presenter: `?legacy&presenter`). Its docs are in [docs/legacy/](docs/legacy/). The new talk borrows its PM prompts and recorded answers from [src/variants/pm.ts](src/variants/pm.ts).
