@@ -186,5 +186,7 @@ Each numbered line is one press of → (or the clicker). Quoted words are what t
 
 ### 5.6 · Feedback and sponsors
 
+*Only shown when the URL has `?sponsors`, e.g. `http://localhost:5173/?sponsors`.*
+
 1. “If you've got thirty seconds, the middle code is feedback on this session. I'd love to hear how it went.” Leave it up while people head out.
 

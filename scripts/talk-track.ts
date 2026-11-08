@@ -34,6 +34,10 @@ for (const b of BEATS) {
   }
   p(`### ${b.num} · ${b.title}`);
   p();
+  if ("onlyWith" in b && b.onlyWith) {
+    p(`*Only shown when the URL has \`?${b.onlyWith}\`, e.g. \`http://localhost:5173/?${b.onlyWith}\`.*`);
+    p();
+  }
   b.steps.forEach((s, i) => {
     const keys = s.keys ? ` *(keys: ${s.keys})*` : "";
     p(`${i + 1}. ${s.say}${keys}`);

@@ -31,7 +31,7 @@ export function useKeys() {
       if (k === "x" || k === "X") return go(() => dispatch("removeLastNotice"));
       if (k === "b" || k === "B" || k === ".") return go(() => dispatch("toggleBlackout"));
       if (!isPresenter && (k === "f" || k === "F")) return go(() => void (document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen?.()));
-      if (!isPresenter && (k === "o" || k === "O")) return go(() => void window.open(`${location.pathname}?presenter`, "signal-presenter", "width=1440,height=900"));
+      if (!isPresenter && (k === "o" || k === "O")) return go(() => void window.open(`${location.pathname}?presenter${new URLSearchParams(location.search).has("sponsors") ? "&sponsors" : ""}`, "signal-presenter", "width=1440,height=900"));
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);

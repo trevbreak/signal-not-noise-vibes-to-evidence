@@ -260,6 +260,8 @@ export type Beat = {
   steps: Step[];
   /** Per-kind settings. */
   props?: Record<string, unknown>;
+  /** Shown only when the URL has this query param (e.g. "sponsors"); left out of the talk otherwise. */
+  onlyWith?: string;
 };
 
 /** When each movement should be finished, in minutes from the cold open (presenter clock). Estimated from
@@ -273,7 +275,7 @@ export const MOVEMENTS: { n: number; name: string; ends: number }[] = [
   { n: 5, name: "Ship it?", ends: 24 },
 ]
 
-export const BEATS: Beat[] = [
+const ALL_BEATS: Beat[] = [
   {
     id: "preshow", num: "0", title: "Title (while people sit down)", movement: 0, kind: "title", needle: "hidden", dark: true,
     props: { variant: "preshow" },
@@ -494,12 +496,20 @@ export const BEATS: Beat[] = [
     ],
   },
   {
-    id: "feedback", num: "5.6", title: "Feedback and sponsors", movement: 5, kind: "feedback", needle: "hidden", dark: true,
+    id: "feedback", num: "5.6", title: "Feedback and sponsors", movement: 5, kind: "feedback", needle: "hidden", dark: true, onlyWith: "sponsors",
     steps: [
       { say: "“If you've got thirty seconds, the middle code is feedback on this session. I'd love to hear how it went.” Leave it up while people head out." },
     ],
   },
 ];
+
+/**
+ * The beats in this run of the talk. A beat with `onlyWith` is left out unless the URL has that
+ * query param: the feedback and sponsors slide (5.6) needs ?sponsors. Outside a browser (the
+ * talk-track script) every beat is kept, so the printed track still lists it.
+ */
+const URL_PARAMS = typeof location === "undefined" ? null : new URLSearchParams(location.search);
+export const BEATS: Beat[] = ALL_BEATS.filter((b) => !b.onlyWith || !URL_PARAMS || URL_PARAMS.has(b.onlyWith));
 
 /** Where the presenter's needle starts in 1.3, before the room moves it. */
 export const HAND_START = 50;
