@@ -2,7 +2,7 @@
 
 The same talk, retold for a customer-experience team building agentic service chat across several e-commerce brands. The PM Translator is replaced by a **Service Agent** for a made-up camping store, **Bunyip Outdoors** (a second made-up brand, **Maison Hart**, appears in 6.4). The original talk is unchanged.
 
-- **Run it:** `./app.sh start`, then open `http://localhost:5173/?service` on the projector and press **O** for the presenter window (it opens `?service&presenter`). It keeps its own saved place, separate from the original talk. A bare `?presenter` also works: it opens whichever talk has a projector window open.
+- **Run it:** `./app.sh start`, then open `http://localhost:5173/?service` on the projector and press **O** for the presenter window (it opens `?service&presenter`). It keeps its own saved place, separate from the original talk. A bare `?presenter` also works: it opens whichever talk has a projector window open. `?variant=service` is accepted as another spelling of `?service`. Both windows must be on the same telling: a projector at plain `http://localhost:5173/` is the PM Translator.
 - **Jump to a beat:** `?service&mock#25.0` (beat 25, step 0). `?mock` answers the room's messages without the network; never present with it.
 - **Edit the talk:** [src/service/content.ts](../src/service/content.ts). **Talk track:** [talk-track-service.md](talk-track-service.md), from `npm run talk-track:service`.
 
