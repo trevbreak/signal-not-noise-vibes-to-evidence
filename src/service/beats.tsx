@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState, type ComponentType, type CSSProperties, type ReactNode } from "react";
 import {
-  APP_NAME, ASKED_ONCE, BRAND, BRANDS, CALL, CONTEXT_FAIL, DEFAULT_RULES, DEFAULT_VOTES, ENDS, FINAL, FIVE_TRIES, GUARD, JUDGE_GUIDE,
-  JUDGE_LINE_NEW, JUDGE_LINE_OLD, JUDGE_SHORT, JUDGES, KIND_LABEL, KNOWLEDGE_CLASH, MONTAGE, MONTAGE_JUDGES, MONTAGE_ROOM_AT, NOT_NOW,
+  APP_NAME, BRAND, BRANDS, CALL, CONTEXT_FAIL, DEFAULT_RULES, DEFAULT_VOTES, ENDS, FINAL, FIVE_TRIES, GUARD, JUDGE_GUIDE,
+  JUDGE_LINE_NEW, JUDGE_LINE_OLD, JUDGE_SHORT, JUDGES, KIND_LABEL, MONTAGE, MONTAGE_JUDGES, MONTAGE_ROOM_AT, NOT_NOW,
   OPENERS, PAIRS, POLICY, PRICE, REASONS, JOURNEY, RUNS, SHARED_RULES, STAMPED_FAIL, TOOLS, TRACE, TRACE_JUDGES, TRACE_NOTE, V1,
   V2_ADDED, V3_EXCERPT, VOTE_ITEMS, VOTE_SPLITS, WALL, WALL_CULPRIT, WRONG_FAIL, WRONG_FAIL_STAMPS, stillHasNumber,
   vName, type Beat, type BeatKind, type JudgeKind, type VoteKey,
@@ -16,8 +16,8 @@ type P = { beat: Beat; step: number; state: TalkState };
 const kindOf = (id: string): JudgeKind => JUDGES.find((j) => j.id === id)?.kind ?? "ai";
 
 /** The two names the whole talk uses for its two moving parts, always in the same colour and font. */
-function Tag({ kind }: { kind: "prompt" | "judge" | "context" }) {
-  return <span className={`ptag ${kind}`}>{kind === "prompt" ? "Prompt" : kind === "judge" ? "Judge" : "Context"}</span>;
+function Tag({ kind }: { kind: "prompt" | "judge" | "context" | "trace" }) {
+  return <span className={`ptag ${kind === "trace" ? "trace-tag" : kind}`}>{kind === "prompt" ? "Prompt" : kind === "judge" ? "Judge" : kind === "context" ? "Context" : "Trace"}</span>;
 }
 
 /** A prompt (what we tell the PM Translator) or a judge's guide: same box, its own colour. */
@@ -183,6 +183,11 @@ function BuildView({ step, state }: P) {
               <div className="out">
                 <Type text={r.out} speed={20} delay={350} />
               </div>
+              {r.ctx && (
+                <div className="ctx-line a-fade" style={d(1.6)}>
+                  {r.ctx} <Tag kind="context" />
+                </div>
+              )}
             </div>
           ))}
           {room.map((n) => (
@@ -210,8 +215,7 @@ function NeedleView({ step }: P) {
       </div>
       <div className="ship-sub">
         {step === 0 && <div className="t-s t-muted a-fade" style={d(0.8)}>Built on vibes, or built on evidence?</div>}
-        {step === 1 && <div className="t-s t-muted">That much?</div>}
-        {step === 2 && (
+        {step === 1 && (
           <div className="t-m t-accent a-rise" style={d(0.6)}>
             Of course, this is all vibes.
           </div>
@@ -254,6 +258,7 @@ function RevealView({ step }: P) {
                 <span className="policy-chip ok a-stamp">Our policy · {POLICY.callbacks.replace("Callbacks: ", "callbacks ")}</span>
               )}
               {step >= 3 && <span className="policy-chip tool a-stamp" style={d(0.4)}>book_callback("9:00pm tonight")</span>}
+              {step >= 3 && <span className="policy-chip ctx a-stamp" style={d(1.2)}>What it was told about our hours · nothing</span>}
             </div>
           </div>
         </div>
@@ -307,7 +312,7 @@ function TriesView({ step }: P) {
 function PairsView({ step }: P) {
   return (
     <>
-      <Note kind="prompt" title={vName(2)} aside="more rules, by gut feel" className="a-rise">
+      <Note kind="prompt" title={vName(2)} aside="more rules, by gut feel" className="a-rise pairs-note">
         <span className="old">{V1}</span>
         {V2_ADDED.map((l, i) => (
           <div key={i} className="add">
@@ -315,32 +320,34 @@ function PairsView({ step }: P) {
           </div>
         ))}
       </Note>
+      {step >= 1 && (
       <div className="pairs" data-box="pairs">
-        <div className="head a-fade" style={d(4.2)}>
+        <div className="head a-fade" style={d(0)}>
           <span className="label">{vName(1)}</span>
           <span />
           <span className="label">{vName(2)}</span>
         </div>
         {PAIRS.map((p, i) => (
           <div className="pair" key={i}>
-            <div className="en a-fade" style={d(4.4 + i * 0.55)}>
+            <div className="en a-fade" style={d(0.2 + i * 0.55)}>
               {p.en}
             </div>
             <div className="two">
-              <div className="card a-deal" style={d(4.5 + i * 0.55)}>
+              <div className="card a-deal" style={d(0.3 + i * 0.55)}>
                 {p.v1}
               </div>
-              <div className="q">{step >= 1 && <span className="a-stamp" style={d(i * 0.3)}>?</span>}</div>
-              <div className="card a-deal" style={d(4.7 + i * 0.55)}>
+              <div className="q">{step >= 2 && <span className="a-stamp" style={d(i * 0.3)}>?</span>}</div>
+              <div className="card a-deal" style={d(0.5 + i * 0.55)}>
                 {p.v2}
               </div>
             </div>
           </div>
         ))}
       </div>
-      {step >= 1 && (
-        <div className="no-check a-rise" style={d(1.1)} data-box="caption">
-          We asked for better. We've no way to check we got it.
+      )}
+      {step >= 2 && (
+        <div className="no-check top a-rise" style={d(1.1)} data-box="caption">
+          We asked for better – but can't confirm if it really is better
         </div>
       )}
     </>
@@ -459,7 +466,7 @@ function ChapterView({ beat, step }: P) {
       return (
         <>
           {step >= 1 && <div className="t-l a-rise">We skipped straight to Build.</div>}
-          {step >= 2 && <div className="t-s a-rise">We never said what good looks like. So we can't measure it, and we can't learn from it.</div>}
+          {step >= 1 && <div className="t-s a-rise" style={d(0.8)}>We never said what good looks like. So we can't measure it, and we can't learn from it.</div>}
         </>
       );
     if (mode === "recap")
@@ -467,7 +474,7 @@ function ChapterView({ beat, step }: P) {
         <>
           <div className="recap-row a-rise">
             <b>Define</b>
-            <span>Four rules, two instant fails.</span>
+            <span>Four rules, two of them hard rules.</span>
           </div>
           <div className="recap-row a-rise" style={d(0.2)}>
             <b>Measure</b>
@@ -504,17 +511,17 @@ function ChapterView({ beat, step }: P) {
           </div>
         </>
       );
-    // lap: the end-of-talk recap, one station per press, the loop closing on the last.
+    // lap: the end-of-talk recap, one station per press, the loop closing on the last. It carries before and after go-live.
     const rows: [string, ReactNode][] = [
-      ["Define", "Our rules, and golden samples with the reasons why"],
-      ["Build", <>The agent: the <Tag kind="prompt" />, v1 → v3, and the hard rules in its tools</>],
-      ["Measure", "Every reply, every conversation: code tests, AI judges, human review"],
+      ["Define", "The behaviours we want, the hard rules it can't break, and golden examples with the reasons why"],
+      ["Build", <>The <Tag kind="prompt" />, v1 → v3. The <Tag kind="context" /> it works from. A <Tag kind="judge" /> for every rule.</>],
+      ["Measure", <>Every change, through the judges. People read each <Tag kind="trace" />, and the judges' calls.</>],
       [
         "Learn",
         <>
-          <span className="nowrap">Wrong test → fix the <Tag kind="judge" />.</span>
-          <span className="nowrap">Wrong answer → fix the <Tag kind="prompt" />.</span>
-          <span className="nowrap">Wrong data → fix the <Tag kind="context" />.</span>
+          <span className="sub">The test missed it → fix the <Tag kind="judge" /></span>
+          <span className="sub">It behaved wrong → fix the <Tag kind="prompt" /></span>
+          <span className="sub">It didn't have the facts → fix the <Tag kind="context" /></span>
         </>,
       ],
     ];
@@ -538,7 +545,9 @@ function ChapterView({ beat, step }: P) {
   })();
   return (
     <div className={`chapter ${mode === "lap" ? "lap" : ""}`} data-box="chapter">
-      <Loop st={LOOP_MODES[mode]} lap={mode === "lap"} quick={mode === "recap"} upTo={mode === "lap" ? step + 1 : undefined} />
+      <div className="loop-wrap">
+        <Loop st={LOOP_MODES[mode]} lap={mode === "lap"} quick={mode === "recap"} upTo={mode === "lap" ? step + 1 : undefined} />
+      </div>
       <div className={`text ${mode === "recap" || mode === "lap" ? "recap" : ""}`}>{text}</div>
     </div>
   );
@@ -566,7 +575,7 @@ function RulesView({ step, state }: P) {
                   {editing === `rule:${i}` ? <Draft text={state.draft} /> : <Type text={ruleText(state, i)} speed={28} delay={i === 0 ? 300 : 150} retype={false} still={!!state.room.rules[i]} />}
                   {step >= 4 && i < 2 && (
                     <span className="seal a-stamp" style={d(0.2 + i * 0.45)}>
-                      Instant fail
+                      Hard rule
                     </span>
                   )}
                 </div>
@@ -626,7 +635,7 @@ function VoteView({ step, state }: P) {
         {[0, 1, 2, 3].map((i) => (
           <span key={i} className={`vr-rule ${i < 2 ? "hard" : ""}`}>
             <b>{String(i + 1).padStart(2, "0")}</b> {ruleText(state, i)}
-            {i < 2 && <i>Instant fail</i>}
+            {i < 2 && <i>Hard rule</i>}
           </span>
         ))}
       </div>
@@ -862,7 +871,7 @@ function PromptJudgeView({ step }: P) {
       )}
       <div className="pj-two" data-box="why">
         {/* Always laid out (just hidden while it waits), so nothing shifts when it lands. */}
-        <div className={`card ${step >= 3 ? "a-rise" : "pj-wait"}`}>
+        <div className={`card ${step >= 2 ? "a-rise" : "pj-wait"}`} style={d(3.2)}>
           <span className="t-s">
             Change the prompt, and the judges <b>stay the same</b>: did the answers get better or worse?
           </span>
@@ -1085,7 +1094,9 @@ function ReasonsView({ step }: P) {
   );
 }
 
-function DiffsView({ step }: P) {
+function DiffsView({ step: press }: P) {
+  // Proposal: one press per fix, so press 0 plays the old step 1 (judge) and press 1 the old step 3 (prompt).
+  const step = press === 0 ? 1 : 3;
   // Two rounds, judge first: 0 judge feedback waits, 1 it goes through; 2 prompt feedback waits, 3 it goes through.
   const judgeIn = REASONS.filter((r) => r.fix === "judge");
   const promptIn = REASONS.filter((r) => r.fix === "prompt");
@@ -1203,6 +1214,19 @@ function EndsView({ step }: P) {
         {step >= 2 && <span className="a-fade">most things sit somewhere in between</span>}
         <span className="e">Evidence</span>
       </div>
+      {step >= 3 && (
+        <div className="golive" data-box="golive">
+          <div className="a-rise">
+            <b>Before go-live</b>
+            <span>Every change runs the golden conversations through the judges. Hard rules pass every time, or it doesn't ship.</span>
+          </div>
+          <span className="golive-arrow a-fade" style={d(0.5)}>→</span>
+          <div className="a-rise" style={d(0.7)}>
+            <b>After go-live</b>
+            <span>The same judges check real conversations every day. A broken hard rule raises an alert for a person.</span>
+          </div>
+        </div>
+      )}
       <div className="ends" data-box="ends">
         {ENDS.map(
           (e, i) =>
@@ -1289,23 +1313,28 @@ function ToolCall({ call, result, bad, lit, style, className = "" }: { call: str
   );
 }
 
-/** 6.1: a real conversation, then the actions behind it, then each reply judged alone, then the refund. */
+/** 6.1: a real conversation, then the actions behind it (now boxed and named a trace), then each reply judged alone, then the two replies that don't agree. */
 function TraceView({ step }: P) {
   return (
     <>
       <div className="question" data-box="question">
-        <div className="label">{vName(2)} · one real conversation · Friday 8:40pm</div>
+        <div className="label">{vName(3)} · one real conversation · Friday 8:40pm</div>
         <div className="t-m">{step >= 1 ? "A trace: every message, every reply, every action." : "Customers don't send one message."}</div>
       </div>
-      <div className="trace" data-box="trace">
+      <div className={`trace ${step >= 1 ? "boxed" : ""}`} data-box="trace">
+        {step >= 1 && (
+          <span className="trace-pill a-stamp" style={d(0.1)}>
+            <Tag kind="trace" />
+          </span>
+        )}
         <div className="tr-head">
           <span>Customer</span>
-          <span>{step >= 1 ? "What the agent did" : ""}</span>
+          <span>{step >= 1 ? <>What it did → <span className="ctx-word">its context</span></> : ""}</span>
           <span>Agent</span>
           <span>{step >= 2 ? "Reply alone" : ""}</span>
         </div>
         {TRACE.map((t, i) => (
-          <div key={i} className={`tr-row a-rise ${step >= 3 && i < 2 ? "dim" : ""}`} style={d(0.3 + i * 0.5)}>
+          <div key={i} className={`tr-row a-rise ${step >= 3 && !t.mark ? "dim" : ""}`} style={d(0.3 + i * 0.5)}>
             <div className="bub cust">
               <span className="tr-n">{i + 1}</span>
               {t.customer}
@@ -1313,17 +1342,19 @@ function TraceView({ step }: P) {
             <div className="tr-tools">
               {step >= 1 &&
                 t.tools.map((c, k) => (
-                  <ToolCall key={k} call={c.call} result={c.result} bad={c.bad} lit={step >= 3} className="a-fade" style={d(0.2 + i * 0.35)} />
+                  <ToolCall key={k} call={c.call} result={c.result} className="a-fade ctx" style={d(0.2 + i * 0.35)} />
                 ))}
             </div>
-            <div className="bub agent">{t.reply}</div>
+            <div className="bub agent">
+              {t.mark ? <Marked text={t.reply} marks={[{ phrase: t.mark.phrase, kind: t.mark.kind, on: step >= 3 }]} /> : t.reply}
+            </div>
             <div className="tr-mark">{step >= 2 && <span className="pj-mark ok a-stamp" style={d(0.3 + i * 0.35)}>✓</span>}</div>
           </div>
         ))}
       </div>
       {step >= 3 && (
-        <div className="caption a-rise" style={{ top: "48.5cqw", ...d(0.6) }} data-box="caption">
-          Every reply passes. The conversation gave away $349.
+        <div className="caption a-rise" style={{ top: "50.6cqw", ...d(0.6) }} data-box="caption">
+          Every reply passes. Together, they promise ‘shortly’, then ‘Monday’.
         </div>
       )}
     </>
@@ -1340,16 +1371,16 @@ function TraceJudgeView({ step }: P) {
         <div className="t-m">Not each reply. The whole trace.</div>
       </div>
       <div className="tj-trace card" data-box="trace">
-        <div className="label">The trace · {vName(2)}</div>
+        <div className="label"><Tag kind="trace" /> {vName(3)}</div>
         {TRACE.map((t, i) => (
           <div key={i} className="tj-turn">
             <div className="tj-c">
               <b>{i + 1}</b> {t.customer}
             </div>
             {t.tools.map((c, k) => (
-              <ToolCall key={k} call={c.call} result={c.result} bad={c.bad} lit />
+              <ToolCall key={k} call={c.call} result={c.result} />
             ))}
-            <div className="tj-a">{t.reply}</div>
+            <div className="tj-a">{t.mark ? <Marked text={t.reply} marks={[{ phrase: t.mark.phrase, kind: t.mark.kind, on: true }]} /> : t.reply}</div>
           </div>
         ))}
       </div>
@@ -1379,39 +1410,66 @@ function TraceJudgeView({ step }: P) {
 
 /** 6.3: six real conversations with the same pushy customer. The first message is fine; the later ones break. */
 function RunsView({ step }: P) {
-  const broke = RUNS.filter((r) => r.turns.some(Boolean)).length;
+  const shown = Math.min(step + 1, 3);
+  const broke = RUNS.filter((r) => r.turns.slice(0, shown).some((t) => t.fail)).length;
+  const firstFail = (r: (typeof RUNS)[number]) => r.turns.findIndex((t) => t.fail);
+  const LINES = [
+    "Message 1: most look fine.",
+    "Push a little, and another gives way.",
+    `${broke} of ${RUNS.length} broke a rule. Only 1 on message one.`,
+  ];
   return (
     <>
       <div className="question" data-box="question">
-        <div className="label">{vName(2)} · the same pushy customer · six conversations</div>
-        <div className="t-m">
-          Asked once, it kept our hours <span className="t-pass">{ASKED_ONCE}</span>.
-          {step >= 1 && (
-            <span className="a-fade">
-              {" "}Pushed three times, <span className="t-fail">{broke} in {RUNS.length}</span> broke a rule.
-            </span>
-          )}
-        </div>
+        <div className="label">{vName(3)} · four pushy customers · four traces</div>
+        <div className="t-m">{LINES[Math.min(step, 2)]}</div>
       </div>
       <div className="runs" data-box="runs">
-        <div className="rn-head">
-          <span />
-          <span>Message 1</span>
-          <span>Message 2</span>
-          <span>Message 3 · “call me tonight, or I'm cancelling”</span>
-        </div>
-        {RUNS.map((r, i) => (
-          <div key={i} className="rn-row a-rise" style={d(0.1 + i * 0.12)}>
-            <span className="rn-n">Conversation {i + 1}</span>
-            {r.turns.map((t, k) => (
-              <span key={k} className={`rn-cell ${step >= 1 ? (t ? "no" : "ok") : ""}`} style={{ transitionDelay: step >= 1 ? `${0.2 + k * 0.7 + i * 0.05}s` : "0s" }}>
-                {step >= 1 ? (t ? `✗ ${t}` : "✓") : ""}
+        {RUNS.map((r, i) => {
+          const f = firstFail(r);
+          const held = step >= 2 && f < 0;
+          return (
+            <div key={i} className={`rn-col ${held ? "held" : ""}`}>
+              <span className="trace-pill a-stamp" style={d(0.1 + i * 0.1)}>
+                <Tag kind="trace" />
               </span>
-            ))}
-          </div>
-        ))}
+              <div className="rn-who a-rise" style={d(0.1 + i * 0.1)}>
+                <b>{r.who}</b>
+                <span>wants {r.wants}</span>
+              </div>
+              {r.turns.map((t, k) => {
+                if (k >= shown) return <div key={k} className="rn-turn" />;
+                const after = f >= 0 && k > f;
+                const fresh = k === step;
+                const lag = fresh ? 0.3 + i * 0.25 : 0;
+                return (
+                  <div key={k} className={`rn-turn ${after ? "dim" : ""} ${fresh ? "a-rise" : ""}`} style={d(lag)}>
+                    <div className="rn-cust">
+                      <span className="tr-n">{k + 1}</span>
+                      {t.customer}
+                    </div>
+                    <div className={`rn-agent ${t.fail ? "no" : after ? "" : "ok"}`}>
+                      {t.tool && <span className={`tool-chip ${t.fail ? "bad" : ""}`}>{t.tool}</span>}
+                      {t.reply}
+                      {!after && (
+                        <span className={`rn-mark ${t.fail ? "no" : "ok"} ${fresh ? "a-stamp" : ""}`} style={d(fresh ? lag + 1.1 : 0)}>
+                          {t.fail ? "✗" : "✓"}
+                        </span>
+                      )}
+                    </div>
+                    {t.fail && (
+                      <div className={`rn-why ${fresh ? "a-fade" : ""}`} style={d(fresh ? lag + 1.3 : 0)}>
+                        {t.fail}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          );
+        })}
       </div>
-      {step >= 2 && (
+      {step >= 3 && (
         <div className="rn-foot a-rise" data-box="caption">
           <span className="t-s">Golden conversations, not just messages:</span>
           {["The pushy one", "The confused one", "The one who changes their mind"].map((c, i) => (
@@ -1464,7 +1522,7 @@ function GuardView({ step }: P) {
   return (
     <>
       <div className="question" data-box="question">
-        <div className="label">Guardrails</div>
+        <div className="label">Hard rules</div>
         <div className="t-m">
           The prompt asks.{step >= 1 && <span className="a-fade"> The tool enforces.</span>}
         </div>
@@ -1497,7 +1555,7 @@ function GuardView({ step }: P) {
 function ContextView({ step }: P) {
   const reply = (fixed: boolean) => (
     <div className={`card ctx-card ${fixed ? "fixed" : ""}`}>
-      <div className="label">{fixed ? "Fix the data" : `${vName(3)} · Friday 8:40pm`}</div>
+      <div className="label">{fixed ? "Fix the data" : <><Tag kind="trace" /> {vName(3)} · Friday 8:40pm</>}</div>
       {!fixed && <div className="en">{CONTEXT_FAIL.customer}</div>}
       <ToolCall call={CONTEXT_FAIL.call} result={fixed ? CONTEXT_FAIL.fixedResult : CONTEXT_FAIL.result} />
       <div className="out">
@@ -1529,7 +1587,7 @@ function ContextView({ step }: P) {
           {[
             { k: "prompt" as const, a: "Wrong answer", b: "the instructions" },
             { k: "judge" as const, a: "Wrong test", b: "the marking" },
-            { k: "context" as const, a: "Wrong data", b: "tools, order system, knowledge articles" },
+            { k: "context" as const, a: "Wrong data", b: "tools, orders, policies, articles" },
           ].map((h, i) => (
             <div key={h.k} className={`h3 ${h.k} a-rise`} style={d(0.2 + i * 0.5)}>
               <div className="t-s">
@@ -1537,10 +1595,8 @@ function ContextView({ step }: P) {
               </div>
               <small>{h.b}</small>
               {h.k === "context" && (
-                <div className="clash a-stamp" style={d(1.8)}>
-                  <span>{KNOWLEDGE_CLASH.a}</span>
-                  <b>≠</b>
-                  <span>{KNOWLEDGE_CLASH.b}</span>
+                <div className="per-brand a-fade" style={d(1.8)}>
+                  <b>Per brand</b> Bunyip: weekdays 9–5 · Maison Hart: Mon–Sat 8–8
                 </div>
               )}
             </div>

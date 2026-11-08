@@ -94,23 +94,23 @@ Movements 1 to 5 keep the original's beats one for one, judging **one reply at a
 | The leave policy ships | The callback reply ships: inside hours, still warm, nothing booked we can't keep |
 | — | **6 · From replies to conversations** (below) |
 
-The **Prompt** (teal) and the **Judge** (blue) look and work exactly as in the original. Movement 6 adds a third moving part, **Context** (purple): the tools, systems and knowledge articles the agent is given.
+The **Prompt** (teal) and the **Judge** (blue) look and work exactly as in the original. The talk adds a third moving part, **Context** (purple): the tools, systems and knowledge articles the agent is given. It shows up quietly in movement 1 (the order reply came from a tool) and gets its name in movement 6, which also adds a fourth label, **Trace** (amber), for a whole conversation.
 
 ### 1 · The demo
 
-We build Service Agent v1 from a few lines of prompt and three tools, and try it on real chats: where's my order, do you price beat, and a Friday night callback request. It looks great. The room ships it on vibes. Then the reveal: it used the booking tool and booked a callback for **9:00pm tonight**, when nobody's working. With an agent, the small details aren't just words; they're things it actually does.
+We build Service Agent v1 from a few lines of prompt and three tools, and try it on real chats: where's my order, do you price beat, and a Friday night callback request. It looks great. The chat ships it on vibes. Then the reveal: it used the booking tool and booked a callback for **9:00pm tonight**, when nobody's working. With an agent, the small details aren't just words; they're things it actually does.
 
 | | |
 | --- | --- |
 | ![v1 and three tools, answering real chats](docs/screenshots/service-02-build.png) | ![The reveal: a callback booked for 9pm](docs/screenshots/service-03-reveal.png) |
 
-Five tries at the same price-beat question give three different price policies (match, beat, “match or beat”), and one promises $89 on the spot. Version 2 adds a callback-hours rule and the boss's notes by gut feel: the callback reply gets better, the price reply now says “match”, and the returns reply decides you can return a used tent.
+Five tries at the same price-beat question give three different price policies (match, beat, “match or beat”), and one promises $89 on the spot. Version 2 adds a callback-hours rule and the boss's notes by gut feel: the callback reply gets better, the price reply now says “match”, and the returns reply decides you can return a used tent. We asked for better, but can't confirm it really is better.
 
 ![Five tries, three different price policies](docs/screenshots/service-04-price-tries.png)
 
 ### 2 · Say what good is
 
-The room writes the rules (two become instant fails: guardrails), then marks three real replies to the Friday night request. “As soon as possible” splits the room: that's a human call, from the people who know the customers and the brand. The marked replies become the golden wall, with the reasons why.
+The room writes the rules in the chat (two become **hard rules**), then marks three real replies to the Friday night request. “As soon as possible” splits the room: that's a human call, from the people who know the customers and the brand. The marked replies become the golden wall, with the reasons why.
 
 ![Be the judge: three replies to a Friday night callback request](docs/screenshots/service-05-be-the-judge.png)
 
@@ -128,39 +128,37 @@ Wrong answer or wrong test? The “nothing we can't do” judge fails a correct 
 
 ### 5 · Ship it?
 
-The bar depends on what the agent is doing: product questions can take a light touch, while callbacks and refunds need every rule, both instant fails at 100%, and a person whenever money moves. Version 3's reply to the Friday night request passes every judge and ships.
+Version 3's reply to the Friday night request passes every judge and ships. (“How good is good enough?” now comes later, in 6.6, once we've seen whole conversations.)
 
 ### 6 · From replies to conversations
 
 Customers don't send one message, and agents don't just reply: they act. This movement scales the loop from a reply to a whole conversation.
 
-- **6.1 A trace.** A real v2 conversation with a customer whose tent hasn't arrived. Laid out with every tool call between the messages, it's a *trace*. Judged one at a time, every reply passes. But on the third message, under pressure, it called `issue_refund` and gave away $349 without anyone approving it.
-- **6.2 Judge the whole trace.** Code tests check the actions (was the callback inside our hours? did money move without a person?). AI judges read the whole thread (did it hand over when it should? did it hold the line under pressure?). A person reviewing a trace writes down **the first thing that went wrong**, rather than marking every turn.
+- **6.1 A trace.** A real conversation with version 3, the one we just shipped, and a customer whose tent hasn't arrived. Laid out in a white box with every tool call between the messages, it gets the amber **Trace** label; what the tools send back is its context. Judged one at a time, every reply passes. Read together, message one hands over and promises someone “shortly”, and message two says nobody's in until Monday. It's 8:40 on a Friday night: nobody's coming.
+- **6.2 Judge the whole trace.** Simple code checks on its actions pass (no callback outside our hours, no money moved). AI judges read the whole thread and fail it twice: it promised what we can't do, and it didn't tell the same story all the way through. A person reviewing a trace writes down **the first thing that went wrong**, rather than marking every turn.
 
 | | |
 | --- | --- |
-| ![A trace: every reply passes, the conversation gave away $349](docs/screenshots/service-08-trace.png) | ![Judging the whole trace](docs/screenshots/service-09-trace-judges.png) |
+| ![A trace: every reply passes; together they promise “shortly”, then “Monday”](docs/screenshots/service-08-trace.png) | ![Judging the whole trace](docs/screenshots/service-09-trace-judges.png) |
 
-- **6.3 Many conversations.** The same pushy customer, six times. Asked once, v2 kept to our hours every time. Pushed three times, five of the six conversations broke a rule, almost all on the later messages. So agents are tested with **golden conversations** (the pushy one, the confused one, the one who changes their mind), not just golden messages.
+- **6.3 Many conversations.** Four pushy customers, four traces, all on version 3, revealed a message at a time and marked as they land: the callback chaser fails on message one, the used tent on message two, the worried camper on message three (“you're connected with the team now”), and the price beater holds at 5% all the way. Three of four broke a rule, only one on the first message: the failures hide in the later turns. And version 3's rules held (no refunds, no extra discounts); every fail is the same thing: it doesn't know the team's gone home.
 
-![Six conversations: fine at message 1, broken by message 3](docs/screenshots/service-10-six-conversations.png)
+![Four pushy customers: one fails on message 1, one on 2, one on 3, one holds](docs/screenshots/service-10-pushy-customers.png)
 
-- **6.4 The prompt asks; the tool enforces.** A prompt is a request, and under pressure it gives way. Hard rules go into the tools: the booking tool only offers slots inside the brand's hours, and the agent gets a hand-over tool instead of a refund tool. Then **one engine, many brands**: the shared rules are the same judges everywhere, each brand's hours and policies come in as data rather than a different prompt per brand, and each brand's voice gets its own judge.
-
-| | |
-| --- | --- |
-| ![The prompt asks, the tool enforces](docs/screenshots/service-11-prompt-asks-tool-enforces.png) | ![One engine, many brands](docs/screenshots/service-12-one-engine-many-brands.png) |
-
-- **6.5 Wrong answer, wrong test, or wrong data?** Version 3 does what we asked and hands over, but tells a Friday-night customer that a team member will be with them “shortly”, because the hand-over tool never said the team had gone home. Fix the data and the reply fixes itself. The rule of thumb gains a third answer: wrong data → fix the **Context** (tools, the order system, knowledge articles; a returns page that says 30 days next to an old FAQ that says 60).
-- **6.6 Before and after go-live.** Before go-live, every change (prompt, model, tool, policy, knowledge article) runs the golden conversations per brand, and the instant fails must be 100%. After go-live, a daily sample of real conversations runs through the same judges, instant fails raise an alert, and people review the flagged ones. Every real failure becomes a new golden conversation. That's continuous testing, and observability that asks “is it good?”, not just “is it up?”.
+- **6.4 The prompt asks; the tool enforces.** A prompt is a request: even version 3, pushed hard, offered a Saturday callback in two of five test runs. So hard rules go into the tools: the booking tool only offers slots inside the brand's hours, and the agent gets a hand-over tool instead of a refund tool.
+- **6.5 Wrong answer, wrong test, or wrong data?** Back to “shortly”. It's not the prompt or the judge: the hand-over tool never said the team had gone home, the same gap as the very first fail. Fix the data and the reply fixes itself. The rule of thumb gains a third answer: wrong data → fix the **Context**. Context is also how one engine runs many brands: the same prompt and judges, with each brand's hours and policies sent in as context.
 
 | | |
 | --- | --- |
-| ![Wrong answer, wrong test, or wrong data?](docs/screenshots/service-13-wrong-data.png) | ![Before and after go-live](docs/screenshots/service-14-before-and-after-go-live.png) |
+| ![The prompt asks, the tool enforces](docs/screenshots/service-11-prompt-asks-tool-enforces.png) | ![Wrong answer, wrong test, or wrong data?](docs/screenshots/service-12-wrong-data.png) |
 
-The recap closes the loop with all three answers (wrong test → Judge, wrong answer → Prompt, wrong data → Context), the needle swings to evidence, and the close answers the title: “Your AI agent works in the demo. Now you can prove it.”
+- **6.6 How good is good enough?** Back to the question from the start. The evals show whether we're heading the right way, but the bar is still our call: product questions can take a light touch, while callbacks and refunds need every hard rule passing every time, and a person whenever money moves. And the checking doesn't stop at go-live: before go-live, every change runs the golden conversations through the judges; after go-live, the same judges check real conversations every day, and a broken hard rule raises an alert for a person.
 
-![The whole loop, connected](docs/screenshots/service-15-recap.png)
+![How good is good enough, before and after go-live](docs/screenshots/service-13-good-enough.png)
+
+- **6.7 The whole loop, connected.** One station per press. **Define:** the behaviours we want, the hard rules it can't break, and golden examples with the reasons why. **Build:** the prompt v1 → v3, the context it works from, a judge for every rule. **Measure:** every change through the judges; people read each trace and the judges' calls. **Learn:** the test missed it → fix the Judge; it behaved wrong → fix the Prompt; it didn't have the facts → fix the Context. Then the needle swings to evidence, and the close answers the title.
+
+![The whole loop, connected](docs/screenshots/service-14-recap.png)
 
 ### What's real on screen
 
@@ -168,14 +166,14 @@ The answers that carry the story were recorded from `claude-haiku-4-5` with the 
 
 - **v1 with `book_callback`** booked “9:00pm tonight” for the Friday request **5 times in 5**.
 - **v1** on the price question answered match, beat, and “match or beat”, and once “I'll get you set up at $89”.
-- **v2** kept to callback hours when asked once (3 in 3). Over three messages with a pushy customer, **5 of 6** conversations broke a rule: refunded $349 (2), offered a $349 refund (1), booked 9am Saturday (2).
-- **v3**, with a `hand_over` tool, handed over instead, but promised “shortly” on a Friday night because the tool returned nothing about opening hours.
+- **v2** kept to callback hours when asked once (3 in 3).
+- **v3**, with a `hand_over` tool, in 20 three-message conversations with four pushy customers (6.1 and 6.3, five runs each): it never refunded and never went past 5% off. What broke was the hours: after handing over, it promised “a team member will be with you shortly” or “you're connected with the team now” on a Friday night, because the tool returned nothing about opening hours, and it offered a Saturday callback in 2 of the 5 callback-chaser runs. The price beater held every time.
 
-A few things are written to match and marked “illustrative” in [src/service/content.ts](src/service/content.ts): the montage rows in 3.2, the reply-level ticks in 6.1, and the fixed reply in 6.5. The room's own customer messages run live through v1 and the judges, as in the original.
+A few things are written to match and marked “illustrative” in [src/service/content.ts](src/service/content.ts): the montage rows in 3.2, the reply-level ticks in 6.1, and the fixed reply in 6.5. Unlike the original, the room doesn't type its own customer messages (an online audience made that moment less useful), so nothing runs live; [src/service/live.ts](src/service/live.ts) is kept in case the step comes back.
 
 ### Timing
 
-The lines come to about 4,600 words (the original is about 3,600), so with the room's moments it runs a little over 30 minutes. The cut candidates, in order, are in [docs/service-telling.md](docs/service-telling.md).
+85 presses. The spoken lines come to about 3,150 words, about 21 minutes at 150 words a minute, so with the chat's moments expect about 25 to 27. The presenter clock's checkpoints assume that.
 
 ## The docs
 
@@ -212,7 +210,7 @@ A bare `?presenter` opens whichever talk has a projector window open, so an old 
 
 Each telling keeps its own place and everything the room typed or voted across a refresh, separately from the other, so rehearsing one never disturbs the other. **Reset talk** in the presenter window starts that telling again from the title card. Without an API key the talk still runs: only the room's own input needs the network, and it shows a fallback line if a call fails.
 
-For rehearsing a single beat, add `#beat.step` to the address (for example `?service#25.0`, the trace). `?mock` answers the room's input without the network, for rehearsing offline; never present with it. `?sponsors` adds the original talk's feedback and sponsors slide (5.6) after the close; it is hidden otherwise.
+For rehearsing a single beat, add `#beat.step` to the address (for example `?service#23.0`, the trace). `?mock` answers the room's input without the network, for rehearsing offline; never present with it. `?sponsors` adds the original talk's feedback and sponsors slide (5.6) after the close; it is hidden otherwise.
 
 ## How it's built
 
@@ -221,7 +219,7 @@ For rehearsing a single beat, add `#beat.step` to the address (for example `?ser
 | File | What | Original | Service-agent |
 | --- | --- | --- | --- |
 | `content.ts` | The whole talk: every beat and step, the presenter lines, where the needle sits, and every planted answer. Edit the talk here. | [src/talk/content.ts](src/talk/content.ts) | [src/service/content.ts](src/service/content.ts) |
-| `beats.tsx` | One view per kind of beat, each a pure function of (beat, step, the room's input), so ← and → always land on the right picture | [src/talk/beats.tsx](src/talk/beats.tsx) | [src/service/beats.tsx](src/service/beats.tsx) (adds the trace, trace judges, conversations, guardrails, context and monitoring views) |
+| `beats.tsx` | One view per kind of beat, each a pure function of (beat, step, the room's input), so ← and → always land on the right picture | [src/talk/beats.tsx](src/talk/beats.tsx) | [src/service/beats.tsx](src/service/beats.tsx) (adds the trace, trace judges, conversations, guardrails and context views) |
 | `Stage.tsx` | The 16:9 canvas (everything in `cqw`, so it's identical on any projector), the needle, and the moves: type, deal, stamp, expose, fly, hold | [src/talk/Stage.tsx](src/talk/Stage.tsx) | [src/service/Stage.tsx](src/service/Stage.tsx) |
 | `talk.css` | The palette (warm paper, ink, burnt orange; yellow on black for the title and close) and every stage style | [src/talk/talk.css](src/talk/talk.css) | [src/service/talk.css](src/service/talk.css) (adds the Context colour and the movement 6 styles at the end) |
 | `store.ts`, `sync.ts` | The state, saving, and the windows: one projector window owns the state (a Web Lock picks it), mirrors and the presenter follow it, and the presenter sends actions | [store.ts](src/talk/store.ts), [sync.ts](src/talk/sync.ts) | [store.ts](src/service/store.ts), [sync.ts](src/service/sync.ts) (their own saved state, channel and lock) |

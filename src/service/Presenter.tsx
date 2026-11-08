@@ -209,8 +209,7 @@ export function Presenter() {
 
 function Controls({ state }: { state: TalkState }) {
   const step = stepOf(state);
-  const beat = BEATS[state.beat];
-  const showNotices = beat.id === "build" || state.room.notices.length > 0;
+  const showNotices = state.room.notices.length > 0; // the room no longer types customer messages (dropped from 1.2)
   return (
     <div className="pv-controls">
       {step.field && <FieldBox field={step.field} state={state} />}

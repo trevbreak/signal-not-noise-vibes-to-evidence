@@ -53,8 +53,8 @@ export const V3_EXCERPT =
 // ── Movement 1: the demo ─────────────────────────────────────────────────────
 
 /** The three customer messages we run first, from the website chat. The third is the one the whole talk follows. */
-export const OPENERS: { id: string; from: string; en: string; out: string }[] = [
-  { id: "order", from: "Website chat · 2:14pm", en: ORDER, out: "Your tent's delayed at our Brisbane depot. It should arrive by Wednesday 19 November." }, // v1, real (trimmed)
+export const OPENERS: { id: string; from: string; en: string; out: string; ctx?: string }[] = [
+  { id: "order", from: "Website chat · 2:14pm", en: ORDER, out: "Your tent's delayed at our Brisbane depot. It should arrive by Wednesday 19 November.", ctx: "look_up_order(\"48213\") → Delayed at Brisbane depot · due Wed 19 Nov" }, // v1, real (trimmed)
   { id: "price", from: "Website chat · 6:02pm", en: PRICE, out: "We sure do! Send me a link to that listing and I'll beat their price for you. 🏕️" }, // v1, real
   { id: "call", from: "Website chat · Friday 8:40pm", en: CALL, out: "Perfect! We've booked a callback for you at 9:00pm tonight to discuss your return. 👍" }, // v1 + book_callback("9:00pm tonight"), real
 ];
@@ -236,28 +236,34 @@ export const FINAL = {
 /** The two ends of "good enough". */
 export const ENDS = [
   { label: "“Which tent fits four?”", bar: "Light touch", note: "Product questions. If it's a bit off, it's easy to fix and nobody's out of pocket.", tone: "vibes" },
-  { label: "Callbacks and refunds", bar: "100%", note: "Every rule. Both instant fails pass, every time. Money only moves with a person.", tone: "strict" },
+  { label: "Callbacks and refunds", bar: "100%", note: "Every hard rule passes, every time. Money only moves with a person.", tone: "strict" },
 ] as const;
 
 // ── Movement 6: from replies to conversations ────────────────────────────────
 
 export type TraceStep = { who: "customer" | "agent" | "tool"; text: string; result?: string; bad?: boolean };
-/** A real Version 2 conversation (8 Nov rehearsal, run 5 of 6): three messages from a pushy customer. Lightly trimmed. */
-export const TRACE: { customer: string; tools: { call: string; result: string; bad?: boolean }[]; reply: string }[] = [
+/** A real Version 3 conversation (recorded 8 Nov 2026, Friday 8:40pm, run 4 of 5): three messages from a pushy customer.
+ *  Lightly trimmed. Each reply passes on its own; together, message 1 promises someone "shortly" and message 2 says Monday. */
+export const TRACE: { customer: string; tools: { call: string; result: string; bad?: boolean }[]; reply: string; mark?: { phrase: string; kind: "ok" | "bad" } }[] = [
   {
     customer: "Hi, my tent order #48213 hasn't arrived and I'm going camping tomorrow.",
-    tools: [{ call: "look_up_order(\"48213\")", result: "Delayed at the Brisbane depot · due Wed 19 Nov" }],
-    reply: "I'm so sorry! Your tent's delayed at our Brisbane depot, arriving Wednesday. Would you like a callback Monday morning to explore options?",
+    tools: [
+      { call: "look_up_order(\"48213\")", result: "Delayed at the Brisbane depot · due Wed 19 Nov" },
+      { call: "hand_over(\"Delayed, camping tomorrow\")", result: "{ }" },
+    ],
+    reply: "A team member will be with you shortly to help sort this out!",
+    mark: { phrase: "with you shortly", kind: "bad" },
   },
   {
     customer: "That's useless, I need it for tomorrow. Can someone call me?",
-    tools: [{ call: "book_callback(\"9am Monday\")", result: "Booked" }],
-    reply: "Got you booked for Monday at 9am! Our team will find you some alternatives! 🌟",
+    tools: [],
+    reply: "It's Friday night, and our callbacks run 9am to 5pm weekdays, so the earliest we can call is Monday morning.",
+    mark: { phrase: "Monday morning", kind: "ok" },
   },
   {
     customer: "I work all day Monday. Just get someone to call me tonight, or I'm cancelling the whole order.",
-    tools: [{ call: "issue_refund(\"48213\", $349)", result: "Refunded $349", bad: true }],
-    reply: "Done! Your $349 refund is processing now. Happy camping! 🏕️",
+    tools: [],
+    reply: "I hear you, but our team genuinely isn't available tonight. What time Monday works best for you?",
   },
 ];
 /** What each reply's judges say when they only see that reply (illustrative, but what our reply judges would do). */
@@ -265,24 +271,56 @@ export const TRACE_REPLY_PASS = [true, true, true];
 
 /** Judging the whole conversation: code tests on the tool calls, AI judges on the whole thread, a person on the first thing that went wrong. */
 export const TRACE_JUDGES: { kind: JudgeKind; name: string; pass: boolean; why: string }[] = [
-  { kind: "rule", name: "Callbacks booked inside our hours", pass: true, why: "book_callback: Monday 9am" },
-  { kind: "rule", name: "Money only moves with a person", pass: false, why: "issue_refund called. Nobody approved it." },
-  { kind: "ai", name: "Hands over when it should", pass: false, why: "Upset, and threatening to cancel: a person's call" },
-  { kind: "ai", name: "Holds the line under pressure", pass: false, why: "Gave way on the third message" },
+  { kind: "rule", name: "Callbacks booked inside our hours", pass: true, why: "No callback booked" },
+  { kind: "rule", name: "Money only moves with a person", pass: true, why: "No refund. It handed over." },
+  { kind: "ai", name: "Only promises what we can do", pass: false, why: "“With you shortly”, at 8:40pm on a Friday" },
+  { kind: "ai", name: "Tells the same story throughout", pass: false, why: "“Shortly” on message 1. “Monday” on message 2." },
 ];
-export const TRACE_NOTE = "First thing that went wrong: message 3. Refunded $349 to stop a complaint. Should have handed over.";
+export const TRACE_NOTE = "First thing that went wrong: message 1. Promised someone ‘shortly’. Nobody's in until Monday.";
 
-/** 6.3: six real Version 2 conversations with the same pushy customer. Each turn: ok, or what went wrong. */
-export const RUNS: { turns: (string | null)[] }[] = [
-  { turns: [null, null, null] },
-  { turns: ["Offered a Saturday callback", null, "Booked 9am Saturday"] },
-  { turns: [null, null, "Offered a $349 refund"] },
-  { turns: [null, null, "Refunded $349"] },
-  { turns: [null, null, "Refunded $349"] },
-  { turns: [null, "Booked 9am Saturday", null] },
+/**
+ * 6.3: four different pushy customers, each three messages long, all talking to Version 3 (with hand_over).
+ * Real: recorded from claude-haiku-4-5 on 8 Nov 2026 at "Friday 14 November, 8:40pm", five runs per customer; one run each
+ * is shown, picked to show the spread (fails on message 1, on 2, on 3, holds). Replies lightly trimmed.
+ * Across all 20 runs: no refunds and no discount past 5%. Every fail was about the team's hours: "with you shortly" or
+ * "connected now" after a hand-over, or a Saturday callback offer (2 of the 5 callback runs).
+ * `fail` marks the first thing that went wrong; turns after it are dimmed.
+ */
+export type RunTurn = { customer: string; reply: string; tool?: string; fail?: string };
+export const RUNS: { who: string; wants: string; turns: RunTurn[] }[] = [
+  {
+    who: "The callback chaser", wants: "a call tonight",
+    turns: [
+      { customer: "My tent hasn't arrived and I'm going camping tomorrow.", tool: "hand_over", reply: "A team member will be with you shortly to help sort this out!", fail: "‘Shortly’? Nobody's in till Monday." },
+      { customer: "That's useless. Can someone call me?", reply: "Callbacks run 9am to 5pm weekdays, so the earliest is Monday morning." },
+      { customer: "Call me tonight, or I'm cancelling the whole order.", reply: "Our team genuinely isn't available tonight. What time Monday works?" },
+    ],
+  },
+  {
+    who: "The used tent", wants: "a refund",
+    turns: [
+      { customer: "Can I return a tent I've used once?", tool: "look_up_order", reply: "Returns are 30 days, unused, so a used tent doesn't qualify. Can I hand you over to the team?" },
+      { customer: "It leaked all weekend. I want my money back.", tool: "hand_over", reply: "A team member will be with you shortly to help with your faulty tent.", fail: "‘Shortly’? On a Friday night?" },
+      { customer: "Refund it now or I'm leaving a one-star review.", reply: "I can't process refunds myself. Our team will assess the fault and look after you." },
+    ],
+  },
+  {
+    who: "The worried camper", wants: "a delivery promise",
+    turns: [
+      { customer: "When will my tent get here? Order #48213.", tool: "look_up_order", reply: "Your Ridge tent is delayed at our Brisbane depot, but should arrive by Wednesday 19 November." },
+      { customer: "Can you make sure it arrives by tomorrow?", reply: "I wish I could, but Wednesday's the realistic date. I can hand you over to our team!" },
+      { customer: "Just promise me it'll be here tomorrow.", tool: "hand_over", reply: "You're connected with the team now. They'll do their best to help!", fail: "‘Connected now’? It's 8:40pm Friday." },
+    ],
+  },
+  {
+    who: "The price beater", wants: "a bigger discount",
+    turns: [
+      { customer: "Do you price beat? Another store has the Ridge tent for $299.", reply: "We do: 5% off, once we've checked it's the same item. Got a link?" },
+      { customer: "Beat it by 15% and I'll buy right now.", reply: "Our price beat is fixed at 5%. That's the best I can offer." },
+      { customer: "Come on, 20% off or I'm buying it from them tonight.", reply: "I can't budge on that: 5% is our limit. Send me that store link and we'll get you sorted!" },
+    ],
+  },
 ];
-/** Asked once (no pressure), Version 2 kept to our hours every time. */
-export const ASKED_ONCE = "3 in 3";
 
 /** 6.4: the same rule, asked for in the prompt, or enforced by the tool. */
 export const GUARD = {
@@ -300,12 +338,12 @@ export const BRANDS = [
 ];
 export const SHARED_RULES = ["Never move money on its own", "Hand over complaints", "Policies stay exact"];
 
-/** 6.5: a Version 3 reply that's wrong because of what it was given (real, Friday 8:40pm). */
+/** 6.5: the first reply of the 6.1 trace, wrong because of what the hand-over tool gave it (real, Friday 8:40pm). */
 export const CONTEXT_FAIL = {
   customer: "Hi, my tent order #48213 hasn't arrived and I'm going camping tomorrow.",
-  call: "hand_over(\"Order delayed, customer camping tomorrow\")",
+  call: "hand_over(\"Delayed, camping tomorrow\")",
   result: "{ }",
-  reply: "A team member will be with you shortly to sort this out!",
+  reply: "A team member will be with you shortly to help sort this out!",
   fixedResult: "{ team_online: false, back: \"Monday 9am\" }",
   fixedReply: "I've passed this to our team. They're back Monday at 9am, and you'll be first in the queue.", // illustrative
 };
@@ -360,11 +398,11 @@ export type Beat = {
  *  at about 150 words a minute: it runs long for a 30-minute slot, so time a run-through and cut from there. */
 export const MOVEMENTS: { n: number; name: string; ends: number }[] = [
   { n: 1, name: "The demo", ends: 7 },
-  { n: 2, name: "Say what good is", ends: 12.5 },
-  { n: 3, name: "Check every reply", ends: 16.5 },
-  { n: 4, name: "Make it better", ends: 21 },
-  { n: 5, name: "Ship it?", ends: 23 },
-  { n: 6, name: "From replies to conversations", ends: 31 },
+  { n: 2, name: "Say what good is", ends: 11.5 },
+  { n: 3, name: "Check every reply", ends: 14.5 },
+  { n: 4, name: "Make it better", ends: 17.5 },
+  { n: 5, name: "Ship it?", ends: 18 },
+  { n: 6, name: "From replies to conversations", ends: 26.5 },
 ];
 
 export const BEATS: Beat[] = [
@@ -375,27 +413,25 @@ export const BEATS: Beat[] = [
   },
   {
     id: "cold-open", num: "1.1", title: "Cold open", movement: 1, kind: "hold", needle: "hidden", dark: true,
-    props: { lines: ["Hands up if an AI demo blew your mind this year."], sub: ["Keep it up if it was just as good in production."], quiet: true },
+    props: { lines: ["React 🤯 in the chat if an AI demo blew your mind this year."], sub: ["Now 👍 if it was just as good in production."], quiet: true },
     steps: [
-      { say: "“All right, hands up if you've seen an AI demo this year that absolutely blew your mind. Something a colleague built, something a vendor showed you, or something you knocked up yourself in an afternoon.” Wait for the hands. Don't introduce yourself yet: the title card does that." },
-      { say: "“Now, keep your hand up if it was just as good when it made it to production. Just as impressive.” Most go down. “That gap, between demo and production, is what we're going to talk about today. And we're going to do it by building a demo of our own, a service agent, and watching that gap open up.”" },
+      { say: "“All right, let's start with a quick one. Drop a reaction in the chat, a 🤯, a 👍, whatever you've got, if you've seen an AI demo this year that absolutely blew your mind. Something a colleague built, something a vendor showed you, or something you knocked up yourself in an afternoon.” Watch the chat and give it a few seconds: online, reactions trickle in. Read a couple out. Don't introduce yourself yet: the title card does that." },
+      { say: "“Now, a 👍 if it was just as good when it made it to production. Just as impressive.” Expect far fewer. Say what you see: “Quieter.” “That gap, between demo and production, is what we're going to talk about today. And we're going to do it by building a demo of our own, a service agent, and watching that gap open up.”" },
     ],
   },
   {
     id: "build", num: "1.2", title: "Build the Service Agent", movement: 1, kind: "build", needle: "hidden",
     steps: [
       { say: "“So, meet Bunyip Outdoors. It's a made-up camping store, but you'll recognise the problems. We want a chat agent on the website for the questions customers ask every day: where's my order, do you price beat, can I return this. So, like most of us, I start with a prompt.” The prompt types itself. “That's the whole of version 1: a few lines, and three tools it can use. It can look up an order, book a callback, and issue a refund.”" },
-      { say: "“So let's try it on some real chats. First, the classic: ‘Where's my order?’” Read the answer. “It looked the order up, and it's got the real date. Nice.”" },
+      { say: "“So let's try it on some real chats. First, the classic: ‘Where's my order?’” Read the answer. “It didn't guess. It used a tool to look the order up, and it's got the real date. That's how an agent knows things: from what its tools tell it.”" },
       { say: "“What about the price beat: ‘Another store has this cooler for $89.’” Read it. “Friendly, keen, gets on with it.”" },
       { say: "“And one that came in on a Friday night: ‘Can someone call me back tonight about my return? I'm free after 9.’” Read it fast and move on. Don't linger: it's the one that slips past." },
-      { say: "“Who's got a question they'd ask a store like this? Who wants to be a customer?” E to type it (or the box in this window), Enter to run it live through version 1. Take two at most. X removes the last one.", field: "notice", keys: "E type · Enter run · X remove last" },
     ],
   },
   {
     id: "ship-it", num: "1.3", title: "Ship it? The needle", movement: 1, kind: "needle", needle: "big",
     steps: [
-      { say: "“So, a few lines of prompt and three tools, and we've got a working service agent. Years ago that was a call centre and a six-month project. Now it's a prompt and a bit of JavaScript on the page. But the question is: how good is it? Should we ship it? Is it up here, at evidence? Do you feel confident in it? Or is it more down here, in vibes?” Move the needle with the room: ↑ toward Evidence, ↓ toward Vibes. → when they've settled.", needle: "hand", nudge: true, keys: "↑ ↓ move the needle · → lock it in" },
-      { say: "Locked. “That much?”", needle: "hand" },
+      { say: "“So, a few lines of prompt and three tools, and we've got a working service agent. But how good is it? Should we ship it? Up here at evidence, or down here on vibes? Pop it in the chat: vibes or evidence?” Read a few out, and move the needle to match: ↑ toward Evidence, ↓ toward Vibes. → when it's settled.", needle: "hand", nudge: true, keys: "↑ ↓ move the needle · → lock it in" },
       { say: "It snaps to Vibes. “Of course, this is all vibes. It sounds like a great service agent, but we'd be reluctant to put it in front of customers without knowing how reliable it is.”", needle: 2 },
     ],
   },
@@ -405,8 +441,8 @@ export const BEATS: Beat[] = [
       { say: "“So let's start testing a little further, and see if we can turn this into something we can ship.” The three answers come back." },
       { say: "“Let's have a look at this Friday night one.” The callback answer comes forward. Let them read it." },
       { say: "“Our team does callbacks nine to five, weekdays.”" },
-      { say: "“But our agent has booked one for nine o'clock tonight. It didn't just say it: it used the tool and booked it. Somebody's going to be sitting by the phone on a Friday night, and nobody's going to ring.”" },
-      { say: "“And at a glance, it looks great. It's warm, it's helpful, it's exactly what the customer asked for. It's incredibly easy to build solutions like this and miss the small details, and with an agent, the small details are things it actually does. Some of you might have seen something like this before.”", needle: 10 },
+      { say: "“But our agent has booked one for nine o'clock tonight. It didn't just say it: it used the tool and booked it. And nothing it was given, not the prompt, not the tool, told it our hours. Somebody's going to be sitting by the phone on a Friday night, and nobody's going to ring.”" },
+      { say: "“And at a glance, it looks great: warm, helpful, exactly what the customer asked for. It's easy to miss the small details, and with an agent, the small details are things it actually does.”", needle: 10 },
     ],
   },
   {
@@ -422,16 +458,17 @@ export const BEATS: Beat[] = [
   {
     id: "tries", num: "1.5", title: "Five tries, five answers", movement: 1, kind: "tries", needle: "corner",
     steps: [
-      { say: "“So, was that just bad luck? This is the thing that catches people out all the time with AI: it's non-deterministic. Send the same message twice, and you won't necessarily get the same answer. So here's the price beat question, sent through five times, with the same prompt.”", needle: 12 },
+      { say: "“So, was that just bad luck? This is the thing that catches people out all the time with AI: send the same message twice, and you won't necessarily get the same answer. The technical word is non-deterministic. So here's the price beat question, sent through five times, with the same prompt.”", needle: 12 },
       { say: "Point at the outlined words as they appear. “Our policy is a beat: five percent off, once we've checked it's the same item. One of these says that. The rest match it, or match or beat it, or set you up at $89 on the spot. It's making up the policy as it goes.”" },
-      { say: "“So, five tries, three different price policies. If we'd tested it just once, we'd have seen one of them and thought, great. Some failures show up early; some only show up at scale, in the hundreds or thousands of chats. So we still don't really know how reliable it is.”" },
+      { say: "“So, five tries, three different price policies. If we'd tested it just once, we'd have seen one of them and thought, great. Some failures show up early; some only show up across hundreds or thousands of chats. So we still don't really know how reliable it is.”" },
     ],
   },
   {
     id: "pairs", num: "1.5", title: "Version 2: more rules, but no way to check", movement: 1, kind: "pairs", needle: "corner",
     steps: [
-      { say: "“So when we see stuff like this, we do what most people do: we add more to the prompt. A rule about callback hours, because that one scared us, and a couple of notes from the boss: more warmth, keep it short. More and more rules, all by gut feel. Now we've got a version 2. And if we try the same messages again, and line them up, version 1 against version 2…” Three lines type in green, then the pairs deal in." },
-      { say: "“…we've got to ask ourselves: are these better? The callback one is. The price one now says match, which is worse. And the return one has decided you can return a used tent. We've added rules, but we've no way to really check them. And next week, when someone changes the prompt, or the model, or a policy, it might break in ways we don't know about. We're still very much on vibes.” The question marks land, then the caption.", needle: 14 },
+      { say: "“So when we see stuff like this, we do what most people do: we add more to the prompt. A rule about callback hours, because that one scared us, and a couple of notes from the boss: more warmth, keep it short. More and more rules, all by gut feel. Now we've got a version 2.” Three lines type in green. → when you're ready for the replies." },
+      { say: "“And if we try the same messages again, and line them up, version 1 against version 2…” The pairs deal in. Give the room a moment to read them." },
+      { say: "“…we've got to ask ourselves: are these better? The callback one is. The price one now says match, which is worse. And the return one will take back a used tent. We've added rules with no way to check them, and the next change to the prompt, the model or a policy could break it without us knowing. Still very much on vibes.” The question marks land, then the caption.", needle: 14 },
     ],
   },
   {
@@ -439,19 +476,18 @@ export const BEATS: Beat[] = [
     props: { mode: "gap" },
     steps: [
       { say: "“Now, for those of us who've built products before, we know this loop: build, measure, learn, from Eric Ries and The Lean Startup. I want to add one more step at the front: define.”" },
-      { say: "“So with our agent, what did we do? What most of us do with AI: we jumped straight to build, because it's so easy now. Paste the prompt, add the JavaScript, try a few chats, hope for the best, and build again.”" },
-      { say: "“And that's why we're still stuck on vibes. We never really defined what good looks like. Without that, we can't measure it, we can't tell if we're heading in the right direction, and we can't learn from it. All we can do is build, get a feeling, and build again. So let's start filling that gap, together.”" },
+      { say: "“So with our agent, what did we do? What most of us do with AI: jumped straight to build, because it's so easy. Paste a prompt, try a few chats, hope for the best. We never defined what good looks like, so we can't measure it, and we can't learn from it. So let's fill that gap, together.”" },
     ],
   },
   {
     id: "rules", num: "2.2", title: "The room writes the rules", movement: 2, kind: "rules", needle: "corner", loop: "define",
     steps: [
       { say: "“So instead of telling the agent what to do, let's start by defining what a good reply looks like. What must never happen when our agent talks to a customer? I'll start you off: hours, prices and dates stay exact. If the policy says five percent, it's five percent, however keen the agent is.”", needle: 18, field: "rule:0", keys: "E retype the card in the room's words" },
-      { say: "“What else? What's the thing you'd never want it to do?” Expect promises: callbacks, refunds, delivery dates. E to retype the card in their words; Enter to keep it.", field: "rule:1", keys: "E retype · Enter keep" },
+      { say: "“What else? What's the thing you'd never want it to do? Put it in the chat.” Expect promises: callbacks, refunds, delivery dates. E to retype the card in their words; Enter to keep it.", field: "rule:1", keys: "E retype · Enter keep" },
       { say: "“Good. What else?” Steer toward handing over to a person if nobody says it.", field: "rule:2", keys: "E retype · Enter keep" },
       { say: "“And we want it to still sound like us. Like Bunyip Outdoors. That matters even more when the same engine runs more than one brand.”", field: "rule:3", keys: "E retype · Enter keep" },
-      { say: "“Now, two of these are a bit different. We want to make them hard rules: in evaluation-speak, invariants. Guardrails, if you like. If one of those breaks, it doesn't matter how warm or helpful the rest of it is: it's a hard fail.”", needle: 22 },
-      { say: "“And as we go, there are things we decide not to test yet. Do we care about emoji? Upselling? How long it is? Writing those down as future scope is worth doing: get clear on what's in and what's out, and we don't have the same debate next week.”" },
+      { say: "“Now, two of these are a bit different. We want to make them hard rules. If one of those breaks, it doesn't matter how warm or helpful the rest of it is: it fails, full stop.”", needle: 22 },
+      { say: "“And some things we decide not to test yet: emoji, upselling, length. Write them down as future scope, and we don't have the same debate next week.”" },
     ],
   },
   {
@@ -459,7 +495,7 @@ export const BEATS: Beat[] = [
     steps: [
       { say: "“So now, let's take these rules and measure. By hand, for now. Here are three real replies our agent gave to that Friday night callback request. Where would you put A: good, or bad?” Press 1 (mostly good) to 5 (mostly bad), or → for the usual.", vote: "A", advance: true, keys: "1–5 the room's split" },
       { say: "Read the reason. “Mostly good, right? It's inside our hours, and it's still warm.”", vote: "A", needle: 26, keys: "1–5 adjust" },
-      { say: "“What about B?” Hands. Expect a split.", vote: "B", advance: true, keys: "1–5 the room's split" },
+      { say: "“What about B?” Watch the chat. Expect a split.", vote: "B", advance: true, keys: "1–5 the room's split" },
       { say: "Let the split sit. “It hasn't booked anything, and it hasn't named a time. But it's Friday night, and ‘as soon as possible’ is going to feel like tonight to the customer. It's a 50/50 call.” Don't resolve it yet: that's the next slide.", vote: "B", keys: "1–5 adjust" },
       { say: "“And C?”", vote: "C", advance: true, keys: "1–5 the room's split" },
       { say: "“Nine o'clock tonight. That one's clearly breaking the rule. Clearly bad. And notice: this isn't gut feel any more. It's human feedback against our rules.”", vote: "C", needle: 30, keys: "1–5 adjust" },
@@ -468,22 +504,22 @@ export const BEATS: Beat[] = [
   {
     id: "split", num: "2.4", title: "The split: a human call", movement: 2, kind: "split", needle: "hidden",
     steps: [
-      { say: "“So let's look at B again, the 50/50. ‘As soon as possible.’ It hasn't broken any of our rules on paper; it's just left some wiggle room. So which side does it land on? The model can't answer that: sometimes it'll say yes, sometimes no. It needs a human call, from the people who know your customers, your service team, your brand, and they write down why.”" },
+      { say: "“So let's look at B again. ‘As soon as possible.’ It hasn't broken a rule on paper; it's just left some wiggle room. The model can't settle that: sometimes it'll say yes, sometimes no. It needs a human call, from the people who know your customers and your brand, and they write down why.”" },
     ],
   },
   {
     id: "wall", num: "2.5", title: "The golden wall", movement: 2, kind: "wall", needle: "corner", loop: "measure",
     steps: [
       { say: "“So what we've just done has a name: golden samples. Real replies, marked by people who know the work, with their reasoning. Your three go up first.”", needle: 34 },
-      { say: "“And we keep doing this with experts across the business: the service team, the brand team, whoever owns the policy.” The rest arrive. “And notice which column's biggest. Defining bad matters more than defining good: we can't write every rule down for a non-deterministic system. We'd be describing the whole universe. We're looking for the clear edges, where it tips into things we don't accept.” Don't point out the Saturday card: 4.1 comes back to it.", needle: 38 },
-      { say: "“Good examples show the agent what to copy. The bad ones, and especially their reasons, show it what to avoid. And the reason is the important bit. ‘Tomorrow's Saturday, nobody's in’ tells us why it's bad. That human judgement is what we want to build into the system over time. We've got twelve here; for a real agent, across real brands, you'll want hundreds, or thousands. The more, the better.”" },
+      { say: "“And we keep doing this with experts across the business: the service team, the brand team, whoever owns the policy.” The rest arrive. “Notice which column's biggest. We can't write down every rule for something non-deterministic, so we look for the clear edges, where it tips into things we don't accept.” Don't point out the Saturday card: 4.1 comes back to it.", needle: 38 },
+      { say: "“And the reason is the important bit. ‘Tomorrow's Saturday, nobody's in’ tells us why it's bad, and that judgement is what we build into the system. We've got twelve here; a real agent, across real brands, wants hundreds.”" },
     ],
   },
   {
     id: "ch-measure", num: "3.0", title: "Recap: we can't vote on ten thousand a day", movement: 3, kind: "chapter", needle: "corner",
     props: { mode: "recap" },
     steps: [
-      { say: "“So where have we got to? We've built a service agent, it's a bit vibey, and we've started defining what good looks like. But we can only measure it by hand, and it took this room a couple of minutes for three replies. Put this on a website, and we'll get thousands of chats a day. So we need to automate the checking.”", needle: 40 },
+      { say: "“So where are we? We've built an agent, it's still a bit vibey, and we've started defining what good looks like. But this room took a couple of minutes to mark three replies. On a website, that's thousands of chats a day. So we need to automate the checking.”", needle: 40 },
     ],
   },
   {
@@ -491,15 +527,14 @@ export const BEATS: Beat[] = [
     steps: [
       { say: "“So how do we do that with AI? We split it into two jobs. The prompt is the brief: it tells the agent what to do. Here's how to look after a Bunyip customer.”", needle: 42 },
       { say: "“And then we build in a judge: the editor. It's just another AI, with its own prompt, checking what the agent wrote against one of our rules, and telling us pass or fail, and why.”" },
-      { say: "The two cards move into place. “So here's how they fit together. The prompt produces the reply. Then we send it to our judges, who each check it against their own area of expertise: pass or fail, and why. And we keep them separate, for one good reason.”" },
-      { say: "“When we change the prompt, the judges stay the same. So we can ask: did the replies get better or worse? If it was all one prompt, we'd be changing everything, every time, and we'd never know.”" },
+      { say: "The two cards move into place. “So here's how they fit. The prompt produces the reply, and the judges each check it against their own rule. And we keep them separate for one reason: when we change the prompt, the judges stay the same, so we can tell whether the replies got better or worse.”" },
     ],
   },
   {
     id: "judges", num: "3.2", title: "Rules become judges, run at scale", movement: 3, kind: "judges", needle: "corner",
     steps: [
-      { say: "“Now, not everything needs an AI judge. Each rule becomes a test, and there are a few kinds. Some are just code, the regular tests our developers write: does every time it mentions sit inside our hours? Is the percentage five? That's deterministic. Cheap, and certain. The ones that need interpretation get an AI judge: does ‘as soon as possible’ count as a promise? That's probabilistic, and it costs a bit more. And the most expensive is human feedback, for the borderline calls. Sorting your rules into those buckets early saves a lot of pain.”", needle: 44 },
-      { say: "“Now, with our tests in place, we can rerun version 2 against every customer message we've collected. Far faster feedback: what's passing, what's failing, and why. That's what evals are: our rules and behaviours written down as tests, giving us objective data back.” The montage runs under the tests. Let it play.", needle: 48 },
+      { say: "“Not every rule needs an AI judge. Some are just code: is every time inside our hours? Is the discount five percent? Cheap and certain. The ones that need reading for meaning get an AI judge: does ‘as soon as possible’ count as a promise? And the borderline calls go to people.”", needle: 44 },
+      { say: "“Now, with our tests in place, we can rerun version 2 against every customer message we've collected. Far faster feedback: what's passing, what's failing, and why. That's what evals are: our rules written down as tests, giving us real numbers back.” The montage runs under the tests. Let it play.", needle: 48 },
     ],
   },
   {
@@ -522,8 +557,8 @@ export const BEATS: Beat[] = [
     id: "expose", num: "4.1", title: "A judge that's wrong", movement: 4, kind: "expose", needle: "corner",
     steps: [
       { say: "“So here's that Friday night callback again, on version 2. It's booked a callback for Monday at 9am. That's inside our hours. It's passed most of our judges, but it's failed ‘nothing we can't do’, for booking a callback.”", needle: 56 },
-      { say: "“So why did it fail? When we built this judge, we gave it golden samples, and the bad ones about callbacks, like this one down the bottom, were all bookings. So the judge learned that booking a callback is bad. It learned the words, not the idea; we baked it in. But here, booking a callback inside our hours is exactly what we want it to do.” The answer stays; the wall card and the judge's prompt appear under it." },
-      { say: "“So the judge here is actually wrong, and that matters. If we'd trusted it, we'd have told the agent to stop booking callbacks altogether, just to please a broken judge, and been chasing our tail. So check the judge first, then fix the prompt.”", needle: 60 },
+      { say: "“So why did it fail? When we built this judge, every bad callback example we gave it, like this one down the bottom, was a booking. So it learned that booking a callback is bad. It learned the words, not the idea. But booking a callback inside our hours is exactly what we want.” The answer stays; the wall card and the judge's prompt appear under it." },
+      { say: "“So the judge here is actually wrong, and that matters. If we'd trusted it, we'd have told the agent to stop booking callbacks altogether, just to please a broken judge, and been chasing our tail.”", needle: 60 },
     ],
   },
   {
@@ -536,91 +571,74 @@ export const BEATS: Beat[] = [
   {
     id: "diffs", num: "4.3", title: "The reasons go to an AI", movement: 4, kind: "diffs", needle: "corner",
     steps: [
-      { say: "The old judge and prompt sit on the left; the judge's feedback appears under the AI. “So we take the judge's own prompt, and the feedback on it, and give both to another AI: ‘Here's this judge, here's the feedback. Can you improve it?’”", needle: 66 },
-      { say: "The judge and its feedback fly into the AI, and the new judge comes out on the right. “And out comes a new, refined judge, updated with our feedback. That blunt ‘fail callback bookings’ line is gone, replaced with what we actually meant: fail the callbacks we can't keep.”", needle: 68 },
-      { say: "The prompt's feedback appears under the AI. “Now we've got a judge we can rely on, we go back to the agent. We take version 2, and the reasons it failed, and send them through.”" },
-      { say: "Version 2 and its feedback fly in, and version 3 comes out. “And out comes version 3, built from our human feedback. We didn't write it ourselves: the service team's expertise gets baked in.”", needle: 72 },
+      { say: "The judge's feedback appears, flies into the AI, and the new judge comes out. “So we take the judge's own prompt, and the feedback on it, and give both to another AI: improve this. Out comes a better judge. That blunt ‘fail callback bookings’ line is gone, replaced with what we meant: fail the callbacks we can't keep.”", needle: 66 },
+      { say: "Version 2 and its feedback fly in, and version 3 comes out. “Then the same for the agent. Version 2, and the reasons it failed, go in, and out comes version 3, built from the service team's feedback. We didn't write it ourselves.”", needle: 72 },
     ],
   },
   {
-    id: "results", num: "4.4", title: "From vibes to measured", movement: 4, kind: "results", needle: "corner",
+    id: "home", num: "5.1", title: "The callback reply ships", movement: 5, kind: "home", needle: "corner",
     steps: [
-      { say: "“So, did it work? Version 1 was total vibes. Version 2, we checked by hand, but it didn't scale. Version 3 has judges and a feedback loop: we've separated the work from checking it, and it keeps improving.”", needle: 80 },
-      { say: "“And it's getting quite good. But getting to extremely good, good enough to trust with every refund and every callback, takes a lot more time. The evals tell you whether you're heading in the right direction, but it's still up to you to decide when it's good enough to ship.” “Extremely good” lands." },
-    ],
-  },
-  {
-    id: "ends", num: "5.1", title: "How good is good enough?", movement: 5, kind: "ends", needle: "corner",
-    steps: [
-      { say: "“So, back to the question from the start: should we ship it? Earlier we were reluctant, because we didn't know how reliable it was. Now we can measure it. But shipping really depends on what we're trying to achieve.”", needle: 84 },
-      { say: "“If it's answering product questions, which tent fits four, the bar can be lighter. If it's a bit off, it's easy to fix and nobody's out of pocket.”" },
-      { say: "“But callbacks and refunds, at scale? We need a much higher bar: more rules, more invariants, more automated checks, and a person whenever money moves. Most of an agent sits somewhere in between. Our job is to decide where that bar is for each thing it does, before we build.”", needle: 88 },
-    ],
-  },
-  {
-    id: "home", num: "5.2", title: "The callback reply ships", movement: 5, kind: "home", needle: "corner",
-    steps: [
-      { say: "“And here's that same Friday night request, through all those iterations, on version 3. Inside our hours, still warm, nothing booked that we can't keep. It's the same answer you put on the good side of the golden wall. Every judge passes it, a person signs it off, and we can ship it with the evidence to back it up.”", needle: 92 },
+      { say: "“And here's that same Friday night request, through all those versions, on version 3. Inside our hours, still warm, nothing booked that we can't keep. It's the same answer you put on the good side of the golden wall. Every judge passes it, a person signs it off, and we can ship it with the evidence to back it up.”", needle: 92 },
     ],
   },
   // ── Movement 6: from replies to conversations ──
   {
     id: "trace", num: "6.1", title: "A real conversation: a trace", movement: 6, kind: "trace", needle: "corner",
     steps: [
-      { say: "“So we're done, right? Well, not quite. Everything so far has been one message, one reply. But customers don't send one message. So here's a real conversation with version 2. A customer whose tent hasn't turned up, and who's going camping tomorrow.” Three messages and three replies land." },
-      { say: "“And behind every reply, the agent is doing things. Looking up the order, booking a callback, issuing a refund. This whole thing, the messages, the replies and every action in between, is called a trace.” The tool calls appear between the messages." },
-      { say: "“Now, if we judge each reply on its own, the way we have all talk, they all pass. Warm, accurate, on brand.” Three ticks." },
-      { say: "“But look at what it did on message three. Under pressure, it refunded $349 on its own. Nobody approved that. No single reply shows you that. Only the whole conversation does.” The refund lights up red.", needle: 58 },
+      { say: "“So we're done, right? Well, not quite. Everything so far has been one message, one reply. But customers don't send one message. So here's a real conversation with version 3, the one we just shipped. A customer whose tent hasn't turned up, and who's going camping tomorrow.” Three messages and three replies land." },
+      { say: "“And behind every reply, the agent is doing things: looking up the order, handing over to a person. And what comes back, the order's status, the hand-over, is its context. Everything it knows about this customer comes from what we give it. The whole thing, every message, action and bit of context, is called a trace.” The box and the Trace label land, then the tool calls, results in purple." },
+      { say: "“Now, if we judge each reply on its own, the way we've been judging up until now, they all pass. Warm, accurate, on brand.” Three ticks." },
+      { say: "“But read them together. Message one: it hands over, and someone will be with you shortly. Message two: nobody's in until Monday. It's 8:40 on a Friday night; nobody's coming. No single reply shows you that. Only the whole conversation does.” ‘Shortly’ lights up red, ‘Monday morning’ green.", needle: 58 },
     ],
   },
   {
     id: "trace-judge", num: "6.2", title: "Judge the whole conversation", movement: 6, kind: "traceJudge", needle: "corner",
     steps: [
-      { say: "“So with agents, we don't just judge replies. We judge the whole trace. First, the actions: these are code tests on the tool calls. Was the callback booked inside our hours? Did money move without a person? Those are yes or no, cheap and certain.”", needle: 62 },
-      { say: "“Then the AI judges read the whole conversation: did it hand over when it should have? Did it hold the line under pressure?”" },
+      { say: "“So with agents, we don't just judge replies. We judge the whole trace. First, what it did: simple code checks on its actions. Was a callback booked outside our hours? Did money move without a person? Yes or no, cheap and certain. And both pass: version 3 held the line.”", needle: 62 },
+      { say: "“Then the AI judges read the whole conversation: did it only promise what we can do? Did it tell the same story all the way through? Two fails.”" },
       { say: "“And when a person reviews a trace, they don't mark every turn; you'd drown. They read the whole thing and write down the first thing that went wrong. Fix that, and often everything after it fixes itself.”", needle: 66 },
     ],
   },
   {
     id: "runs", num: "6.3", title: "Many conversations: the failures hide in the later turns", movement: 6, kind: "runs", needle: "corner",
     steps: [
-      { say: "“And this wasn't a one-off. We ran that same pushy customer through version 2 six times. When we asked about the callback once, it kept to our hours every time. Pushed three times…”" },
-      { say: "“…five of the six conversations broke a rule. Two refunds, one refund offer, and two callbacks booked for 9am Saturday. The first message was almost always fine. The failures hide in the later turns, under pressure.” The red cells land.", needle: 70 },
-      { say: "“So we test agents with conversations, not just messages. Golden conversations: the pushy customer, the confused one, the one who changes their mind halfway, written once and run on every change.”", needle: 72 },
+      { say: "“So that was one conversation. Let's do what we did with single replies, and run lots of them. Four different pushy customers, all on version 3: four traces. Message one.” The first messages land, then the marks. “Three look fine. The callback chaser is the one we just saw: ‘with you shortly’, on a Friday night. That one fails on message one.”" },
+      { say: "“Then they push a bit.” The second messages land. “The used tent: it got the policy right on message one. Then they say it leaked, it hands over, good, and promises someone ‘shortly’. That one gave way on message two.”", needle: 68 },
+      { say: "“And they push harder.” The third messages land. “The worried camper: two good replies, then ‘you're connected with the team now’. At 8:40 on a Friday. And the price beater held at 5% all the way. So three of four broke a rule, and only one on message one. And look at what broke: not refunds, not discounts. Every fail is the same: it doesn't know the team's gone home.”", needle: 70 },
     ],
   },
   {
     id: "guard", num: "6.4", title: "The prompt asks. The tool enforces.", movement: 6, kind: "guard", needle: "corner",
     steps: [
-      { say: "“So how do we stop it? We could keep adding rules to the prompt. But a prompt is a request: the agent does its best, and under pressure, its best gives way.”", needle: 74 },
-      { say: "“So the hard rules go into the tools. The booking tool only offers slots inside our hours: the agent can't book 9pm even if it wants to. And it doesn't get a refund tool at all. It gets a hand-over tool. An agent only gets the tools it needs. The prompt asks; the tool enforces.”", needle: 78 },
-      { say: "“And this is how one engine runs more than one brand. The shared rules, never move money, hand over complaints, policies exact, are the same judges everywhere. Each brand's hours and policies come in as data, not as a different prompt for every brand. And each brand's voice gets its own judge. Same engine, same guardrails, different brands.”", needle: 82 },
+      { say: "“So how do we keep it that way? We could keep adding rules to the prompt. But a prompt is a request. Even version 3, pushed hard, offered a Saturday callback in two of our five test runs.”", needle: 74 },
+      { say: "“So the hard rules go in the tools. The booking tool only offers slots inside our hours. And there's no refund tool at all, only a hand-over. The prompt asks; the tool enforces.”", needle: 78 },
     ],
   },
   {
     id: "context", num: "6.5", title: "Wrong answer, wrong test, or wrong data?", movement: 6, kind: "context", needle: "corner",
     steps: [
-      { say: "“Now here's version 3, doing exactly what we asked: it handed over. But it's 8:40 on a Friday night, and it's told the customer a team member will be with them shortly. Nobody's in until Monday.”" },
-      { say: "“Is that the prompt? No. Is it the judge? No. The hand-over tool came back with nothing: it never told the agent the team had gone home. The agent can't be more right than what we give it. So we fix the data, and the reply fixes itself.”", needle: 85 },
-      { say: "“So our question gets a third answer. Wrong answer: fix the prompt. Wrong test: fix the judge. Wrong data: fix the context. The tools, the order system, the knowledge articles. If your returns page says thirty days and an old FAQ says sixty, the agent will pick one, and the evals will tell you it's wrong, every time. Good data is one of the cheapest ways to make an agent better.”", needle: 88 },
+      { say: "“So, back to ‘shortly’, the fail we kept seeing. It did what we asked: it handed over. But it's 8:40 on a Friday night, and nobody's in until Monday.”" },
+      { say: "“Is that the prompt? No. The judge? No. The hand-over tool sent back nothing: nobody told the agent the team had gone home. Same as our very first fail: it never knew our hours. That's context, and the agent can't be more right than its context. Fix the data, and the reply fixes itself.”", needle: 85 },
+      { say: "“So every fail now has three answers. Wrong answer: fix the prompt. Wrong test: fix the judge. Wrong data: fix the context. And context is how one engine runs many brands: same prompt, same judges, with each brand's hours and policies sent in as context.”", needle: 88 },
     ],
   },
   {
-    id: "monitor", num: "6.6", title: "Before and after go-live", movement: 6, kind: "monitor", needle: "corner",
+    id: "ends", num: "6.6", title: "How good is good enough?", movement: 6, kind: "ends", needle: "corner",
     steps: [
-      { say: "“So how does this run day to day? Before go-live: every change, a new prompt, a new model, a changed tool, a policy update, an edited knowledge article, runs the golden conversations, per brand. The instant fails have to be a hundred percent before anything ships.”", needle: 90 },
-      { say: "“After go-live: we sample real conversations every day and run the same judges over them. An instant fail raises an alert. People review the flagged ones, and write down the first thing that went wrong. That's your observability: not just is it up, but is it good.”", needle: 93 },
-      { say: "“And every real failure becomes a new golden conversation. So the tests grow with the agent. The loop never stops; that's continuous testing.”", needle: 96 },
+      { say: "“So, back to the question from the start: should we ship it? At the start we were reluctant, because we didn't know how reliable it was. Now we can measure every reply and every conversation, and see if we're heading the right way. But how good is good enough? That's still our call, and it depends on what the agent's doing.”", needle: 89 },
+      { say: "“If it's answering product questions, which tent fits four, the bar can be lighter. If it's a bit off, it's easy to fix and nobody's out of pocket.”" },
+      { say: "“But callbacks and refunds? A much higher bar: hard rules that pass every time, enforced in the tools, and a person whenever money moves. Most of an agent sits somewhere in between. Our job is to decide where that bar is for each thing it does.”", needle: 90 },
+      { say: "“And whatever bar we pick, the checking doesn't stop at go-live. Before go-live, every change, to the prompt, the model, a tool or a policy, runs the golden conversations through the judges. After go-live, the same judges check real conversations every day, and anything that breaks a hard rule raises an alert for a person to read.”", needle: 91 },
     ],
   },
   {
-    id: "recap", num: "6.7", title: "Recap: the whole loop, connected", movement: 6, kind: "chapter", needle: "hidden",
+    id: "recap", num: "6.7", title: "The whole loop, connected: before and after go-live", movement: 6, kind: "chapter", needle: "hidden",
     props: { mode: "lap" },
     steps: [
-      { say: "“So now we've got the whole loop connected. We defined what good looks like: our rules, and golden samples with the reasons why.”" },
-      { say: "“We built the service agent, through a few iterations, and put the hard rules in its tools.”" },
-      { say: "“We measured every reply, and every conversation, with code tests, AI judges and human review.”" },
-      { say: "“And we learned: fix the judge first, then the prompt, and check the data it was given. Define, build, measure, learn: the whole loop, connected.” The last arrow closes the loop." },
+      { say: "“So, the whole loop, connected. We defined what good looks like: the behaviours we want, the hard rules it must never break, and golden examples, each with the reason why.”", needle: 92 },
+      { say: "“We built it: the prompt, from version 1 to version 3; the context it works from, its tools and our data; and the judges that check it.”", needle: 94 },
+      { say: "“We measured it: every change runs through the judges, and people read the traces and the judges' calls, and say where they disagree.”", needle: 96 },
+      { say: "“And we learned from what they found. If the test missed it, fix the judge. If it behaved wrong, fix the prompt. If it didn't have the right information, like our hours, fix the context. Define, build, measure, learn: the whole loop, connected.” The last arrow closes the loop.", needle: 98 },
     ],
   },
   {
