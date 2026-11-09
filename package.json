@@ -8,7 +8,8 @@
     "build": "tsc -b && vite build",
     "typecheck": "tsc -b --noEmit",
     "talk-track": "npx --yes tsx@4.19.2 scripts/talk-track.ts > docs/talk-track.md",
-    "talk-track:service": "npx --yes tsx@4.19.2 scripts/talk-track.ts service > docs/talk-track-service.md"
+    "talk-track:service": "npx --yes tsx@4.19.2 scripts/talk-track.ts service > docs/talk-track-service.md",
+    "slides-pdf:service": "npx --yes tsx@4.19.2 scripts/slides-pdf.ts service docs/slides-service.pdf"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.131.0",
